@@ -1,0 +1,10 @@
+run = "npm run dev"
+
+[nix]
+channel = "stable-23_05"
+
+[deps]
+pkgs.nodejs-18_x
+pkgs.nodePackages.typescript-language-server
+pkgs.yarn
+pkgs.replitPackages.jest
