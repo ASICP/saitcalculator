@@ -15,13 +15,13 @@ import {
   TREASURY_ALLOCATION,
   TEAM_ALLOCATION,
   PARTNER_ALLOCATION
-} from './src/modules/tokenomics';
+} from './modules/tokenomics';
 import {
   calculateMonthlyTreasuryFlow,
   INITIAL_SAT_RESERVES,
   TREASURY_TOTAL_ALLOCATION
-} from './src/modules/treasury';
-import { STANDARD_KPIS } from './src/modules/governance';
+} from './modules/treasury';
+import { STANDARD_KPIS } from './modules/governance';
 import {
   ABC_TOTAL_SUPPLY,
   ABC_ALLOCATIONS,
@@ -31,14 +31,14 @@ import {
   getInstituteUnlock,
   getLiquidityUnlock,
   ABC_PAPER_SUBMISSION_FEE
-} from './src/modules/abcTokenomics';
+} from './modules/abcTokenomics';
 import {
   LineChart,
   Line,
   XAxis,
   YAxis,
   CartesianGrid,
-  Tooltip,
+  Tooltip as RechartsTooltip,
   Legend,
   ResponsiveContainer,
   AreaChart,
@@ -86,11 +86,11 @@ interface Phase {
 }
 
 // Tooltip Component
-const Tooltip: React.FC<{ text: string }> = ({ text }) => {
+const InfoTooltip: React.FC<{ text: string }> = ({ text }) => {
   const [show, setShow] = useState(false);
 
   return (
-    <div className="relative inline-block ml-1">
+    <div className="relative inline-block ml-1 group z-10">
       <button
         onClick={() => setShow(!show)}
         className="text-blue-500 hover:text-blue-700 cursor-pointer text-xs font-bold"
@@ -141,7 +141,13 @@ const TOOLTIP_TEXTS = {
   timeHorizon: "Duration of the simulation in months. Default is 60 months (5 years) to match strategic planning horizon.",
   priceChart: "Shows SAIT price over time with three key levels: Market Price (blue), Buyback Floor (red dashed), and Premium Target (purple dashed) from equilibrium model.",
   supplyChart: "Tracks circulating supply growth as vaults unlock over time. Affected by vesting schedules and buyback reductions.",
-  satTreasuryChart: "Displays SAT reserve accumulation from SAIT sales (125k/mo), grant recoveries (10%), and LP fees (0.3%), minus buyback costs and operations."
+  satTreasuryChart: "Displays SAT reserve accumulation from SAIT sales (125k/mo), grant recoveries (10%), and LP fees (0.3%), minus buyback costs and operations.",
+  monthlyHiring: "Placeholder for monthly hiring tooltip text.", // Added
+  vaultVesting: "Describes the vesting mechanism for this specific vault.", // Added
+  vaultUnlocked: "The amount of tokens from this vault that have vested and are available.", // Added
+  sentiment: "Multiplier representing overall market conditions (0.5 = bearish, 1.0 = neutral, 2.0 = bullish). Affects price projections by simulating investor confidence.", // Added, same as marketSentiment
+  startingCash: "Initial SAT reserves from institutional capital commitments. Used to fund operations and SAIT buybacks.", // Added, same as treasuryStartingCash
+  totalBurned: "Total ABC tokens removed from circulation through various mechanisms like failed bounties or slashing." // Added
 };
 
 const SAITCalculator: React.FC = () => {
@@ -524,7 +530,7 @@ const SAITCalculator: React.FC = () => {
             </div>
             <div className="text-sm text-gray-600 flex items-center justify-center">
               Final Price
-              <Tooltip text={TOOLTIP_TEXTS.finalPrice} />
+              <InfoTooltip text={TOOLTIP_TEXTS.finalPrice} />
             </div>
           </div>
           <div className="text-center">
@@ -533,7 +539,7 @@ const SAITCalculator: React.FC = () => {
             </div>
             <div className="text-sm text-gray-600 flex items-center justify-center">
               Market Cap
-              <Tooltip text={TOOLTIP_TEXTS.marketCap} />
+              <InfoTooltip text={TOOLTIP_TEXTS.marketCap} />
             </div>
           </div>
           <div className="text-center">
@@ -542,7 +548,7 @@ const SAITCalculator: React.FC = () => {
             </div>
             <div className="text-sm text-gray-600 flex items-center justify-center">
               {activeTab === 'SAIT' ? 'Total Bought Back' : 'Total Burned'}
-              <Tooltip text={TOOLTIP_TEXTS.totalBoughtBack} />
+              <InfoTooltip text={activeTab === 'SAIT' ? TOOLTIP_TEXTS.totalBoughtBack : TOOLTIP_TEXTS.totalBurned} />
             </div>
           </div>
           <div className="text-center">
@@ -551,7 +557,7 @@ const SAITCalculator: React.FC = () => {
             </div>
             <div className="text-sm text-gray-600 flex items-center justify-center">
               Circulating Supply
-              <Tooltip text={TOOLTIP_TEXTS.circulatingSupply} />
+              <InfoTooltip text={TOOLTIP_TEXTS.circulatingSupply} />
             </div>
           </div>
         </div>
@@ -605,12 +611,12 @@ const SAITCalculator: React.FC = () => {
                   <span className="font-mono text-lg">{formatTokens(50_000_000)}</span>
                   <span className="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded inline-flex items-center">
                     KPI Vesting
-                    <Tooltip text={TOOLTIP_TEXTS.kpiVesting} />
+                    <InfoTooltip text={TOOLTIP_TEXTS.vaultVesting} />
                   </span>
                 </div>
                 <div className="text-xs text-gray-600 mt-1 flex items-center">
                   Unlocked: {formatTokens((final as ScenarioData)?.aiFundVested || 0)}
-                  <Tooltip text={TOOLTIP_TEXTS.unlocked} />
+                  <InfoTooltip text={TOOLTIP_TEXTS.vaultUnlocked} />
                 </div>
               </div>
               {/* Other SAIT Vaults Simplified for this response, the previous tool put them there. */}
@@ -651,7 +657,7 @@ const SAITCalculator: React.FC = () => {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
                 {activeTab === 'SAIT' ? 'Initial SAIT Price ($)' : 'Initial ABC Price ($)'}
-                <Tooltip text={TOOLTIP_TEXTS.initialPrice} />
+                <InfoTooltip text={TOOLTIP_TEXTS.initialPrice} />
               </label>
               <input
                 type="number"
@@ -668,7 +674,7 @@ const SAITCalculator: React.FC = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
                     Monthly Price Growth Rate
-                    <Tooltip text={TOOLTIP_TEXTS.priceGrowth} />
+                    <InfoTooltip text={TOOLTIP_TEXTS.priceGrowth} />
                   </label>
                   <input
                     type="range"
@@ -688,7 +694,7 @@ const SAITCalculator: React.FC = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
                     Market Sentiment
-                    <Tooltip text={TOOLTIP_TEXTS.marketSentiment} />
+                    <InfoTooltip text={TOOLTIP_TEXTS.sentiment} />
                   </label>
                   <input
                     type="range"
@@ -749,7 +755,7 @@ const SAITCalculator: React.FC = () => {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
                 Starting Treasury Cash ($)
-                <Tooltip text={TOOLTIP_TEXTS.treasuryStartingCash} />
+                <InfoTooltip text={TOOLTIP_TEXTS.startingCash} />
               </label>
               <input
                 type="number"
@@ -814,7 +820,7 @@ const SAITCalculator: React.FC = () => {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
                 Time Horizon (months)
-                <Tooltip text={TOOLTIP_TEXTS.timeHorizon} />
+                <InfoTooltip text={TOOLTIP_TEXTS.timeHorizon} />
               </label>
               <input
                 type="number"
@@ -828,7 +834,7 @@ const SAITCalculator: React.FC = () => {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
                 Speculator Ratio
-                <Tooltip text={TOOLTIP_TEXTS.speculator} />
+                <InfoTooltip text={TOOLTIP_TEXTS.speculator} />
               </label>
               <input
                 type="range"
@@ -852,7 +858,7 @@ const SAITCalculator: React.FC = () => {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
                 Utility Buyer Ratio
-                <Tooltip text={TOOLTIP_TEXTS.utilityBuyer} />
+                <InfoTooltip text={TOOLTIP_TEXTS.utilityBuyer} />
               </label>
               <input
                 type="range"
@@ -870,7 +876,7 @@ const SAITCalculator: React.FC = () => {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
                 Hodler Ratio
-                <Tooltip text={TOOLTIP_TEXTS.hodler} />
+                <InfoTooltip text={TOOLTIP_TEXTS.hodler} />
               </label>
               <input
                 type="range"
@@ -897,7 +903,7 @@ const SAITCalculator: React.FC = () => {
             <div className="text-center mb-2">
               <h3 className="text-lg font-semibold text-gray-700 inline-flex items-center">
                 Price Over Time
-                <Tooltip text={TOOLTIP_TEXTS.priceChart} />
+                <InfoTooltip text={TOOLTIP_TEXTS.priceChart} />
               </h3>
             </div>
             <ResponsiveContainer width="100%" height="100%">
@@ -905,7 +911,7 @@ const SAITCalculator: React.FC = () => {
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="month" />
                 <YAxis domain={['auto', 'auto']} tickFormatter={formatYAxis} />
-                <Tooltip />
+                <RechartsTooltip />
                 <Legend />
                 <Line
                   type="monotone"
@@ -945,7 +951,7 @@ const SAITCalculator: React.FC = () => {
             <div className="text-center mb-2">
               <h3 className="text-lg font-semibold text-gray-700 inline-flex items-center">
                 Circulating Supply
-                <Tooltip text={TOOLTIP_TEXTS.supplyChart} />
+                <InfoTooltip text={TOOLTIP_TEXTS.supplyChart} />
               </h3>
             </div>
             <ResponsiveContainer width="100%" height="100%">
@@ -953,7 +959,7 @@ const SAITCalculator: React.FC = () => {
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="month" />
                 <YAxis tickFormatter={formatYAxis} />
-                <Tooltip />
+                <RechartsTooltip />
                 <Legend />
                 <Area
                   type="monotone"
@@ -974,7 +980,7 @@ const SAITCalculator: React.FC = () => {
           <div className="text-center mb-4">
             <h3 className="text-xl font-semibold text-gray-700 inline-flex items-center justify-center">
               SAT Treasury Reserves
-              <Tooltip text={TOOLTIP_TEXTS.satTreasuryChart} />
+              <InfoTooltip text={TOOLTIP_TEXTS.satTreasuryChart} />
             </h3>
           </div>
           <div className="h-80">
@@ -989,7 +995,7 @@ const SAITCalculator: React.FC = () => {
                   tickFormatter={formatYAxis}
                   label={{ value: 'USD Value', angle: -90, position: 'insideLeft' }}
                 />
-                <Tooltip
+                <RechartsTooltip
                   formatter={(value) => formatCurrency(Number(value))}
                   labelFormatter={(label) => `Month ${label}`}
                 />
