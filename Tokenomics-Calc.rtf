@@ -1,0 +1,78 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2822
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\fnil\fcharset0 HelveticaNeue;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+{\*\expandedcolortbl;;\cssrgb\c0\c0\c0;}
+\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 \
+CLAUDE: Tokenomics Calc\
+\
+\pard\pardeftab720\partightenfactor0
+
+\f1\fs22 \cf2  Components to Integrate into Calculator\
+\
+1. Phase-Based Unlock System\
+Replace our simple monthly drip with the sophisticated phase system:\
+```typescript\
+interface Phase \{\
+  name: string;\
+  startQuarter: number;\
+  totalPercent: number;\
+  durationQuarters: number;\
+  buckets: \{\
+    research: number;\
+    ecosystem: number;\
+    team: number;\
+    // etc\
+  \};\
+\}\
+```\
+\
+2. Burn Floor Implementation\
+```typescript\
+const [burnFloor, setBurnFloor] = useState(2000000); // SAIT per quarter\
+const [burnFloorFinancing, setBurnFloorFinancing] = useState('treasury');\
+\
+// In calculation logic\
+const effectiveBurn = Math.max(usageBasedBurn, burnFloor);\
+const treasuryBurnCost = Math.max(0, effectiveBurn - usageBasedBurn);\
+```\
+\
+3. Advanced Treasury Modeling\
+```typescript\
+const [treasuryStartingCash, setTreasuryStartingCash] = useState(1500000);\
+const [operationalSpend, setOperationalSpend] = useState(600000);\
+const [treasuryShare, setTreasuryShare] = useState(0.30);\
+\
+// Track treasury health over time\
+const treasuryBalance = startingCash + cumulativeFees * treasuryShare - cumulativeOpex;\
+```\
+\
+4. Overhang Warnings\
+```typescript\
+// Calculate next 2 quarters unlock pressure\
+const overhangRatio = (nextTwoQuartersUnlocks / currentCirculatingSupply);\
+const overhangWarning = overhangRatio > 0.40; // Warning threshold\
+\
+// Visual alerts when overhang exceeds safe levels\
+```\
+\
+5. Scenario Presets\
+Implement your four tested scenarios as presets:\
+- Base Mid: Balanced approach (60% overhang risk)\
+- Lean Supply: Lower supply, higher burn share (75% overhang)\
+- High Adoption: Aggressive usage growth (60% overhang) \
+- Runway Guard: Treasury protection focus (60% overhang)\
+\
+6. Multi-Supply Comparison\
+Add ability to run same parameters across different total supplies (500M, 1B, 5B) to show how burn percentages change.\
+\
+Critical Updates Needed:\
+\
+Increase burn rates - Current usage projections are too low to achieve deflation\
+Add treasury runway warnings when cash flow goes negative\
+Implement overhang alerts when unlock pressure exceeds 40-50%\
+Add staking economics to show real yield sustainability\
+Phase-based unlock scheduling instead of linear monthly unlocks\
+}

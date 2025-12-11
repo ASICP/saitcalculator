@@ -1,0 +1,3868 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2822
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\fswiss\fcharset0 Helvetica-Bold;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\margl1440\margr1440\vieww17340\viewh13000\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 \
+Comments\
+\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\
+\
+Pushed the changes, also FYI, will be updating some of the allocations to match the initial GTM\
+\
+Well actually just to clarify, the unlocks shown in the .md files for example in the https://github.com/Mbastidas001/SAIT/blob/main/sims/outputs_scenarios/base_mid/SAIT_Tokenomics_Report.md , are for 28% unlock of the allocations across 4 years (16q). I just misread the portion in my review. The allocations already match the initial GTM \
+\
+after review of them @Anthony Monroy the base_mid case is best so far, but still had 60 % overhang. So some  possible tweaks I am considering: smooth the early unlocks to reduce overhang <40%. , Exploring initial float +2\'963% for liquidity depth. , Increasing burn_share if early usage lags.\
+\
+SCENARIO 1\
+\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\
+\
+BASE-MID\
+\
+# SAIT Tokenomics Simulation \'97 Plain English Context\
+\
+## What this is\
+We modeled SAIT\'92s tokenomics to see how unlocks, burns, staking, and treasury cash interact.\
+It shows whether SAIT stays scarce, whether the treasury runs out, and whether the design is credible.\
+\
+## Key assumptions in this run\
+- **Total Supply**: 1,000,000,000 SAIT (fixed, no inflation).\
+- **Initial circulation**: 10.0% of supply unlocked in Q1.\
+- **Unlock cap**: \uc0\u8804  1.00% per month (\u8776  3.00% per quarter).\
+- **Fee per action**: $0.25.\
+- **Fee split**: 50% burn, 20% stakers, 30% treasury.\
+- **Usage start**: 100,000 actions in Q1, growing 20.0% per quarter.\
+- **Staking**: 25% of circulating tokens staked, with 12% APY cap.\
+- **Treasury**: start $1,500,000, spending $600,000/quarter.\
+- **Burn floor**: 2,000,000 SAIT per quarter, mode=treasury.\
+- **Price path**: custom CSV (16 rows).\
+\
+## How to read the results\
+- **Deflationary quarters**: times when burns exceed unlocks (circulating supply shrinks).\
+- **Overhang vs Float**: supply waiting to unlock relative to what\'92s circulating (dump risk).\
+- **Treasury runway**: quarters before treasury cash runs out.\
+- **Crowdfund proceeds**: cash raised from planned sales (tiers).\
+\
+The following sections show KPI tables, per-scenario reports, and recommendations.\
+\
+# SAIT Tokenomics \'97 Consolidated Report\
+\
+## Executive Summary\
+- This report compares total-supply scenarios using the same cap-compliant unlock schedule, fee/burn settings, and price path.\
+- Burns scale with **usage** rather than supply, so SAIT burned is similar across caps; burn **percent** falls as supply grows.\
+- Overhang/Float and Treasury runway are the two most important operational risk flags.\
+\
+## Inputs & Assumptions\
+- Horizon: **16 quarters**\
+- Total-supply grid: **1,000,000,000**\
+- Initial float: **10.00%** of total (Q1 start)\
+- Unlock cap: **1.00%/mo \uc0\u8658  3.00%/qtr** (global)\
+- Usage: actions Q1=**100,000**, growth QoQ=**20.0%**\
+- Fees: **$0.25/action** | Splits: burn=0.50, stakers=0.20, treasury=0.30\
+- Staking: %staked=**25.0%** | target APY=**12.0%** (fee-funded cap)\
+- Treasury: start=**$1,500,000**, ops=**$600,000/qtr**\
+- Burn floor: **2,000,000 SAIT/q** (treasury)\
+- Price: **custom CSV (16 rows)**\
+\
+## Schedule Diagnostics\
+- Total unlock over 16q: **28.00%** of total supply\
+- Avg unlock per quarter: **1.75%** | Max per quarter: **3.00%**\
+- Global cap breaches: **none** (excess spilled forward if needed)\
+\
+### Unlocks by Bucket (16q totals)\
+- Research: **11.60%**\
+- Ecosystem: **8.80%**\
+- Team: **2.10%**\
+- Partners: **3.00%**\
+- Treasury: **1.30%**\
+- Liquidity: **1.20%**\
+- Total: **28.00%**\
+\
+## Scenario Comparison (Key KPIs)\
+| Total Supply | Init Float | Final Circ | Final Circ % | Cum Burn (SAIT) | Cum Burn % | Defl Qtrs | Runway Q (min) | Peak Unlock %/q | Max Overhang/Float | Avg Staker APY |\
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|\
+| 1,000,000,000 | 100,000,000 | 347,999,998 | 34.80% | 32,000,000 | 3.20% | 3 | inf | 3.00% | 60.0% | 0.74% |\
+\
+## Recommendations\
+- Reduce early unlocks (longer durations, stagger phases) or slightly increase initial float to bring Max Overhang/Float below 40%.\
+- Publish the cap-compliant unlock curve and overhang metric alongside governance proposals to set expectations.\
+- Add a burn floor (e.g., 2M SAIT/q) financed from treasury early on; remove when usage burns dominate.\
+\
+## Per-Scenario Details\
+\
+---\
+\
+### Scenario \'97 Total Supply 1,000,000,000\
+\
+\
+## Headline\
+- **Supply**: 16q unlocks = 28.00%; Final circ = 34.80% (347,999,998 SAIT).\
+- **Burns**: cumulative = 32,000,000 SAIT (3.20%); Deflationary quarters: 3 (first: Q14).\
+- **Treasury**: runway\uc0\u8776  inf q (min balance $3,400,000 at Q1).\
+- **Overhang**: max = 60.00%; quarters > 40% = 2.\
+\
+## Unlocks by Bucket (16q total)\
+- Research: 11.60%\
+- Ecosystem: 8.80%\
+- Team: 2.10%\
+- Partners: 3.00%\
+- Treasury: 1.30%\
+- Liquidity: 1.20%\
+- **Total**: 28.00%\
+\
+## Notes\
+- Burns are driven by usage/fees/price, not by total supply \'97 hence identical SAIT burns across caps.\
+- Global cap enforcer ensures per-quarter total unlock \uc0\u8804  3% (given 1%/mo cap).\
+- Overhang is defined as next-2Q unlocks \'f7 starting float for the quarter.\
+\
+## Suggested levers if this scenario trips warnings\
+- Reduce early unlock pace (longer durations / stagger phases) to cut overhang.\
+- Raise burn_share / increase actions / fee_per_action / price to approach deflationary quarters.\
+- Consider a small increase in initial float only if liquidity depth is a concern (trade-off: more potential sellers).\
+\
+sims/outputs_scenarios/base_mid/config.yaml\
+\
+quarters: 16\
+max_unlock_cap_per_month: 0.01\
+initial_circulating_pct: 0.1\
+base_actions_q1: 100000\
+actions_growth_qoq: 0.2\
+fee_per_action_usd: 0.25\
+burn_share: 0.5\
+stakers_share: 0.2\
+treasury_share: 0.3\
+staked_pct_of_circ: 0.25\
+target_staker_apy: 0.12\
+starting_treasury_cash_usd: 1500000\
+ops_spend_per_q_usd: 600000\
+burn_floor_sait_per_q: 2000000\
+burn_floor_finance: treasury\
+price_q1_usd: 0.05\
+price_growth_qoq: 0.35\
+total_supply_grid:\
+- 1000000000\
+\
+Unlocks\
+\
+Quarter,Research,Ecosystem,Team,Partners,Treasury,Liquidity\
+Q1,0.008249999999999997,0.015749999999999993,0.0,0.0,0.002999999999999999,0.002999999999999999\
+Q2,0.009857142857142856,0.013499999999999996,0.0012857142857142854,0.0012857142857142854,0.002357142857142857,0.0017142857142857146\
+Q3,0.014035714285714282,0.007649999999999998,0.0010285714285714282,0.004628571428571427,0.0006857142857142859,0.001971428571428571\
+Q4,0.01380612244897959,0.008228571428571427,0.0018734693877551017,0.0039306122448979595,0.0010346938775510203,0.0011265306122448986\
+Q5,0.009051020408163274,0.005871428571428576,0.0018122448979591848,0.002155102040816329,0.0009224489795918374,0.0001877551020408171\
+Q6,0.005625000000000001,0.003125,0.001875,0.0012500000000000002,0.0006250000000000001,0.0\
+Q7,0.012576923076923078,0.008423076923076924,0.0017307692307692306,0.004846153846153847,0.000576923076923077,0.0018461538461538465\
+Q8,0.012576923076923078,0.008423076923076924,0.0017307692307692304,0.004846153846153846,0.000576923076923077,0.0018461538461538465\
+Q9,0.007721153846153849,0.004528846153846155,0.0021634615384615386,0.0020576923076923086,0.0007211538461538464,0.00030769230769230803\
+Q10,0.005625000000000001,0.003125,0.001875,0.0012500000000000002,0.0006250000000000001,0.0\
+Q11,0.005625000000000001,0.003125,0.001875,0.0012500000000000002,0.0006250000000000001,0.0\
+Q12,0.005625000000000001,0.003125,0.001875,0.0012500000000000002,0.0006250000000000001,0.0\
+Q13,0.005625000000000001,0.003125,0.001875,0.0012500000000000002,0.0006250000000000001,0.0\
+Q14,0.0,0.0,0.0,0.0,0.0,0.0\
+Q15,0.0,0.0,0.0,0.0,0.0,0.0\
+Q16,0.0,0.0,0.0,0.0,0.0,0.0\
+\
+sims/outputs_scenarios/base_mid/kpis_summary.md\
+# SAIT Tokenomics \'97 KPI Summary\
+\
+| Total Supply | Init Float | Final Circ | Cum Burn (SAIT) | Cum Burn % | Deflationary Qtrs | Min Runway Qtrs | Peak Unlock %/q | Max Overhang/Float | Cap Breach |\
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|:---:|\
+| 1,000,000,000 | 100,000,000 | 347,999,998 | 32,000,000 | 3.20% | 3 | \uc0\u8734  | 3.00% | 60.0% | no |\
+\
+sims/outputs_scenarios/base_mid/phases.yaml\
+\
+phases:\
+  # Phase 1 \'97 Q4'25 Pilot Fundraising (\uc0\u8776 Q1 in sim)\
+  - name: Pilot drip\
+    start_quarter: 1\
+    total_pct: 0.02                # ~2% over 2 quarters = 0.5\'961%/mo drip\
+    duration_quarters: 2\
+    buckets:\
+      Ecosystem: 0.60\
+      Liquidity: 0.10\
+      Research: 0.20\
+      Treasury: 0.10\
+\
+  - name: Pilot milestone boost (dashboard/pilot live)\
+    start_quarter: 1\
+    total_pct: 0.03                # milestone bump, still capped globally\
+    duration_quarters: 1\
+    buckets:\
+      Ecosystem: 0.50\
+      Research: 0.30\
+      Treasury: 0.10\
+      Liquidity: 0.10\
+\
+  # Phase 2 \'97 2026 Scaling R&D (quarters 2\'965 in this mapping)\
+  - name: 2026 scaling drip\
+    start_quarter: 2\
+    total_pct: 0.06                # 6% spread across 4 quarters (~1.5%/q avg)\
+    duration_quarters: 4\
+    buckets:\
+      Research: 0.45\
+      Ecosystem: 0.30\
+      Team: 0.10\
+      Partners: 0.10\
+      Treasury: 0.05\
+\
+  - name: 2026 major milestone (R&D targets hit)\
+    start_quarter: 3\
+    total_pct: 0.03\
+    duration_quarters: 1\
+    buckets:\
+      Research: 0.50\
+      Ecosystem: 0.20\
+      Partners: 0.20\
+      Liquidity: 0.10\
+\
+  # Phase 3 \'97 2027\'9628 Expansion (rest of horizon)\
+  - name: 2027-28 expansion drip\
+    start_quarter: 6\
+    total_pct: 0.10                # ~10% over 8 quarters (slow, steady)\
+    duration_quarters: 8\
+    buckets:\
+      Research: 0.45\
+      Ecosystem: 0.25\
+      Team: 0.15\
+      Partners: 0.10\
+      Treasury: 0.05\
+\
+  - name: 2027-28 milestone unlocks (sovereign deployments)\
+    start_quarter: 7\
+    total_pct: 0.04\
+    duration_quarters: 2\
+    buckets:\
+      Research: 0.40\
+      Ecosystem: 0.30\
+      Partners: 0.20\
+      Liquidity: 0.10\
+\
+sims/outputs_scenarios/base_mid/prices.csv\
+Price_USD\
+0.05\
+0.055\
+0.0605\
+0.06655\
+0.10\
+0.11\
+0.121\
+0.1331\
+0.25\
+0.30\
+0.35\
+0.40\
+0.45\
+0.50\
+0.50\
+0.50\
+\
+sims/outputs_scenarios/base_mid/report_1000000000.md\
+\
+# SAIT Scenario \'97 Total Supply 1,000,000,000\
+\
+## Headline\
+- **Supply**: 16q unlocks = 28.00%; Final circ = 34.80% (347,999,998 SAIT).\
+- **Burns**: cumulative = 32,000,000 SAIT (3.20%); Deflationary quarters: 3 (first: Q14).\
+- **Treasury**: runway\uc0\u8776  inf q (min balance $3,400,000 at Q1).\
+- **Overhang**: max = 60.00%; quarters > 40% = 2.\
+\
+## Unlocks by Bucket (16q total)\
+- Research: 11.60%\
+- Ecosystem: 8.80%\
+- Team: 2.10%\
+- Partners: 3.00%\
+- Treasury: 1.30%\
+- Liquidity: 1.20%\
+- **Total**: 28.00%\
+\
+## Notes\
+- Burns are driven by usage/fees/price, not by total supply \'97 hence identical SAIT burns across caps.\
+- Global cap enforcer ensures per-quarter total unlock \uc0\u8804  3% (given 1%/mo cap).\
+- Overhang is defined as next-2Q unlocks \'f7 starting float for the quarter.\
+\
+## Suggested levers if this scenario trips warnings\
+- Reduce early unlock pace (longer durations / stagger phases) to cut overhang.\
+- Raise burn_share / increase actions / fee_per_action / price to approach deflationary quarters.\
+- Consider a small increase in initial float only if liquidity depth is a concern (trade-off: more potential sellers).\
+\
+\
+SCENARIO 2\
+\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\
+\
+# SAIT Tokenomics Simulation \'97 Plain English Context\
+\
+## What this is\
+We modeled SAIT\'92s tokenomics to see how unlocks, burns, staking, and treasury cash interact.\
+It shows whether SAIT stays scarce, whether the treasury runs out, and whether the design is credible.\
+\
+## Key assumptions in this run\
+- **Total Supply**: 1,000,000,000 SAIT (fixed, no inflation).\
+- **Initial circulation**: 10.0% of supply unlocked in Q1.\
+- **Unlock cap**: \uc0\u8804  1.00% per month (\u8776  3.00% per quarter).\
+- **Fee per action**: $0.40.\
+- **Fee split**: 55% burn, 20% stakers, 25% treasury.\
+- **Usage start**: 200,000 actions in Q1, growing 30.0% per quarter.\
+- **Staking**: 25% of circulating tokens staked, with 12% APY cap.\
+- **Treasury**: start $1,500,000, spending $600,000/quarter.\
+- **Burn floor**: 1,000,000 SAIT per quarter, mode=treasury.\
+- **Price path**: custom CSV (16 rows).\
+\
+## How to read the results\
+- **Deflationary quarters**: times when burns exceed unlocks (circulating supply shrinks).\
+- **Overhang vs Float**: supply waiting to unlock relative to what\'92s circulating (dump risk).\
+- **Treasury runway**: quarters before treasury cash runs out.\
+- **Crowdfund proceeds**: cash raised from planned sales (tiers).\
+\
+The following sections show KPI tables, per-scenario reports, and recommendations.\
+\
+# SAIT Tokenomics \'97 Consolidated Report\
+\
+## Executive Summary\
+- This report compares total-supply scenarios using the same cap-compliant unlock schedule, fee/burn settings, and price path.\
+- Burns scale with **usage** rather than supply, so SAIT burned is similar across caps; burn **percent** falls as supply grows.\
+- Overhang/Float and Treasury runway are the two most important operational risk flags.\
+\
+## Inputs & Assumptions\
+- Horizon: **16 quarters**\
+- Total-supply grid: **1,000,000,000, 5,000,000,000**\
+- Initial float: **10.00%** of total (Q1 start)\
+- Unlock cap: **1.00%/mo \uc0\u8658  3.00%/qtr** (global)\
+- Usage: actions Q1=**200,000**, growth QoQ=**30.0%**\
+- Fees: **$0.40/action** | Splits: burn=0.55, stakers=0.20, treasury=0.25\
+- Staking: %staked=**25.0%** | target APY=**12.0%** (fee-funded cap)\
+- Treasury: start=**$1,500,000**, ops=**$600,000/qtr**\
+- Burn floor: **1,000,000 SAIT/q** (treasury)\
+- Price: **custom CSV (16 rows)**\
+\
+## Schedule Diagnostics\
+- Total unlock over 16q: **28.00%** of total supply\
+- Avg unlock per quarter: **1.75%** | Max per quarter: **3.00%**\
+- Global cap breaches: **none** (excess spilled forward if needed)\
+\
+### Unlocks by Bucket (16q totals)\
+- Research: **11.60%**\
+- Ecosystem: **8.80%**\
+- Team: **2.10%**\
+- Partners: **3.00%**\
+- Treasury: **1.30%**\
+- Liquidity: **1.20%**\
+- Total: **28.00%**\
+\
+## Scenario Comparison (Key KPIs)\
+| Total Supply | Init Float | Final Circ | Final Circ % | Cum Burn (SAIT) | Cum Burn % | Defl Qtrs | Runway Q (min) | Peak Unlock %/q | Max Overhang/Float | Avg Staker APY |\
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|\
+| 1,000,000,000 | 100,000,000 | 349,098,902 | 34.91% | 30,901,096 | 3.09% | 3 | inf | 3.00% | 60.0% | 4.07% |\
+| 5,000,000,000 | 500,000,000 | 1,869,098,900 | 37.38% | 30,901,096 | 0.62% | 3 | inf | 3.00% | 60.0% | 0.79% |\
+\
+## Recommendations\
+- Reduce early unlocks (longer durations, stagger phases) or slightly increase initial float to bring Max Overhang/Float below 40%.\
+- Publish the cap-compliant unlock curve and overhang metric alongside governance proposals to set expectations.\
+- Add a burn floor (e.g., 2M SAIT/q) financed from treasury early on; remove when usage burns dominate.\
+\
+## Per-Scenario Details\
+\
+---\
+\
+### Scenario \'97 Total Supply 1,000,000,000\
+\
+\
+## Headline\
+- **Supply**: 16q unlocks = 28.00%; Final circ = 34.91% (349,098,902 SAIT).\
+- **Burns**: cumulative = 30,901,096 SAIT (3.09%); Deflationary quarters: 3 (first: Q14).\
+- **Treasury**: runway\uc0\u8776  inf q (min balance $3,414,000 at Q1).\
+- **Overhang**: max = 60.00%; quarters > 40% = 2.\
+\
+## Unlocks by Bucket (16q total)\
+- Research: 11.60%\
+- Ecosystem: 8.80%\
+- Team: 2.10%\
+- Partners: 3.00%\
+- Treasury: 1.30%\
+- Liquidity: 1.20%\
+- **Total**: 28.00%\
+\
+## Notes\
+- Burns are driven by usage/fees/price, not by total supply \'97 hence identical SAIT burns across caps.\
+- Global cap enforcer ensures per-quarter total unlock \uc0\u8804  3% (given 1%/mo cap).\
+- Overhang is defined as next-2Q unlocks \'f7 starting float for the quarter.\
+\
+## Suggested levers if this scenario trips warnings\
+- Reduce early unlock pace (longer durations / stagger phases) to cut overhang.\
+- Raise burn_share / increase actions / fee_per_action / price to approach deflationary quarters.\
+- Consider a small increase in initial float only if liquidity depth is a concern (trade-off: more potential sellers).\
+\
+\
+---\
+\
+### Scenario \'97 Total Supply 5,000,000,000\
+\
+\
+## Headline\
+- **Supply**: 16q unlocks = 28.00%; Final circ = 37.38% (1,869,098,900 SAIT).\
+- **Burns**: cumulative = 30,901,096 SAIT (0.62%); Deflationary quarters: 3 (first: Q14).\
+- **Treasury**: runway\uc0\u8776  inf q (min balance $3,414,000 at Q1).\
+- **Overhang**: max = 60.00%; quarters > 40% = 2.\
+\
+## Unlocks by Bucket (16q total)\
+- Research: 11.60%\
+- Ecosystem: 8.80%\
+- Team: 2.10%\
+- Partners: 3.00%\
+- Treasury: 1.30%\
+- Liquidity: 1.20%\
+- **Total**: 28.00%\
+\
+## Notes\
+- Burns are driven by usage/fees/price, not by total supply \'97 hence identical SAIT burns across caps.\
+- Global cap enforcer ensures per-quarter total unlock \uc0\u8804  3% (given 1%/mo cap).\
+- Overhang is defined as next-2Q unlocks \'f7 starting float for the quarter.\
+\
+## Suggested levers if this scenario trips warnings\
+- Reduce early unlock pace (longer durations / stagger phases) to cut overhang.\
+- Raise burn_share / increase actions / fee_per_action / price to approach deflationary quarters.\
+- Consider a small increase in initial float only if liquidity depth is a concern (trade-off: more potential sellers).\
+\
+config.yaml\
+\
+quarters: 16\
+max_unlock_cap_per_month: 0.01\
+initial_circulating_pct: 0.1\
+base_actions_q1: 200000\
+actions_growth_qoq: 0.3\
+fee_per_action_usd: 0.4\
+burn_share: 0.55\
+stakers_share: 0.2\
+treasury_share: 0.25\
+staked_pct_of_circ: 0.25\
+target_staker_apy: 0.12\
+starting_treasury_cash_usd: 1500000\
+ops_spend_per_q_usd: 600000\
+burn_floor_sait_per_q: 1000000\
+burn_floor_finance: treasury\
+price_q1_usd: 0.05\
+price_growth_qoq: 0.35\
+total_supply_grid:\
+- 1000000000\
+- 5000000000\
+\
+sims/outputs_scenarios/high_adoption_high_fee/derived_unlock_schedule.csv\
+\
+Quarter,Research,Ecosystem,Team,Partners,Treasury,Liquidity\
+Q1,0.008249999999999997,0.015749999999999993,0.0,0.0,0.002999999999999999,0.002999999999999999\
+Q2,0.009857142857142856,0.013499999999999996,0.0012857142857142854,0.0012857142857142854,0.002357142857142857,0.0017142857142857146\
+Q3,0.014035714285714282,0.007649999999999998,0.0010285714285714282,0.004628571428571427,0.0006857142857142859,0.001971428571428571\
+Q4,0.01380612244897959,0.008228571428571427,0.0018734693877551017,0.0039306122448979595,0.0010346938775510203,0.0011265306122448986\
+Q5,0.009051020408163274,0.005871428571428576,0.0018122448979591848,0.002155102040816329,0.0009224489795918374,0.0001877551020408171\
+Q6,0.005625000000000001,0.003125,0.001875,0.0012500000000000002,0.0006250000000000001,0.0\
+Q7,0.012576923076923078,0.008423076923076924,0.0017307692307692306,0.004846153846153847,0.000576923076923077,0.0018461538461538465\
+Q8,0.012576923076923078,0.008423076923076924,0.0017307692307692304,0.004846153846153846,0.000576923076923077,0.0018461538461538465\
+Q9,0.007721153846153849,0.004528846153846155,0.0021634615384615386,0.0020576923076923086,0.0007211538461538464,0.00030769230769230803\
+Q10,0.005625000000000001,0.003125,0.001875,0.0012500000000000002,0.0006250000000000001,0.0\
+Q11,0.005625000000000001,0.003125,0.001875,0.0012500000000000002,0.0006250000000000001,0.0\
+Q12,0.005625000000000001,0.003125,0.001875,0.0012500000000000002,0.0006250000000000001,0.0\
+Q13,0.005625000000000001,0.003125,0.001875,0.0012500000000000002,0.0006250000000000001,0.0\
+Q14,0.0,0.0,0.0,0.0,0.0,0.0\
+Q15,0.0,0.0,0.0,0.0,0.0,0.0\
+Q16,0.0,0.0,0.0,0.0,0.0,0.0\
+\
+\
+sims/outputs_scenarios/high_adoption_high_fee/kpis_summary.md\
+# SAIT Tokenomics \'97 KPI Summary\
+\
+| Total Supply | Init Float | Final Circ | Cum Burn (SAIT) | Cum Burn % | Deflationary Qtrs | Min Runway Qtrs | Peak Unlock %/q | Max Overhang/Float | Cap Breach |\
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|:---:|\
+| 1,000,000,000 | 100,000,000 | 349,098,902 | 30,901,096 | 3.09% | 3 | \uc0\u8734  | 3.00% | 60.0% | no |\
+| 5,000,000,000 | 500,000,000 | 1,869,098,900 | 30,901,096 | 0.62% | 3 | \uc0\u8734  | 3.00% | 60.0% | no |\
+\
+\
+sims/outputs_scenarios/high_adoption_high_fee/phases.yaml\
+\
+phases:\
+  # Phase 1 \'97 Q4'25 Pilot Fundraising (\uc0\u8776 Q1 in sim)\
+  - name: Pilot drip\
+    start_quarter: 1\
+    total_pct: 0.02                # ~2% over 2 quarters = 0.5\'961%/mo drip\
+    duration_quarters: 2\
+    buckets:\
+      Ecosystem: 0.60\
+      Liquidity: 0.10\
+      Research: 0.20\
+      Treasury: 0.10\
+\
+  - name: Pilot milestone boost (dashboard/pilot live)\
+    start_quarter: 1\
+    total_pct: 0.03                # milestone bump, still capped globally\
+    duration_quarters: 1\
+    buckets:\
+      Ecosystem: 0.50\
+      Research: 0.30\
+      Treasury: 0.10\
+      Liquidity: 0.10\
+\
+  # Phase 2 \'97 2026 Scaling R&D (quarters 2\'965 in this mapping)\
+  - name: 2026 scaling drip\
+    start_quarter: 2\
+    total_pct: 0.06                # 6% spread across 4 quarters (~1.5%/q avg)\
+    duration_quarters: 4\
+    buckets:\
+      Research: 0.45\
+      Ecosystem: 0.30\
+      Team: 0.10\
+      Partners: 0.10\
+      Treasury: 0.05\
+\
+  - name: 2026 major milestone (R&D targets hit)\
+    start_quarter: 3\
+    total_pct: 0.03\
+    duration_quarters: 1\
+    buckets:\
+      Research: 0.50\
+      Ecosystem: 0.20\
+      Partners: 0.20\
+      Liquidity: 0.10\
+\
+  # Phase 3 \'97 2027\'9628 Expansion (rest of horizon)\
+  - name: 2027-28 expansion drip\
+    start_quarter: 6\
+    total_pct: 0.10                # ~10% over 8 quarters (slow, steady)\
+    duration_quarters: 8\
+    buckets:\
+      Research: 0.45\
+      Ecosystem: 0.25\
+      Team: 0.15\
+      Partners: 0.10\
+      Treasury: 0.05\
+\
+  - name: 2027-28 milestone unlocks (sovereign deployments)\
+    start_quarter: 7\
+    total_pct: 0.04\
+    duration_quarters: 2\
+    buckets:\
+      Research: 0.40\
+      Ecosystem: 0.30\
+      Partners: 0.20\
+      Liquidity: 0.10\
+\
+\
+sims/outputs_scenarios/high_adoption_high_fee/prices.csv\
+Price_USD\
+0.05\
+0.055\
+0.0605\
+0.06655\
+0.10\
+0.11\
+0.121\
+0.1331\
+0.25\
+0.30\
+0.35\
+0.40\
+0.45\
+0.50\
+0.50\
+0.50\
+\
+sims/outputs_scenarios/high_adoption_high_fee/report_1000000000.md\
+# SAIT Scenario \'97 Total Supply 1,000,000,000\
+\
+## Headline\
+- **Supply**: 16q unlocks = 28.00%; Final circ = 34.91% (349,098,902 SAIT).\
+- **Burns**: cumulative = 30,901,096 SAIT (3.09%); Deflationary quarters: 3 (first: Q14).\
+- **Treasury**: runway\uc0\u8776  inf q (min balance $3,414,000 at Q1).\
+- **Overhang**: max = 60.00%; quarters > 40% = 2.\
+\
+## Unlocks by Bucket (16q total)\
+- Research: 11.60%\
+- Ecosystem: 8.80%\
+- Team: 2.10%\
+- Partners: 3.00%\
+- Treasury: 1.30%\
+- Liquidity: 1.20%\
+- **Total**: 28.00%\
+\
+## Notes\
+- Burns are driven by usage/fees/price, not by total supply \'97 hence identical SAIT burns across caps.\
+- Global cap enforcer ensures per-quarter total unlock \uc0\u8804  3% (given 1%/mo cap).\
+- Overhang is defined as next-2Q unlocks \'f7 starting float for the quarter.\
+\
+## Suggested levers if this scenario trips warnings\
+- Reduce early unlock pace (longer durations / stagger phases) to cut overhang.\
+- Raise burn_share / increase actions / fee_per_action / price to approach deflationary quarters.\
+- Consider a small increase in initial float only if liquidity depth is a concern (trade-off: more potential sellers).\
+\
+\
+sims/outputs_scenarios/high_adoption_high_fee/report_5000000000.md\
+# SAIT Scenario \'97 Total Supply 5,000,000,000\
+\
+## Headline\
+- **Supply**: 16q unlocks = 28.00%; Final circ = 37.38% (1,869,098,900 SAIT).\
+- **Burns**: cumulative = 30,901,096 SAIT (0.62%); Deflationary quarters: 3 (first: Q14).\
+- **Treasury**: runway\uc0\u8776  inf q (min balance $3,414,000 at Q1).\
+- **Overhang**: max = 60.00%; quarters > 40% = 2.\
+\
+## Unlocks by Bucket (16q total)\
+- Research: 11.60%\
+- Ecosystem: 8.80%\
+- Team: 2.10%\
+- Partners: 3.00%\
+- Treasury: 1.30%\
+- Liquidity: 1.20%\
+- **Total**: 28.00%\
+\
+## Notes\
+- Burns are driven by usage/fees/price, not by total supply \'97 hence identical SAIT burns across caps.\
+- Global cap enforcer ensures per-quarter total unlock \uc0\u8804  3% (given 1%/mo cap).\
+- Overhang is defined as next-2Q unlocks \'f7 starting float for the quarter.\
+\
+## Suggested levers if this scenario trips warnings\
+- Reduce early unlock pace (longer durations / stagger phases) to cut overhang.\
+- Raise burn_share / increase actions / fee_per_action / price to approach deflationary quarters.\
+- Consider a small increase in initial float only if liquidity depth is a concern (trade-off: more potential sellers).\
+\
+\
+\
+SCEANRIO 3\
+\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\
+\
+sims/outputs_scenarios/lean_supply_low_fee/SAIT_Tokenomics_Report.md\
+# SAIT Tokenomics Simulation \'97 Plain English Context\
+\
+## What this is\
+We modeled SAIT\'92s tokenomics to see how unlocks, burns, staking, and treasury cash interact.\
+It shows whether SAIT stays scarce, whether the treasury runs out, and whether the design is credible.\
+\
+## Key assumptions in this run\
+- **Total Supply**: 1,000,000,000 SAIT (fixed, no inflation).\
+- **Initial circulation**: 8.0% of supply unlocked in Q1.\
+- **Unlock cap**: \uc0\u8804  1.00% per month (\u8776  3.00% per quarter).\
+- **Fee per action**: $0.10.\
+- **Fee split**: 60% burn, 15% stakers, 25% treasury.\
+- **Usage start**: 100,000 actions in Q1, growing 20.0% per quarter.\
+- **Staking**: 25% of circulating tokens staked, with 12% APY cap.\
+- **Treasury**: start $1,500,000, spending $600,000/quarter.\
+- **Burn floor**: 3,000,000 SAIT per quarter, mode=treasury.\
+- **Price path**: custom CSV (16 rows).\
+\
+## How to read the results\
+- **Deflationary quarters**: times when burns exceed unlocks (circulating supply shrinks).\
+- **Overhang vs Float**: supply waiting to unlock relative to what\'92s circulating (dump risk).\
+- **Treasury runway**: quarters before treasury cash runs out.\
+- **Crowdfund proceeds**: cash raised from planned sales (tiers).\
+\
+The following sections show KPI tables, per-scenario reports, and recommendations.\
+\
+# SAIT Tokenomics \'97 Consolidated Report\
+\
+## Executive Summary\
+- This report compares total-supply scenarios using the same cap-compliant unlock schedule, fee/burn settings, and price path.\
+- Burns scale with **usage** rather than supply, so SAIT burned is similar across caps; burn **percent** falls as supply grows.\
+- Overhang/Float and Treasury runway are the two most important operational risk flags.\
+\
+## Inputs & Assumptions\
+- Horizon: **16 quarters**\
+- Total-supply grid: **1,000,000,000, 500,000,000**\
+- Initial float: **8.00%** of total (Q1 start)\
+- Unlock cap: **1.00%/mo \uc0\u8658  3.00%/qtr** (global)\
+- Usage: actions Q1=**100,000**, growth QoQ=**20.0%**\
+- Fees: **$0.10/action** | Splits: burn=0.60, stakers=0.15, treasury=0.25\
+- Staking: %staked=**25.0%** | target APY=**12.0%** (fee-funded cap)\
+- Treasury: start=**$1,500,000**, ops=**$600,000/qtr**\
+- Burn floor: **3,000,000 SAIT/q** (treasury)\
+- Price: **custom CSV (16 rows)**\
+\
+## Schedule Diagnostics\
+- Total unlock over 16q: **28.00%** of total supply\
+- Avg unlock per quarter: **1.75%** | Max per quarter: **3.00%**\
+- Global cap breaches: **none** (excess spilled forward if needed)\
+\
+### Unlocks by Bucket (16q totals)\
+- Research: **11.60%**\
+- Ecosystem: **8.80%**\
+- Team: **2.10%**\
+- Partners: **3.00%**\
+- Treasury: **1.30%**\
+- Liquidity: **1.20%**\
+- Total: **28.00%**\
+\
+## Scenario Comparison (Key KPIs)\
+| Total Supply | Init Float | Final Circ | Final Circ % | Cum Burn (SAIT) | Cum Burn % | Defl Qtrs | Runway Q (min) | Peak Unlock %/q | Max Overhang/Float | Avg Staker APY |\
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|\
+| 1,000,000,000 | 80,000,000 | 311,999,998 | 31.20% | 48,000,000 | 4.80% | 3 | inf | 3.00% | 75.0% | 0.25% |\
+| 500,000,000 | 40,000,000 | 132,000,000 | 26.40% | 48,000,000 | 9.60% | 3 | inf | 3.00% | 75.0% | 0.55% |\
+\
+## Recommendations\
+- Reduce early unlocks (longer durations, stagger phases) or slightly increase initial float to bring Max Overhang/Float below 40%.\
+- Publish the cap-compliant unlock curve and overhang metric alongside governance proposals to set expectations.\
+- Add a burn floor (e.g., 2M SAIT/q) financed from treasury early on; remove when usage burns dominate.\
+\
+## Per-Scenario Details\
+\
+---\
+\
+### Scenario \'97 Total Supply 1,000,000,000\
+\
+\
+## Headline\
+- **Supply**: 16q unlocks = 28.00%; Final circ = 31.20% (311,999,998 SAIT).\
+- **Burns**: cumulative = 48,000,000 SAIT (4.80%); Deflationary quarters: 3 (first: Q14).\
+- **Treasury**: runway\uc0\u8776  inf q (min balance $3,400,000 at Q1).\
+- **Overhang**: max = 75.00%; quarters > 40% = 2.\
+\
+## Unlocks by Bucket (16q total)\
+- Research: 11.60%\
+- Ecosystem: 8.80%\
+- Team: 2.10%\
+- Partners: 3.00%\
+- Treasury: 1.30%\
+- Liquidity: 1.20%\
+- **Total**: 28.00%\
+\
+## Notes\
+- Burns are driven by usage/fees/price, not by total supply \'97 hence identical SAIT burns across caps.\
+- Global cap enforcer ensures per-quarter total unlock \uc0\u8804  3% (given 1%/mo cap).\
+- Overhang is defined as next-2Q unlocks \'f7 starting float for the quarter.\
+\
+## Suggested levers if this scenario trips warnings\
+- Reduce early unlock pace (longer durations / stagger phases) to cut overhang.\
+- Raise burn_share / increase actions / fee_per_action / price to approach deflationary quarters.\
+- Consider a small increase in initial float only if liquidity depth is a concern (trade-off: more potential sellers).\
+\
+\
+---\
+\
+### Scenario \'97 Total Supply 500,000,000\
+\
+\
+## Headline\
+- **Supply**: 16q unlocks = 28.00%; Final circ = 26.40% (132,000,000 SAIT).\
+- **Burns**: cumulative = 48,000,000 SAIT (9.60%); Deflationary quarters: 3 (first: Q14).\
+- **Treasury**: runway\uc0\u8776  inf q (min balance $3,400,000 at Q1).\
+- **Overhang**: max = 75.00%; quarters > 40% = 2.\
+\
+## Unlocks by Bucket (16q total)\
+- Research: 11.60%\
+- Ecosystem: 8.80%\
+- Team: 2.10%\
+- Partners: 3.00%\
+- Treasury: 1.30%\
+- Liquidity: 1.20%\
+- **Total**: 28.00%\
+\
+## Notes\
+- Burns are driven by usage/fees/price, not by total supply \'97 hence identical SAIT burns across caps.\
+- Global cap enforcer ensures per-quarter total unlock \uc0\u8804  3% (given 1%/mo cap).\
+- Overhang is defined as next-2Q unlocks \'f7 starting float for the quarter.\
+\
+## Suggested levers if this scenario trips warnings\
+- Reduce early unlock pace (longer durations / stagger phases) to cut overhang.\
+- Raise burn_share / increase actions / fee_per_action / price to approach deflationary quarters.\
+- Consider a small increase in initial float only if liquidity depth is a concern (trade-off: more potential sellers).\
+\
+sims/outputs_scenarios/lean_supply_low_fee/config.yaml\
+quarters: 16\
+max_unlock_cap_per_month: 0.01\
+initial_circulating_pct: 0.08\
+base_actions_q1: 100000\
+actions_growth_qoq: 0.2\
+fee_per_action_usd: 0.1\
+burn_share: 0.6\
+stakers_share: 0.15\
+treasury_share: 0.25\
+staked_pct_of_circ: 0.25\
+target_staker_apy: 0.12\
+starting_treasury_cash_usd: 1500000\
+ops_spend_per_q_usd: 600000\
+burn_floor_sait_per_q: 3000000\
+burn_floor_finance: treasury\
+price_q1_usd: 0.05\
+price_growth_qoq: 0.35\
+total_supply_grid:\
+- 1000000000\
+- 500000000\
+\
+sims/outputs_scenarios/lean_supply_low_fee/derived_unlock_schedule.csv\
+Quarter,Research,Ecosystem,Team,Partners,Treasury,Liquidity\
+Q1,0.008249999999999997,0.015749999999999993,0.0,0.0,0.002999999999999999,0.002999999999999999\
+Q2,0.009857142857142856,0.013499999999999996,0.0012857142857142854,0.0012857142857142854,0.002357142857142857,0.0017142857142857146\
+Q3,0.014035714285714282,0.007649999999999998,0.0010285714285714282,0.004628571428571427,0.0006857142857142859,0.001971428571428571\
+Q4,0.01380612244897959,0.008228571428571427,0.0018734693877551017,0.0039306122448979595,0.0010346938775510203,0.0011265306122448986\
+Q5,0.009051020408163274,0.005871428571428576,0.0018122448979591848,0.002155102040816329,0.0009224489795918374,0.0001877551020408171\
+Q6,0.005625000000000001,0.003125,0.001875,0.0012500000000000002,0.0006250000000000001,0.0\
+Q7,0.012576923076923078,0.008423076923076924,0.0017307692307692306,0.004846153846153847,0.000576923076923077,0.0018461538461538465\
+Q8,0.012576923076923078,0.008423076923076924,0.0017307692307692304,0.004846153846153846,0.000576923076923077,0.0018461538461538465\
+Q9,0.007721153846153849,0.004528846153846155,0.0021634615384615386,0.0020576923076923086,0.0007211538461538464,0.00030769230769230803\
+Q10,0.005625000000000001,0.003125,0.001875,0.0012500000000000002,0.0006250000000000001,0.0\
+Q11,0.005625000000000001,0.003125,0.001875,0.0012500000000000002,0.0006250000000000001,0.0\
+Q12,0.005625000000000001,0.003125,0.001875,0.0012500000000000002,0.0006250000000000001,0.0\
+Q13,0.005625000000000001,0.003125,0.001875,0.0012500000000000002,0.0006250000000000001,0.0\
+Q14,0.0,0.0,0.0,0.0,0.0,0.0\
+Q15,0.0,0.0,0.0,0.0,0.0,0.0\
+Q16,0.0,0.0,0.0,0.0,0.0,0.0\
+\
+sims/outputs_scenarios/lean_supply_low_fee/kpis_summary.md\
+# SAIT Tokenomics \'97 KPI Summary\
+\
+| Total Supply | Init Float | Final Circ | Cum Burn (SAIT) | Cum Burn % | Deflationary Qtrs | Min Runway Qtrs | Peak Unlock %/q | Max Overhang/Float | Cap Breach |\
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|:---:|\
+| 1,000,000,000 | 80,000,000 | 311,999,998 | 48,000,000 | 4.80% | 3 | \uc0\u8734  | 3.00% | 75.0% | no |\
+| 500,000,000 | 40,000,000 | 132,000,000 | 48,000,000 | 9.60% | 3 | \uc0\u8734  | 3.00% | 75.0% | no |\
+\
+\
+sims/outputs_scenarios/lean_supply_low_fee/phases.yaml\
+phases:\
+  # Phase 1 \'97 Q4'25 Pilot Fundraising (\uc0\u8776 Q1 in sim)\
+  - name: Pilot drip\
+    start_quarter: 1\
+    total_pct: 0.02                # ~2% over 2 quarters = 0.5\'961%/mo drip\
+    duration_quarters: 2\
+    buckets:\
+      Ecosystem: 0.60\
+      Liquidity: 0.10\
+      Research: 0.20\
+      Treasury: 0.10\
+\
+  - name: Pilot milestone boost (dashboard/pilot live)\
+    start_quarter: 1\
+    total_pct: 0.03                # milestone bump, still capped globally\
+    duration_quarters: 1\
+    buckets:\
+      Ecosystem: 0.50\
+      Research: 0.30\
+      Treasury: 0.10\
+      Liquidity: 0.10\
+\
+  # Phase 2 \'97 2026 Scaling R&D (quarters 2\'965 in this mapping)\
+  - name: 2026 scaling drip\
+    start_quarter: 2\
+    total_pct: 0.06                # 6% spread across 4 quarters (~1.5%/q avg)\
+    duration_quarters: 4\
+    buckets:\
+      Research: 0.45\
+      Ecosystem: 0.30\
+      Team: 0.10\
+      Partners: 0.10\
+      Treasury: 0.05\
+\
+  - name: 2026 major milestone (R&D targets hit)\
+    start_quarter: 3\
+    total_pct: 0.03\
+    duration_quarters: 1\
+    buckets:\
+      Research: 0.50\
+      Ecosystem: 0.20\
+      Partners: 0.20\
+      Liquidity: 0.10\
+\
+  # Phase 3 \'97 2027\'9628 Expansion (rest of horizon)\
+  - name: 2027-28 expansion drip\
+    start_quarter: 6\
+    total_pct: 0.10                # ~10% over 8 quarters (slow, steady)\
+    duration_quarters: 8\
+    buckets:\
+      Research: 0.45\
+      Ecosystem: 0.25\
+      Team: 0.15\
+      Partners: 0.10\
+      Treasury: 0.05\
+\
+  - name: 2027-28 milestone unlocks (sovereign deployments)\
+    start_quarter: 7\
+    total_pct: 0.04\
+    duration_quarters: 2\
+    buckets:\
+      Research: 0.40\
+      Ecosystem: 0.30\
+      Partners: 0.20\
+      Liquidity: 0.10\
+\
+\
+sims/outputs_scenarios/lean_supply_low_fee/prices.csv\
+Price_USD\
+0.05\
+0.055\
+0.0605\
+0.06655\
+0.10\
+0.11\
+0.121\
+0.1331\
+0.25\
+0.30\
+0.35\
+0.40\
+0.45\
+0.50\
+0.50\
+0.50\
+\
+sims/outputs_scenarios/lean_supply_low_fee/report_1000000000.md\
+# SAIT Scenario \'97 Total Supply 1,000,000,000\
+\
+## Headline\
+- **Supply**: 16q unlocks = 28.00%; Final circ = 31.20% (311,999,998 SAIT).\
+- **Burns**: cumulative = 48,000,000 SAIT (4.80%); Deflationary quarters: 3 (first: Q14).\
+- **Treasury**: runway\uc0\u8776  inf q (min balance $3,400,000 at Q1).\
+- **Overhang**: max = 75.00%; quarters > 40% = 2.\
+\
+## Unlocks by Bucket (16q total)\
+- Research: 11.60%\
+- Ecosystem: 8.80%\
+- Team: 2.10%\
+- Partners: 3.00%\
+- Treasury: 1.30%\
+- Liquidity: 1.20%\
+- **Total**: 28.00%\
+\
+## Notes\
+- Burns are driven by usage/fees/price, not by total supply \'97 hence identical SAIT burns across caps.\
+- Global cap enforcer ensures per-quarter total unlock \uc0\u8804  3% (given 1%/mo cap).\
+- Overhang is defined as next-2Q unlocks \'f7 starting float for the quarter.\
+\
+## Suggested levers if this scenario trips warnings\
+- Reduce early unlock pace (longer durations / stagger phases) to cut overhang.\
+- Raise burn_share / increase actions / fee_per_action / price to approach deflationary quarters.\
+- Consider a small increase in initial float only if liquidity depth is a concern (trade-off: more potential sellers).\
+\
+sims/outputs_scenarios/lean_supply_low_fee/report_500000000.md\
+# SAIT Scenario \'97 Total Supply 500,000,000\
+\
+## Headline\
+- **Supply**: 16q unlocks = 28.00%; Final circ = 26.40% (132,000,000 SAIT).\
+- **Burns**: cumulative = 48,000,000 SAIT (9.60%); Deflationary quarters: 3 (first: Q14).\
+- **Treasury**: runway\uc0\u8776  inf q (min balance $3,400,000 at Q1).\
+- **Overhang**: max = 75.00%; quarters > 40% = 2.\
+\
+## Unlocks by Bucket (16q total)\
+- Research: 11.60%\
+- Ecosystem: 8.80%\
+- Team: 2.10%\
+- Partners: 3.00%\
+- Treasury: 1.30%\
+- Liquidity: 1.20%\
+- **Total**: 28.00%\
+\
+## Notes\
+- Burns are driven by usage/fees/price, not by total supply \'97 hence identical SAIT burns across caps.\
+- Global cap enforcer ensures per-quarter total unlock \uc0\u8804  3% (given 1%/mo cap).\
+- Overhang is defined as next-2Q unlocks \'f7 starting float for the quarter.\
+\
+## Suggested levers if this scenario trips warnings\
+- Reduce early unlock pace (longer durations / stagger phases) to cut overhang.\
+- Raise burn_share / increase actions / fee_per_action / price to approach deflationary quarters.\
+- Consider a small increase in initial float only if liquidity depth is a concern (trade-off: more potential sellers).\
+\
+Runway Guard\
+\
+# SAIT Tokenomics Simulation \'97 Plain English Context\
+\
+## What this is\
+We modeled SAIT\'92s tokenomics to see how unlocks, burns, staking, and treasury cash interact.\
+It shows whether SAIT stays scarce, whether the treasury runs out, and whether the design is credible.\
+\
+## Key assumptions in this run\
+- **Total Supply**: 1,000,000,000 SAIT (fixed, no inflation).\
+- **Initial circulation**: 10.0% of supply unlocked in Q1.\
+- **Unlock cap**: \uc0\u8804  1.00% per month (\u8776  3.00% per quarter).\
+- **Fee per action**: $0.25.\
+- **Fee split**: 45% burn, 15% stakers, 40% treasury.\
+- **Usage start**: 100,000 actions in Q1, growing 20.0% per quarter.\
+- **Staking**: 20% of circulating tokens staked, with 12% APY cap.\
+- **Treasury**: start $1,500,000, spending $500,000/quarter.\
+- **Burn floor**: 2,000,000 SAIT per quarter, mode=treasury.\
+- **Price path**: custom CSV (16 rows).\
+\
+## How to read the results\
+- **Deflationary quarters**: times when burns exceed unlocks (circulating supply shrinks).\
+- **Overhang vs Float**: supply waiting to unlock relative to what\'92s circulating (dump risk).\
+- **Treasury runway**: quarters before treasury cash runs out.\
+- **Crowdfund proceeds**: cash raised from planned sales (tiers).\
+\
+The following sections show KPI tables, per-scenario reports, and recommendations.\
+\
+# SAIT Tokenomics \'97 Consolidated Report\
+\
+## Executive Summary\
+- This report compares total-supply scenarios using the same cap-compliant unlock schedule, fee/burn settings, and price path.\
+- Burns scale with **usage** rather than supply, so SAIT burned is similar across caps; burn **percent** falls as supply grows.\
+- Overhang/Float and Treasury runway are the two most important operational risk flags.\
+\
+## Inputs & Assumptions\
+- Horizon: **16 quarters**\
+- Total-supply grid: **1,000,000,000**\
+- Initial float: **10.00%** of total (Q1 start)\
+- Unlock cap: **1.00%/mo \uc0\u8658  3.00%/qtr** (global)\
+- Usage: actions Q1=**100,000**, growth QoQ=**20.0%**\
+- Fees: **$0.25/action** | Splits: burn=0.45, stakers=0.15, treasury=0.40\
+- Staking: %staked=**20.0%** | target APY=**12.0%** (fee-funded cap)\
+- Treasury: start=**$1,500,000**, ops=**$500,000/qtr**\
+- Burn floor: **2,000,000 SAIT/q** (treasury)\
+- Price: **custom CSV (16 rows)**\
+\
+## Schedule Diagnostics\
+- Total unlock over 16q: **28.00%** of total supply\
+- Avg unlock per quarter: **1.75%** | Max per quarter: **3.00%**\
+- Global cap breaches: **none** (excess spilled forward if needed)\
+\
+### Unlocks by Bucket (16q totals)\
+- Research: **11.60%**\
+- Ecosystem: **8.80%**\
+- Team: **2.10%**\
+- Partners: **3.00%**\
+- Treasury: **1.30%**\
+- Liquidity: **1.20%**\
+- Total: **28.00%**\
+\
+## Scenario Comparison (Key KPIs)\
+| Total Supply | Init Float | Final Circ | Final Circ % | Cum Burn (SAIT) | Cum Burn % | Defl Qtrs | Runway Q (min) | Peak Unlock %/q | Max Overhang/Float | Avg Staker APY |\
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|\
+| 1,000,000,000 | 100,000,000 | 347,999,998 | 34.80% | 32,000,000 | 3.20% | 3 | inf | 3.00% | 60.0% | 0.69% |\
+\
+## Recommendations\
+- Reduce early unlocks (longer durations, stagger phases) or slightly increase initial float to bring Max Overhang/Float below 40%.\
+- Publish the cap-compliant unlock curve and overhang metric alongside governance proposals to set expectations.\
+- Add a burn floor (e.g., 2M SAIT/q) financed from treasury early on; remove when usage burns dominate.\
+\
+## Per-Scenario Details\
+\
+---\
+\
+### Scenario \'97 Total Supply 1,000,000,000\
+\
+\
+## Headline\
+- **Supply**: 16q unlocks = 28.00%; Final circ = 34.80% (347,999,998 SAIT).\
+- **Burns**: cumulative = 32,000,000 SAIT (3.20%); Deflationary quarters: 3 (first: Q14).\
+- **Treasury**: runway\uc0\u8776  inf q (min balance $3,500,000 at Q1).\
+- **Overhang**: max = 60.00%; quarters > 40% = 2.\
+\
+## Unlocks by Bucket (16q total)\
+- Research: 11.60%\
+- Ecosystem: 8.80%\
+- Team: 2.10%\
+- Partners: 3.00%\
+- Treasury: 1.30%\
+- Liquidity: 1.20%\
+- **Total**: 28.00%\
+\
+## Notes\
+- Burns are driven by usage/fees/price, not by total supply \'97 hence identical SAIT burns across caps.\
+- Global cap enforcer ensures per-quarter total unlock \uc0\u8804  3% (given 1%/mo cap).\
+- Overhang is defined as next-2Q unlocks \'f7 starting float for the quarter.\
+\
+## Suggested levers if this scenario trips warnings\
+- Reduce early unlock pace (longer durations / stagger phases) to cut overhang.\
+- Raise burn_share / increase actions / fee_per_action / price to approach deflationary quarters.\
+- Consider a small increase in initial float only if liquidity depth is a concern (trade-off: more potential sellers).\
+\
+RUNWAY GUARD\
+\
+sims/outputs_scenarios/runway_guard/SAIT_Tokenomics_Report.md\
+# SAIT Tokenomics Simulation \'97 Plain English Context\
+\
+## What this is\
+We modeled SAIT\'92s tokenomics to see how unlocks, burns, staking, and treasury cash interact.\
+It shows whether SAIT stays scarce, whether the treasury runs out, and whether the design is credible.\
+\
+## Key assumptions in this run\
+- **Total Supply**: 1,000,000,000 SAIT (fixed, no inflation).\
+- **Initial circulation**: 10.0% of supply unlocked in Q1.\
+- **Unlock cap**: \uc0\u8804  1.00% per month (\u8776  3.00% per quarter).\
+- **Fee per action**: $0.25.\
+- **Fee split**: 45% burn, 15% stakers, 40% treasury.\
+- **Usage start**: 100,000 actions in Q1, growing 20.0% per quarter.\
+- **Staking**: 20% of circulating tokens staked, with 12% APY cap.\
+- **Treasury**: start $1,500,000, spending $500,000/quarter.\
+- **Burn floor**: 2,000,000 SAIT per quarter, mode=treasury.\
+- **Price path**: custom CSV (16 rows).\
+\
+## How to read the results\
+- **Deflationary quarters**: times when burns exceed unlocks (circulating supply shrinks).\
+- **Overhang vs Float**: supply waiting to unlock relative to what\'92s circulating (dump risk).\
+- **Treasury runway**: quarters before treasury cash runs out.\
+- **Crowdfund proceeds**: cash raised from planned sales (tiers).\
+\
+The following sections show KPI tables, per-scenario reports, and recommendations.\
+\
+# SAIT Tokenomics \'97 Consolidated Report\
+\
+## Executive Summary\
+- This report compares total-supply scenarios using the same cap-compliant unlock schedule, fee/burn settings, and price path.\
+- Burns scale with **usage** rather than supply, so SAIT burned is similar across caps; burn **percent** falls as supply grows.\
+- Overhang/Float and Treasury runway are the two most important operational risk flags.\
+\
+## Inputs & Assumptions\
+- Horizon: **16 quarters**\
+- Total-supply grid: **1,000,000,000**\
+- Initial float: **10.00%** of total (Q1 start)\
+- Unlock cap: **1.00%/mo \uc0\u8658  3.00%/qtr** (global)\
+- Usage: actions Q1=**100,000**, growth QoQ=**20.0%**\
+- Fees: **$0.25/action** | Splits: burn=0.45, stakers=0.15, treasury=0.40\
+- Staking: %staked=**20.0%** | target APY=**12.0%** (fee-funded cap)\
+- Treasury: start=**$1,500,000**, ops=**$500,000/qtr**\
+- Burn floor: **2,000,000 SAIT/q** (treasury)\
+- Price: **custom CSV (16 rows)**\
+\
+## Schedule Diagnostics\
+- Total unlock over 16q: **28.00%** of total supply\
+- Avg unlock per quarter: **1.75%** | Max per quarter: **3.00%**\
+- Global cap breaches: **none** (excess spilled forward if needed)\
+\
+### Unlocks by Bucket (16q totals)\
+- Research: **11.60%**\
+- Ecosystem: **8.80%**\
+- Team: **2.10%**\
+- Partners: **3.00%**\
+- Treasury: **1.30%**\
+- Liquidity: **1.20%**\
+- Total: **28.00%**\
+\
+## Scenario Comparison (Key KPIs)\
+| Total Supply | Init Float | Final Circ | Final Circ % | Cum Burn (SAIT) | Cum Burn % | Defl Qtrs | Runway Q (min) | Peak Unlock %/q | Max Overhang/Float | Avg Staker APY |\
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|\
+| 1,000,000,000 | 100,000,000 | 347,999,998 | 34.80% | 32,000,000 | 3.20% | 3 | inf | 3.00% | 60.0% | 0.69% |\
+\
+## Recommendations\
+- Reduce early unlocks (longer durations, stagger phases) or slightly increase initial float to bring Max Overhang/Float below 40%.\
+- Publish the cap-compliant unlock curve and overhang metric alongside governance proposals to set expectations.\
+- Add a burn floor (e.g., 2M SAIT/q) financed from treasury early on; remove when usage burns dominate.\
+\
+## Per-Scenario Details\
+\
+---\
+\
+### Scenario \'97 Total Supply 1,000,000,000\
+\
+\
+## Headline\
+- **Supply**: 16q unlocks = 28.00%; Final circ = 34.80% (347,999,998 SAIT).\
+- **Burns**: cumulative = 32,000,000 SAIT (3.20%); Deflationary quarters: 3 (first: Q14).\
+- **Treasury**: runway\uc0\u8776  inf q (min balance $3,500,000 at Q1).\
+- **Overhang**: max = 60.00%; quarters > 40% = 2.\
+\
+## Unlocks by Bucket (16q total)\
+- Research: 11.60%\
+- Ecosystem: 8.80%\
+- Team: 2.10%\
+- Partners: 3.00%\
+- Treasury: 1.30%\
+- Liquidity: 1.20%\
+- **Total**: 28.00%\
+\
+## Notes\
+- Burns are driven by usage/fees/price, not by total supply \'97 hence identical SAIT burns across caps.\
+- Global cap enforcer ensures per-quarter total unlock \uc0\u8804  3% (given 1%/mo cap).\
+- Overhang is defined as next-2Q unlocks \'f7 starting float for the quarter.\
+\
+## Suggested levers if this scenario trips warnings\
+- Reduce early unlock pace (longer durations / stagger phases) to cut overhang.\
+- Raise burn_share / increase actions / fee_per_action / price to approach deflationary quarters.\
+- Consider a small increase in initial float only if liquidity depth is a concern (trade-off: more potential sellers).\
+\
+sims/outputs_scenarios/runway_guard/config.yaml\
+quarters: 16\
+max_unlock_cap_per_month: 0.01\
+initial_circulating_pct: 0.1\
+base_actions_q1: 100000\
+actions_growth_qoq: 0.2\
+fee_per_action_usd: 0.25\
+burn_share: 0.45\
+stakers_share: 0.15\
+treasury_share: 0.4\
+staked_pct_of_circ: 0.2\
+target_staker_apy: 0.12\
+starting_treasury_cash_usd: 1500000\
+ops_spend_per_q_usd: 500000\
+burn_floor_sait_per_q: 2000000\
+burn_floor_finance: treasury\
+price_q1_usd: 0.05\
+price_growth_qoq: 0.35\
+total_supply_grid:\
+- 1000000000\
+\
+sims/outputs_scenarios/runway_guard/derived_unlock_schedule.csv\
+Quarter,Research,Ecosystem,Team,Partners,Treasury,Liquidity\
+Q1,0.008249999999999997,0.015749999999999993,0.0,0.0,0.002999999999999999,0.002999999999999999\
+Q2,0.009857142857142856,0.013499999999999996,0.0012857142857142854,0.0012857142857142854,0.002357142857142857,0.0017142857142857146\
+Q3,0.014035714285714282,0.007649999999999998,0.0010285714285714282,0.004628571428571427,0.0006857142857142859,0.001971428571428571\
+Q4,0.01380612244897959,0.008228571428571427,0.0018734693877551017,0.0039306122448979595,0.0010346938775510203,0.0011265306122448986\
+Q5,0.009051020408163274,0.005871428571428576,0.0018122448979591848,0.002155102040816329,0.0009224489795918374,0.0001877551020408171\
+Q6,0.005625000000000001,0.003125,0.001875,0.0012500000000000002,0.0006250000000000001,0.0\
+Q7,0.012576923076923078,0.008423076923076924,0.0017307692307692306,0.004846153846153847,0.000576923076923077,0.0018461538461538465\
+Q8,0.012576923076923078,0.008423076923076924,0.0017307692307692304,0.004846153846153846,0.000576923076923077,0.0018461538461538465\
+Q9,0.007721153846153849,0.004528846153846155,0.0021634615384615386,0.0020576923076923086,0.0007211538461538464,0.00030769230769230803\
+Q10,0.005625000000000001,0.003125,0.001875,0.0012500000000000002,0.0006250000000000001,0.0\
+Q11,0.005625000000000001,0.003125,0.001875,0.0012500000000000002,0.0006250000000000001,0.0\
+Q12,0.005625000000000001,0.003125,0.001875,0.0012500000000000002,0.0006250000000000001,0.0\
+Q13,0.005625000000000001,0.003125,0.001875,0.0012500000000000002,0.0006250000000000001,0.0\
+Q14,0.0,0.0,0.0,0.0,0.0,0.0\
+Q15,0.0,0.0,0.0,0.0,0.0,0.0\
+Q16,0.0,0.0,0.0,0.0,0.0,0.0\
+\
+
+\f1\b sims/outputs_scenarios/runway_guard/kpis_summary.md\
+# SAIT Tokenomics \'97 KPI Summary\
+\
+| Total Supply | Init Float | Final Circ | Cum Burn (SAIT) | Cum Burn % | Deflationary Qtrs | Min Runway Qtrs | Peak Unlock %/q | Max Overhang/Float | Cap Breach |\
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|:---:|\
+| 1,000,000,000 | 100,000,000 | 347,999,998 | 32,000,000 | 3.20% | 3 | \uc0\u8734  | 3.00% | 60.0% | no |\
+\
+sims/outputs_scenarios/runway_guard/phases.yaml\
+phases:\
+  # Phase 1 \'97 Q4'25 Pilot Fundraising (\uc0\u8776 Q1 in sim)\
+  - name: Pilot drip\
+    start_quarter: 1\
+    total_pct: 0.02                # ~2% over 2 quarters = 0.5\'961%/mo drip\
+    duration_quarters: 2\
+    buckets:\
+      Ecosystem: 0.60\
+      Liquidity: 0.10\
+      Research: 0.20\
+      Treasury: 0.10\
+\
+  - name: Pilot milestone boost (dashboard/pilot live)\
+    start_quarter: 1\
+    total_pct: 0.03                # milestone bump, still capped globally\
+    duration_quarters: 1\
+    buckets:\
+      Ecosystem: 0.50\
+      Research: 0.30\
+      Treasury: 0.10\
+      Liquidity: 0.10\
+\
+  # Phase 2 \'97 2026 Scaling R&D (quarters 2\'965 in this mapping)\
+  - name: 2026 scaling drip\
+    start_quarter: 2\
+    total_pct: 0.06                # 6% spread across 4 quarters (~1.5%/q avg)\
+    duration_quarters: 4\
+    buckets:\
+      Research: 0.45\
+      Ecosystem: 0.30\
+      Team: 0.10\
+      Partners: 0.10\
+      Treasury: 0.05\
+\
+  - name: 2026 major milestone (R&D targets hit)\
+    start_quarter: 3\
+    total_pct: 0.03\
+    duration_quarters: 1\
+    buckets:\
+      Research: 0.50\
+      Ecosystem: 0.20\
+      Partners: 0.20\
+      Liquidity: 0.10\
+\
+  # Phase 3 \'97 2027\'9628 Expansion (rest of horizon)\
+  - name: 2027-28 expansion drip\
+    start_quarter: 6\
+    total_pct: 0.10                # ~10% over 8 quarters (slow, steady)\
+    duration_quarters: 8\
+    buckets:\
+      Research: 0.45\
+      Ecosystem: 0.25\
+      Team: 0.15\
+      Partners: 0.10\
+      Treasury: 0.05\
+\
+  - name: 2027-28 milestone unlocks (sovereign deployments)\
+    start_quarter: 7\
+    total_pct: 0.04\
+    duration_quarters: 2\
+    buckets:\
+      Research: 0.40\
+      Ecosystem: 0.30\
+      Partners: 0.20\
+      Liquidity: 0.10\
+\
+\
+sims/outputs_scenarios/runway_guard/prices.csv\
+Price_USD\
+0.05\
+0.055\
+0.0605\
+0.06655\
+0.10\
+0.11\
+0.121\
+0.1331\
+0.25\
+0.30\
+0.35\
+0.40\
+0.45\
+0.50\
+0.50\
+0.50\
+\
+sims/outputs_scenarios/runway_guard/report_1000000000.md\
+# SAIT Scenario \'97 Total Supply 1,000,000,000\
+\
+## Headline\
+- **Supply**: 16q unlocks = 28.00%; Final circ = 34.80% (347,999,998 SAIT).\
+- **Burns**: cumulative = 32,000,000 SAIT (3.20%); Deflationary quarters: 3 (first: Q14).\
+- **Treasury**: runway\uc0\u8776  inf q (min balance $3,500,000 at Q1).\
+- **Overhang**: max = 60.00%; quarters > 40% = 2.\
+\
+## Unlocks by Bucket (16q total)\
+- Research: 11.60%\
+- Ecosystem: 8.80%\
+- Team: 2.10%\
+- Partners: 3.00%\
+- Treasury: 1.30%\
+- Liquidity: 1.20%\
+- **Total**: 28.00%\
+\
+## Notes\
+- Burns are driven by usage/fees/price, not by total supply \'97 hence identical SAIT burns across caps.\
+- Global cap enforcer ensures per-quarter total unlock \uc0\u8804  3% (given 1%/mo cap).\
+- Overhang is defined as next-2Q unlocks \'f7 starting float for the quarter.\
+\
+## Suggested levers if this scenario trips warnings\
+- Reduce early unlock pace (longer durations / stagger phases) to cut overhang.\
+- Raise burn_share / increase actions / fee_per_action / price to approach deflationary quarters.\
+- Consider a small increase in initial float only if liquidity depth is a concern (trade-off: more potential sellers).\
+\
+\
+sims/outputs_scenarios/INDEX.json\
+[\
+  \{\
+    "profile": "base_mid",\
+    "kpi_csv": "sims/outputs_scenarios/base_mid/kpis_summary.csv"\
+  \},\
+  \{\
+    "profile": "lean_supply_low_fee",\
+    "kpi_csv": "sims/outputs_scenarios/lean_supply_low_fee/kpis_summary.csv"\
+  \},\
+  \{\
+    "profile": "high_adoption_high_fee",\
+    "kpi_csv": "sims/outputs_scenarios/high_adoption_high_fee/kpis_summary.csv"\
+  \},\
+  \{\
+    "profile": "runway_guard",\
+    "kpi_csv": "sims/outputs_scenarios/runway_guard/kpis_summary.csv"\
+  \}\
+]
+\f0\b0 \
+\
+\
+PREVIOUS GENERAL CODE\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\cf0 \'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\
+\
+sims/config.yaml\
+\
+# horizon & caps\
+quarters: 16                     # Q4'25 through Q1'29 (adjust as you like)\
+max_unlock_cap_per_month: 0.01   # \uc0\u8804 1%/mo  \u8658  3%/q (global cap)\
+\
+# circulating start\
+initial_circulating_pct: 0.10    # early scarcity target (you said <15%)\
+\
+# usage/fees \uc0\u8594  burns/staking/treasury (governance-set)\
+base_actions_q1: 100000          # pick a realistic starting usage count\
+actions_growth_qoq: 0.20         # +20% QoQ usage growth (tune)\
+fee_per_action_usd: 0.25         # compliance/tx fee unit economics (tune)\
+burn_share: 0.50                 # 50% of fees \uc0\u8594  burn pot\
+stakers_share: 0.20              # 20% \uc0\u8594  stakers\
+treasury_share: 0.30             # 30% \uc0\u8594  treasury\
+\
+# staking economics\
+staked_pct_of_circ: 0.25         # 25% of circulating tokens staked\
+target_staker_apy: 0.12          # 12% APY cap from fees (quarterly capped in code)\
+\
+# treasury runway\
+starting_treasury_cash_usd: 1500000\
+ops_spend_per_q_usd: 600000\
+\
+# burn floor (to enforce \'93credibility\'94 even if early fees are low)\
+burn_floor_sait_per_q: 2000000\
+burn_floor_finance: "treasury"   # treasury tops up the difference\
+\
+# price path (only used if you don't give prices.csv)\
+price_q1_usd: 0.05\
+price_growth_qoq: 0.35           # *narrative* mid-case; switch to prices.csv for scenarios\
+\
+# total-supply grid (you can still sweep; your business plan anchors 1B)\
+total_supply_grid: [1000000000]\
+\
+\
+sims/phases.yaml\
+\
+phases:\
+  # Phase 1 \'97 Q4'25 Pilot Fundraising (\uc0\u8776 Q1 in sim)\
+  - name: Pilot drip\
+    start_quarter: 1\
+    total_pct: 0.02                # ~2% over 2 quarters = 0.5\'961%/mo drip\
+    duration_quarters: 2\
+    buckets:\
+      Ecosystem: 0.60\
+      Liquidity: 0.10\
+      Research: 0.20\
+      Treasury: 0.10\
+\
+  - name: Pilot milestone boost (dashboard/pilot live)\
+    start_quarter: 1\
+    total_pct: 0.03                # milestone bump, still capped globally\
+    duration_quarters: 1\
+    buckets:\
+      Ecosystem: 0.50\
+      Research: 0.30\
+      Treasury: 0.10\
+      Liquidity: 0.10\
+\
+  # Phase 2 \'97 2026 Scaling R&D (quarters 2\'965 in this mapping)\
+  - name: 2026 scaling drip\
+    start_quarter: 2\
+    total_pct: 0.06                # 6% spread across 4 quarters (~1.5%/q avg)\
+    duration_quarters: 4\
+    buckets:\
+      Research: 0.45\
+      Ecosystem: 0.30\
+      Team: 0.10\
+      Partners: 0.10\
+      Treasury: 0.05\
+\
+  - name: 2026 major milestone (R&D targets hit)\
+    start_quarter: 3\
+    total_pct: 0.03\
+    duration_quarters: 1\
+    buckets:\
+      Research: 0.50\
+      Ecosystem: 0.20\
+      Partners: 0.20\
+      Liquidity: 0.10\
+\
+  # Phase 3 \'97 2027\'9628 Expansion (rest of horizon)\
+  - name: 2027-28 expansion drip\
+    start_quarter: 6\
+    total_pct: 0.10                # ~10% over 8 quarters (slow, steady)\
+    duration_quarters: 8\
+    buckets:\
+      Research: 0.45\
+      Ecosystem: 0.25\
+      Team: 0.15\
+      Partners: 0.10\
+      Treasury: 0.05\
+\
+  - name: 2027-28 milestone unlocks (sovereign deployments)\
+    start_quarter: 7\
+    total_pct: 0.04\
+    duration_quarters: 2\
+    buckets:\
+      Research: 0.40\
+      Ecosystem: 0.30\
+      Partners: 0.20\
+      Liquidity: 0.10\
+\
+\
+sims/prices.csv\
+\
+Price_USD\
+0.05\
+0.055\
+0.0605\
+0.06655\
+0.10\
+0.11\
+0.121\
+0.1331\
+0.25\
+0.30\
+0.35\
+0.40\
+0.45\
+0.50\
+0.50\
+0.50\
+\
+sims/run_scenarios.py\
+\
+#!/usr/bin/env python3\
+import argparse, os, shutil, yaml, subprocess, json\
+\
+BASE_CFG = "sims/config.yaml"\
+PHASES = "sims/phases.yaml"\
+PRICES = "sims/prices.csv"\
+\
+def deep_merge(a, b):\
+    out = dict(a)\
+    for k, v in b.items():\
+        if isinstance(v, dict) and isinstance(out.get(k), dict):\
+            out[k] = deep_merge(out[k], v)\
+        else:\
+            out[k] = v\
+    return out\
+\
+def main():\
+    ap = argparse.ArgumentParser()\
+    ap.add_argument("--profiles", default="sims/scenario_profiles.yaml")\
+    ap.add_argument("--outroot", default="sims/outputs_scenarios")\
+    args = ap.parse_args()\
+\
+    os.makedirs(args.outroot, exist_ok=True)\
+    base_cfg = yaml.safe_load(open(BASE_CFG))\
+    profs = yaml.safe_load(open(args.profiles))["profiles"]\
+\
+    for p in profs:\
+        name = p["name"]\
+        overrides = p.get("overrides", \{\})\
+        workdir = os.path.join(args.outroot, name)\
+        os.makedirs(workdir, exist_ok=True)\
+\
+        cfg = deep_merge(base_cfg, overrides)\
+        cfg_path = os.path.join(workdir, "config.yaml")\
+        with open(cfg_path, "w") as f: yaml.safe_dump(cfg, f, sort_keys=False)\
+\
+        # copy shared inputs\
+        shutil.copyfile(PHASES, os.path.join(workdir, "phases.yaml"))\
+        shutil.copyfile(PRICES, os.path.join(workdir, "prices.csv"))\
+\
+        # run sim\
+        cmd = [\
+            "python", "sims/sait_models.py",\
+            "--config", cfg_path,\
+            "--phase_yaml", os.path.join(workdir, "phases.yaml"),\
+            "--price_csv", os.path.join(workdir, "prices.csv"),\
+            "--outdir", workdir,\
+            "--verbose"\
+        ]\
+        print("==>", name, " ".join(cmd))\
+        subprocess.run(cmd, check=True)\
+\
+    # optional: build a cross-profile index\
+    index_rows = []\
+    for p in profs:\
+        workdir = os.path.join(args.outroot, p["name"])\
+        kpi_csv = os.path.join(workdir, "kpis_summary.csv")\
+        if os.path.exists(kpi_csv):\
+            index_rows.append(\{"profile": p["name"], "kpi_csv": kpi_csv\})\
+    with open(os.path.join(args.outroot, "INDEX.json"), "w") as f:\
+        json.dump(index_rows, f, indent=2)\
+\
+if __name__ == "__main__":\
+    main()\
+\
+\
+sims/sait_models.py\
+\
+#!/usr/bin/env python3\
+"""\
+SAIT Tokenomics Simulator (CLI)\
+- Reads a YAML config and either:\
+  a) per-quarter unlock schedule CSV (percent of total), or\
+  b) Phase YAML and generates a cap-compliant schedule.\
+- Optionally overrides price path with a per-quarter price CSV.\
+- Sweeps over multiple total-supply values.\
+- Prints enriched KPI table, plus writes detailed CSVs/MD/JSON to outputs.\
+\
+Usage:\
+  python3 sait_models.py \\\
+    --config config.yaml \\\
+    --phase_yaml phases.yaml \\\
+    --price_csv prices.csv \\\
+    --outdir outputs \\\
+    --verbose\
+"""\
+\
+import argparse\
+import json\
+import math\
+import os\
+from typing import Optional\
+\
+import numpy as np\
+import pandas as pd\
+import yaml\
+\
+BUCKETS = ["Research", "Ecosystem", "Team", "Partners", "Treasury", "Liquidity"]\
+\
+\
+# ---------------------------\
+# Helpers\
+# ---------------------------\
+\
+def geometric_series(q: int, start: float, growth: float) -> np.ndarray:\
+    """Q-length geometric series: x0=start; x_t = x_\{t-1\}*(1+growth)."""\
+    arr = [float(start)]\
+    for _ in range(1, q):\
+        arr.append(arr[-1] * (1.0 + float(growth)))\
+    return np.array(arr, dtype=float)\
+\
+\
+def load_inputs(config_path: str) -> dict:\
+    with open(config_path, "r") as f:\
+        cfg = yaml.safe_load(f)\
+    return cfg\
+\
+\
+def load_schedule_csv(path: str) -> pd.DataFrame:\
+    sched = pd.read_csv(path)\
+    required_cols = ["Quarter"] + BUCKETS\
+    missing = [c for c in required_cols if c not in sched.columns]\
+    if missing:\
+        raise ValueError(f"unlock schedule missing columns: \{missing\}")\
+    if (sched[BUCKETS] < 0).any().any():\
+        raise ValueError("unlock schedule contains negative percentages")\
+    return sched\
+\
+\
+def load_price_csv(path: str, Q: int) -> np.ndarray:\
+    df = pd.read_csv(path)\
+    if "Price_USD" not in df.columns:\
+        # allow single-column CSV\
+        first = df.columns[0]\
+        df = df.rename(columns=\{first: "Price_USD"\})\
+    series = df["Price_USD"].astype(float).values\
+    if len(series) < Q:\
+        raise ValueError(f"price_csv has \{len(series)\} rows but needs \{Q\}")\
+    return series[:Q]\
+\
+def load_sales_yaml(path: str, Q: int) -> list[dict]:\
+    with open(path, "r") as f:\
+        y = yaml.safe_load(f) or \{\}\
+    tiers = y.get("tiers", [])\
+    packed = []\
+    for t in tiers:\
+        q = t["quarter"]\
+        if isinstance(q, str) and "-" in q:\
+            a, b = q.split("-")\
+            qs = list(range(int(a), int(b)+1))\
+        else:\
+            qs = [int(q)]\
+        amt = int(t["amount_sait"])\
+        price = t.get("price_usd", None)\
+        prange = t.get("price_usd_range", None)\
+        if prange:\
+            lo, hi = float(prange[0]), float(prange[1])\
+            price = (lo + hi) / 2.0  # choose mid by default; you can parametrize\
+        assert price is not None\
+        for qi in qs:\
+            if 1 <= qi <= Q:\
+                packed.append(\{"quarter": qi, "amount_sait": amt // len(qs), "price_usd": float(price)\})\
+    return packed\
+\
+\
+# ---------------------------\
+# Phase YAML -> Schedule CSV\
+# ---------------------------\
+\
+def generate_schedule_from_phases(phase_yaml_path: str, Q: int, quarterly_cap_pct: float) -> pd.DataFrame:\
+    """\
+    Phase YAML format:\
+    phases:\
+      - name: Phase 1\
+        start_quarter: 1\
+        total_pct: 0.10               # fraction of TOTAL supply unlocked over the phase\
+        duration_quarters: 4          # optional; if omitted, computed min to fit cap\
+        buckets:                      # weights across buckets (sum to 1.0)\
+          Research: 0.40\
+          Ecosystem: 0.20\
+          Team: 0.10\
+          Partners: 0.10\
+          Treasury: 0.10\
+          Liquidity: 0.10\
+\
+    Returns a DataFrame with Quarter + BUCKETS (percent of total per quarter).\
+    """\
+    with open(phase_yaml_path, "r") as f:\
+        y = yaml.safe_load(f)\
+    phases = y.get("phases", [])\
+    if not phases:\
+        raise ValueError("phase YAML has no 'phases' list")\
+\
+    rows = [\{"Quarter": f"Q\{i + 1\}", **\{b: 0.0 for b in BUCKETS\}\} for i in range(Q)]\
+    df = pd.DataFrame(rows)\
+\
+    for ph in phases:\
+        name = ph.get("name", "Phase")\
+        start = int(ph["start_quarter"])\
+        total_pct = float(ph["total_pct"])\
+        weights = ph.get("buckets", \{\})\
+        w = np.array([float(weights.get(b, 0.0)) for b in BUCKETS], dtype=float)\
+        if w.sum() <= 0:\
+            raise ValueError(f"\{name\}: bucket weights must sum > 0")\
+        w = w / w.sum()\
+\
+        dur = ph.get("duration_quarters", None)\
+        if dur is None:\
+            dur = math.ceil(total_pct / quarterly_cap_pct)\
+        per_q_total = total_pct / dur\
+        if per_q_total > quarterly_cap_pct:\
+            dur = math.ceil(total_pct / quarterly_cap_pct)\
+            per_q_total = total_pct / dur\
+\
+        for i in range(dur):\
+            q_index = start - 1 + i\
+            if q_index >= Q:\
+                break\
+            for bi, b in enumerate(BUCKETS):\
+                df.at[q_index, b] += per_q_total * w[bi]\
+\
+    return df\
+\
+\
+def enforce_global_quarterly_cap(sched_df: pd.DataFrame, quarterly_cap_pct: float) -> pd.DataFrame:\
+    """\
+    If any quarter\'92s total % exceeds cap, spill the excess forward (preserving bucket ratios).\
+    """\
+    df = sched_df.copy()\
+    Q = len(df)\
+    cols = BUCKETS[:]\
+    totals = df[cols].sum(axis=1).values\
+\
+    for i in range(Q):\
+        if totals[i] > quarterly_cap_pct + 1e-12:\
+            row = df.loc[i, cols].astype(float)\
+            s = row.sum()\
+            if s > 0:\
+                # scale down to cap\
+                df.loc[i, cols] = row * (quarterly_cap_pct / s)\
+                excess = s - quarterly_cap_pct\
+                # spill to next quarter (preserving proportions)\
+                if i + 1 < Q:\
+                    next_row = df.loc[i + 1, cols].astype(float)\
+                    df.loc[i + 1, cols] = next_row + (row / s) * excess\
+            totals = df[cols].sum(axis=1).values\
+\
+    return df\
+\
+# ===== Extra helpers for richer output =====\
+\
+def pct(x: float) -> str:\
+    return f"\{x*100:0.2f\}%"\
+\
+def ansi(color: str, s: str) -> str:\
+    codes = \{"red":"\\033[31m", "yellow":"\\033[33m", "green":"\\033[32m", "reset":"\\033[0m"\}\
+    return f"\{codes.get(color,'')\}\{s\}\{codes['reset']\}"\
+\
+def bucket_totals_pct(sched_df: pd.DataFrame) -> dict:\
+    totals = \{b: float(sched_df[b].sum()) for b in BUCKETS\}\
+    totals["Total"] = float(sum(totals[b] for b in BUCKETS))\
+    return totals\
+\
+def find_min_treasury_point(out: pd.DataFrame) -> tuple[float, str]:\
+    idx = int(out["Treasury_Cash_USD"].idxmin())\
+    return float(out["Treasury_Cash_USD"].iloc[idx]), str(out["Quarter"].iloc[idx])\
+\
+def first_deflationary_quarter(out: pd.DataFrame) -> str:\
+    neg = out.index[out["Net_Issuance_SAIT"] < 0]\
+    return str(out.loc[neg[0], "Quarter"]) if len(neg) else "\'97"\
+\
+def overhang_count(out: pd.DataFrame, threshold: float) -> int:\
+    return int((out["Overhang_vs_Float"] > threshold).sum())\
+\
+def scenario_report_md(\
+    total_supply: int,\
+    cfg: dict,\
+    sched_df: pd.DataFrame,\
+    out: pd.DataFrame,\
+    k: dict,\
+    bucket_totals: dict,\
+    warn_overhang: float = 0.40\
+) -> str:\
+    min_bal, min_bal_q = find_min_treasury_point(out)\
+    overhang_warns = overhang_count(out, warn_overhang)\
+    return "\\n".join([\
+        f"# SAIT Scenario \'97 Total Supply \{total_supply:,\}",\
+        "",\
+        "## Headline",\
+        f"- **Supply**: 16q unlocks = \{pct(sched_df[BUCKETS].sum(axis=1).sum())\}; Final circ = \{k['final_circ_pct']\} (\{k['final_circulating']:,\} SAIT).",\
+        f"- **Burns**: cumulative = \{k['cum_burn_sait']:,\} SAIT (\{pct(k['cum_burn_pct_total'])\}); Deflationary quarters: \{k['deflationary_quarters']\} (first: \{k['first_deflation_q']\}).",\
+        f"- **Treasury**: runway\uc0\u8776  \{k['min_runway_quarters']\} q (min balance $\{min_bal:,.0f\} at \{min_bal_q\}).",\
+        f"- **Overhang**: max = \{pct(k['max_overhang_vs_float'])\}; quarters > \{int(warn_overhang*100)\}% = \{overhang_warns\}.",\
+        "",\
+        "## Unlocks by Bucket (16q total)",\
+        *(f"- \{b\}: \{pct(bucket_totals[b])\}" for b in BUCKETS),\
+        f"- **Total**: \{pct(bucket_totals['Total'])\}",\
+        "",\
+        "## Notes",\
+        "- Burns are driven by usage/fees/price, not by total supply \'97 hence identical SAIT burns across caps.",\
+        "- Global cap enforcer ensures per-quarter total unlock \uc0\u8804  3% (given 1%/mo cap).",\
+        "- Overhang is defined as next-2Q unlocks \'f7 starting float for the quarter.",\
+        "",\
+        "## Suggested levers if this scenario trips warnings",\
+        "- Reduce early unlock pace (longer durations / stagger phases) to cut overhang.",\
+        "- Raise burn_share / increase actions / fee_per_action / price to approach deflationary quarters.",\
+        "- Consider a small increase in initial float only if liquidity depth is a concern (trade-off: more potential sellers).",\
+        ""\
+    ])\
+\
+\
+# ---------------------------\
+# Simulation\
+# ---------------------------\
+\
+def simulate_one_supply(\
+    total_supply: int,\
+    cfg: dict,\
+    sched_pct: pd.DataFrame,\
+    price_series: Optional[np.ndarray]\
+) -> pd.DataFrame:\
+    Q = int(cfg["quarters"])\
+    # schedule (% of total) -> SAIT\
+    unlocks_sait = sched_pct.copy()\
+    for b in BUCKETS:\
+        unlocks_sait[b] = (sched_pct[b].astype(float) * total_supply).round(0)\
+    unlocks_sait["Total_Unlocks"] = unlocks_sait[BUCKETS].sum(axis=1)\
+\
+    # Quarterly cap (3 * monthly cap) \'97 for reporting only (global cap already enforced if chosen)\
+    quarterly_cap_pct = 3.0 * float(cfg["max_unlock_cap_per_month"])\
+    q_cap_units = quarterly_cap_pct * total_supply\
+    cap_flags = (unlocks_sait["Total_Unlocks"] > q_cap_units)\
+\
+    # Usage & fees\
+    actions = geometric_series(Q, cfg["base_actions_q1"], cfg["actions_growth_qoq"])\
+    fee_revenue = actions * float(cfg["fee_per_action_usd"])\
+\
+    # Price path\
+    if price_series is not None:\
+        prices = price_series\
+    else:\
+        prices = geometric_series(Q, cfg["price_q1_usd"], cfg["price_growth_qoq"])\
+\
+    # Splits\
+    burn_share = float(cfg["burn_share"])\
+    stakers_share = float(cfg["stakers_share"])\
+    treasury_share = float(cfg["treasury_share"])\
+    if abs((burn_share + stakers_share + treasury_share) - 1.0) > 1e-6:\
+        raise ValueError("burn+stakers+treasury must sum to 1.0")\
+\
+    # Usage-coupled burns\
+    burns_usd_usage = fee_revenue * burn_share\
+    burns_sait_usage = np.where(prices > 0, burns_usd_usage / prices, 0.0)\
+\
+    # Burn floor (SAIT)\
+    burn_floor_sait = float(cfg.get("burn_floor_sait_per_q", 0.0))\
+    finance_mode = str(cfg.get("burn_floor_finance", "treasury")).lower()  # "treasury" or "ignore"\
+\
+    # Final burns with floor\
+    burns_sait = np.maximum(burns_sait_usage, burn_floor_sait)\
+    burns_usd = burns_sait * prices\
+\
+    # Treasury inflow (adjust if extra burn financed from treasury)\
+    treasury_inflow_usd_nominal = fee_revenue * treasury_share\
+    extra_burn_sait = np.maximum(0.0, burns_sait - burns_sait_usage)\
+    extra_burn_usd = extra_burn_sait * prices\
+    if finance_mode == "treasury":\
+        treasury_inflow_usd = np.maximum(0.0, treasury_inflow_usd_nominal - extra_burn_usd)\
+    else:\
+        treasury_inflow_usd = treasury_inflow_usd_nominal\
+\
+    # Stakers nominal payout\
+    stakers_payout_usd_nominal = fee_revenue * stakers_share\
+\
+    # Trackers\
+    starting_circ = np.zeros(Q)\
+    ending_circ = np.zeros(Q)\
+    net_issuance = np.zeros(Q)\
+    overhang_2q = np.zeros(Q)\
+    overhang_pct = np.zeros(Q)\
+\
+    treasury_cash = np.zeros(Q)\
+    ops_spend = np.full(Q, float(cfg["ops_spend_per_q_usd"]), dtype=float)\
+\
+    staked_pct = float(cfg["staked_pct_of_circ"])\
+    target_apy = float(cfg["target_staker_apy"])\
+    realized_staker_apy = np.zeros(Q)\
+    staked_value_usd = np.zeros(Q)\
+    stakers_payout_usd = np.zeros(Q)\
+\
+    initial_circ = total_supply * float(cfg["initial_circulating_pct"])\
+\
+    for i in range(Q):\
+        starting_circ[i] = initial_circ if i == 0 else ending_circ[i - 1]\
+        unlocks_q = float(unlocks_sait.loc[i, "Total_Unlocks"])\
+        burns_q_sait = burns_sait[i]\
+\
+        ending_circ[i] = starting_circ[i] + unlocks_q - burns_q_sait\
+        net_issuance[i] = unlocks_q - burns_q_sait\
+\
+        # Overhang next 2Q\
+        if i + 1 < Q:\
+            j2 = min(i + 2, Q - 1)\
+            over = unlocks_sait.loc[i + 1:j2, "Total_Unlocks"].sum()\
+        else:\
+            over = 0.0\
+        overhang_2q[i] = over\
+        overhang_pct[i] = (over / starting_circ[i]) if starting_circ[i] > 0 else 0.0\
+\
+        # Staker payouts (fee-funded & APY-capped)\
+        avg_circ = 0.5 * (starting_circ[i] + ending_circ[i])\
+        staked_val = avg_circ * staked_pct * prices[i]\
+        staked_value_usd[i] = staked_val\
+        cap_quarterly = target_apy / 4.0 * staked_val\
+        stakers_payout_usd[i] = min(stakers_payout_usd_nominal[i], cap_quarterly)\
+        realized_staker_apy[i] = (stakers_payout_usd[i] / staked_val * 4.0) if staked_val > 0 else 0.0\
+\
+        # Treasury cash cumulative\
+        treasury_cash[i] = (\
+            float(cfg["starting_treasury_cash_usd"])\
+            + float(treasury_inflow_usd[: i + 1].sum())\
+            - float(ops_spend[: i + 1].sum())\
+        )\
+\
+    out = pd.DataFrame(\{\
+        "Quarter": [f"Q\{i + 1\}" for i in range(Q)],\
+        "Starting_Circ_SAIT": starting_circ.round(0),\
+        "Price_USD": prices,\
+        "Fee_Actions": actions.round(0),\
+        "Fee_Revenue_USD": fee_revenue,\
+        "Burns_USD": burns_usd,\
+        "Burns_SAIT": burns_sait.round(0),\
+        "Unlocks_SAIT": unlocks_sait["Total_Unlocks"].values,\
+        "Ending_Circ_SAIT": ending_circ.round(0),\
+        "Net_Issuance_SAIT": net_issuance.round(0),\
+        "Overhang_2Q_SAIT": overhang_2q.round(0),\
+        "Overhang_vs_Float": overhang_pct,\
+        "Staked_Value_USD": staked_value_usd,\
+        "Stakers_Payout_USD": stakers_payout_usd,\
+        "Realized_Staker_APY": realized_staker_apy,\
+        "Treasury_Cash_USD": treasury_cash,\
+        "Unlocks_Cap_Breached": (unlocks_sait["Total_Unlocks"] > q_cap_units).values\
+    \})\
+    out["Cumulative_Burns_SAIT"] = out["Burns_SAIT"].cumsum().round(0)\
+    out["Cumulative_Burns_%Total"] = out["Cumulative_Burns_SAIT"] / float(total_supply)\
+        # --- Fundraising tiers (optional) ---\
+    sales_yaml_path = "sims/sales.yaml"\
+    sales = []\
+    try:\
+        sales = load_sales_yaml(sales_yaml_path, Q)\
+    except FileNotFoundError:\
+        sales = []\
+\
+    sale_amounts = np.zeros(Q)\
+    sale_proceeds = np.zeros(Q)\
+    for s in sales:\
+        i = s["quarter"] - 1\
+        sale_amounts[i] += s["amount_sait"]\
+        sale_proceeds[i] += s["amount_sait"] * s["price_usd"]\
+\
+    out["Crowdfund_Sold_SAIT"] = sale_amounts\
+    out["Crowdfund_Proceeds_USD"] = sale_proceeds\
+\
+    # Optional: treat crowdfund proceeds as treasury cash (ring-fenced)\
+    out["Treasury_Cash_USD"] = out["Treasury_Cash_USD"] + np.cumsum(sale_proceeds)\
+\
+\
+    return out\
+\
+\
+def kpis_from_out(\
+    out: pd.DataFrame,\
+    total_supply: int,\
+    cfg: dict,\
+    sched_pct: pd.DataFrame,\
+    quarterly_cap_pct: float\
+) -> dict:\
+    init_float = total_supply * float(cfg["initial_circulating_pct"])\
+    per_q_totals = sched_pct[BUCKETS].sum(axis=1).values\
+\
+    # Staker APY stats\
+    apy = out["Realized_Staker_APY"].to_numpy(dtype=float)\
+    avg_apy = float(apy.mean()) if len(apy) else 0.0\
+    min_apy = float(apy.min()) if len(apy) else 0.0\
+    max_apy = float(apy.max()) if len(apy) else 0.0\
+\
+    final_circ = int(out["Ending_Circ_SAIT"].iloc[-1])\
+    final_circ_pct = final_circ / float(total_supply)\
+\
+    # min treasury balance quarter\
+    min_bal, min_bal_q = find_min_treasury_point(out)\
+\
+    return \{\
+        "total_supply": int(total_supply),\
+        "initial_float": int(init_float),\
+        "final_circulating": final_circ,\
+        "final_circ_pct": pct(final_circ_pct),\
+        "cum_burn_sait": int(out["Burns_SAIT"].sum()),\
+        "cum_burn_pct_total": float(out["Burns_SAIT"].sum() / float(total_supply)),\
+        "deflationary_quarters": int((out["Net_Issuance_SAIT"] < 0).sum()),\
+        "first_deflation_q": first_deflationary_quarter(out),\
+        "min_runway_quarters": int(np.argmax(out["Treasury_Cash_USD"] < 0)) if (out["Treasury_Cash_USD"] < 0).any() else math.inf,\
+        "treasury_min_balance": float(min_bal),\
+        "treasury_min_balance_q": min_bal_q,\
+        "max_overhang_vs_float": float(out["Overhang_vs_Float"].max() if len(out) > 0 else 0.0),\
+        "peak_unlock_pct_per_q": float(per_q_totals.max()),\
+        "cap_breach_any": bool((per_q_totals > quarterly_cap_pct + 1e-12).any()),\
+        "avg_staker_apy": float(avg_apy),\
+        "min_staker_apy": float(min_apy),\
+        "max_staker_apy": float(max_apy),\
+        "total_unlocked_pct_16q": float(per_q_totals.sum()),\
+    \}\
+\
+\
+def pretty_print_kpis(kpis_list: list[dict]) -> None:\
+    headers = [\
+        "TotalSupply","InitFloat","FinalCirc","FinalCirc(%)",\
+        "CumBurn(SAIT)","CumBurn(%)","DeflQ","RunwayQ(min)",\
+        "PeakUnl/q","MaxOverhang/Float","AvgAPY","CapBreach"\
+    ]\
+    rows = []\
+    for k in kpis_list:\
+        over = k["max_overhang_vs_float"]\
+        over_str = f"\{over*100:0.1f\}%"\
+        if over >= 0.50:\
+            over_str = ansi("red", over_str)\
+        elif over >= 0.40:\
+            over_str = ansi("yellow", over_str)\
+        else:\
+            over_str = ansi("green", over_str)\
+\
+        runway = k["min_runway_quarters"]\
+        runway_str = str(runway)\
+\
+        rows.append([\
+            f"\{k['total_supply']:,\}",\
+            f"\{k['initial_float']:,\}",\
+            f"\{k['final_circulating']:,\}",\
+            k["final_circ_pct"],\
+            f"\{k['cum_burn_sait']:,\}",\
+            f"\{k['cum_burn_pct_total']*100:0.2f\}%",\
+            k["deflationary_quarters"],\
+            runway_str,\
+            f"\{k['peak_unlock_pct_per_q']*100:0.2f\}%",\
+            over_str,\
+            f"\{k['avg_staker_apy']*100:0.2f\}%",\
+            "YES" if k["cap_breach_any"] else "no",\
+        ])\
+\
+    col_widths = [max(len(str(x)) for x in [h] + [r[i] for r in rows]) for i, h in enumerate(headers)]\
+    sep = "+" + "+".join("-" * (w + 2) for w in col_widths) + "+"\
+    print(sep)\
+    print("| " + " | ".join(h.ljust(col_widths[i]) for i, h in enumerate(headers)) + " |")\
+    print(sep)\
+    for r in rows:\
+        print("| " + " | ".join(str(r[i]).ljust(col_widths[i]) for i in range(len(headers))) + " |")\
+    print(sep)\
+\
+\
+def compute_schedule_stats(sched_df: pd.DataFrame, quarterly_cap_pct: float) -> dict:\
+    totals = sched_df[BUCKETS].sum(axis=1)\
+    return \{\
+        "avg_unlock_pct_per_q": float(totals.mean()),\
+        "max_unlock_pct_per_q": float(totals.max()),\
+        "quarters_over_cap": [f"Q\{i+1\}" for i, t in enumerate(totals) if t > quarterly_cap_pct + 1e-12],\
+        "total_pct_16q": float(totals.sum()),\
+    \}\
+\
+def plain_english_intro(cfg: dict, supplies: list[int], price_mode: str) -> list[str]:\
+    return [\
+        "# SAIT Tokenomics Simulation \'97 Plain English Context",\
+        "",\
+        "## What this is",\
+        "We modeled SAIT\'92s tokenomics to see how unlocks, burns, staking, and treasury cash interact.",\
+        "It shows whether SAIT stays scarce, whether the treasury runs out, and whether the design is credible.",\
+        "",\
+        "## Key assumptions in this run",\
+        f"- **Total Supply**: \{supplies[0]:,\} SAIT (fixed, no inflation).",\
+        f"- **Initial circulation**: \{cfg['initial_circulating_pct']*100:.1f\}% of supply unlocked in Q1.",\
+        f"- **Unlock cap**: \uc0\u8804  \{cfg['max_unlock_cap_per_month']*100:.2f\}% per month (\u8776  \{3*cfg['max_unlock_cap_per_month']*100:.2f\}% per quarter).",\
+        f"- **Fee per action**: $\{cfg['fee_per_action_usd']:.2f\}.",\
+        f"- **Fee split**: \{cfg['burn_share']*100:.0f\}% burn, \{cfg['stakers_share']*100:.0f\}% stakers, \{cfg['treasury_share']*100:.0f\}% treasury.",\
+        f"- **Usage start**: \{cfg['base_actions_q1']:,\} actions in Q1, growing \{cfg['actions_growth_qoq']*100:.1f\}% per quarter.",\
+        f"- **Staking**: \{cfg['staked_pct_of_circ']*100:.0f\}% of circulating tokens staked, with \{cfg['target_staker_apy']*100:.0f\}% APY cap.",\
+        f"- **Treasury**: start $\{cfg['starting_treasury_cash_usd']:,\}, spending $\{cfg['ops_spend_per_q_usd']:,\}/quarter.",\
+        f"- **Burn floor**: \{cfg.get('burn_floor_sait_per_q',0):,.0f\} SAIT per quarter, mode=\{cfg.get('burn_floor_finance','treasury')\}.",\
+        f"- **Price path**: \{price_mode\}.",\
+        "",\
+        "## How to read the results",\
+        "- **Deflationary quarters**: times when burns exceed unlocks (circulating supply shrinks).",\
+        "- **Overhang vs Float**: supply waiting to unlock relative to what\'92s circulating (dump risk).",\
+        "- **Treasury runway**: quarters before treasury cash runs out.",\
+        "- **Crowdfund proceeds**: cash raised from planned sales (tiers).",\
+        "",\
+        "The following sections show KPI tables, per-scenario reports, and recommendations.",\
+        ""\
+    ]\
+\
+\
+def print_inputs_summary(cfg: dict, price_mode: str, sched_stats: dict) -> None:\
+    print("\\n== Inputs Summary ==")\
+    print(f"Horizon: \{cfg['quarters']\} quarters")\
+    print(f"Total-supply grid: \{cfg['total_supply_grid']\}")\
+    print(f"Initial float: \{cfg['initial_circulating_pct']*100:.2f\}% of total (Q1 start)")\
+    print(f"Unlock cap: \{cfg['max_unlock_cap_per_month']*100:.2f\}%/mo \uc0\u8658  \{3*cfg['max_unlock_cap_per_month']*100:.2f\}%/qtr (global)")\
+    print(f"Usage: actions Q1=\{cfg['base_actions_q1']:,\}, growth QoQ=\{cfg['actions_growth_qoq']*100:.1f\}%")\
+    print(f"Fees: $\{cfg['fee_per_action_usd']:.2f\}/action | Splits: burn=\{cfg['burn_share']:.2f\}, stakers=\{cfg['stakers_share']:.2f\}, treasury=\{cfg['treasury_share']:.2f\}")\
+    print(f"Staking: %staked=\{cfg['staked_pct_of_circ']*100:.1f\}% | target APY=\{cfg['target_staker_apy']*100:.1f\}% (fee-funded cap)")\
+    print(f"Treasury: start=$\{cfg['starting_treasury_cash_usd']:,\} | ops=$\{cfg['ops_spend_per_q_usd']:,\}/qtr")\
+    print(f"Burn floor: \{cfg.get('burn_floor_sait_per_q',0):,.0f\} SAIT/q (\{cfg.get('burn_floor_finance','treasury')\})")\
+    print(f"Price: \{price_mode\}")\
+\
+    print("\\n== Schedule Summary ==")\
+    print(f"Total unlock over 16q: \{sched_stats['total_pct_16q']*100:.2f\}% of total supply")\
+    print(f"Avg unlock per quarter: \{sched_stats['avg_unlock_pct_per_q']*100:.2f\}% | Max per quarter: \{sched_stats['max_unlock_pct_per_q']*100:.2f\}%")\
+    if sched_stats["quarters_over_cap"]:\
+        print(f"Cap breaches: \{', '.join(sched_stats['quarters_over_cap'])\}  (exceeds global quarterly cap)")\
+    else:\
+        print("Cap breaches: none")\
+\
+def consolidated_recommendations(kpis_list: list[dict]) -> list[str]:\
+    recs = []\
+    # Flags across scenarios\
+    any_no_defl = any(k["deflationary_quarters"] == 0 for k in kpis_list)\
+    any_overhang_hi = any(k["max_overhang_vs_float"] >= 0.50 for k in kpis_list)\
+    any_runway_short = any((isinstance(k["min_runway_quarters"], int) and k["min_runway_quarters"] < 6) for k in kpis_list)\
+    # Recommendations\
+    if any_no_defl:\
+        recs.append("Increase burn intensity (raise burn_share) and/or adoption (actions growth, fee_per_action) to create at least 1\'962 deflationary quarters by Year 2.")\
+    if any_overhang_hi:\
+        recs.append("Reduce early unlocks (longer durations, stagger phases) or slightly increase initial float to bring Max Overhang/Float below 40%.")\
+    if any_runway_short:\
+        recs.append("Extend treasury runway (raise treasury_share or reduce ops spend) to \uc0\u8805  8\'9612 quarters.")\
+    # Always useful\
+    recs.append("Publish the cap-compliant unlock curve and overhang metric alongside governance proposals to set expectations.")\
+    recs.append("Add a burn floor (e.g., 2M SAIT/q) financed from treasury early on; remove when usage burns dominate.")\
+    return recs\
+\
+# ---------------------------\
+# CLI\
+# ---------------------------\
+\
+def main() -> None:\
+    ap = argparse.ArgumentParser(description="SAIT Tokenomics Simulator")\
+    ap.add_argument("--config", default="config.yaml", help="Path to config.yaml")\
+    ap.add_argument("--schedule", default="unlock_schedule.csv", help="Path to unlock schedule CSV (percents of total)")\
+    ap.add_argument("--phase_yaml", help="Path to phase YAML to auto-generate a cap-compliant schedule CSV")\
+    ap.add_argument("--price_csv", help="Path to custom per-quarter price CSV (Price_USD column)")\
+    ap.add_argument("--outdir", default="outputs", help="Directory to write outputs")\
+    ap.add_argument("--verbose", action="store_true", help="Print inputs and schedule diagnostics")\
+    args = ap.parse_args()\
+\
+    cfg = load_inputs(args.config)\
+    Q = int(cfg["quarters"])\
+    quarterly_cap_pct = 3.0 * float(cfg["max_unlock_cap_per_month"])\
+    os.makedirs(args.outdir, exist_ok=True)\
+\
+    # Schedule: from phases or from CSV\
+    if args.phase_yaml:\
+        sched_df = generate_schedule_from_phases(args.phase_yaml, Q, quarterly_cap_pct)\
+        # enforce global cap across overlapping phases\
+        sched_df = enforce_global_quarterly_cap(sched_df, quarterly_cap_pct)\
+        schedule_path = os.path.join(args.outdir, "derived_unlock_schedule.csv")\
+        sched_df.to_csv(schedule_path, index=False)\
+    else:\
+        schedule_path = args.schedule\
+        sched_df = load_schedule_csv(schedule_path)\
+\
+    # Price series\
+    price_series = None\
+    if args.price_csv:\
+        price_series = load_price_csv(args.price_csv, Q)\
+        price_mode = f"custom CSV (\{len(price_series)\} rows)"\
+    else:\
+        price_mode = f"geometric (Q1=$\{cfg['price_q1_usd']:.2f\}, QoQ=\{cfg['price_growth_qoq']*100:.1f\}%)"\
+\
+    # Verbose inputs & schedule diagnostics\
+    if args.verbose:\
+        stats = compute_schedule_stats(sched_df, quarterly_cap_pct)\
+        print_inputs_summary(cfg, price_mode, stats)\
+\
+    # Run supplies\
+    supplies = cfg.get("total_supply_grid", [])\
+    if not supplies:\
+        raise ValueError("No total_supply_grid in config.yaml")\
+\
+    kpis_all = []\
+    for s in supplies:\
+        out = simulate_one_supply(int(s), cfg, sched_df, price_series)\
+\
+        # 1) Save the full quarterly ledger\
+        out.to_csv(os.path.join(args.outdir, f"results_\{int(s)\}.csv"), index=False)\
+\
+        # 2) Compute KPIs for THIS scenario\
+        kpis = kpis_from_out(out, int(s), cfg, sched_df, quarterly_cap_pct)\
+\
+        # 3) Append to the summary list\
+        kpis_all.append(kpis)\
+\
+        # 4) Per-scenario narrative report (use the 'kpis' we just computed)\
+        buckets_16q = bucket_totals_pct(sched_df)\
+        report = scenario_report_md(int(s), cfg, sched_df, out, kpis, buckets_16q, warn_overhang=0.40)\
+        with open(os.path.join(args.outdir, f"report_\{int(s)\}.md"), "w") as f:\
+            f.write(report)\
+\
+    # KPI summary\
+    kdf = pd.DataFrame(kpis_all)\
+    kdf.to_csv(os.path.join(args.outdir, "kpis_summary.csv"), index=False)\
+    pretty_print_kpis(kpis_all)\
+\
+    # Markdown summary\
+    lines = [\
+        "# SAIT Tokenomics \'97 KPI Summary",\
+        "",\
+        "| Total Supply | Init Float | Final Circ | Cum Burn (SAIT) | Cum Burn % | Deflationary Qtrs | Min Runway Qtrs | Peak Unlock %/q | Max Overhang/Float | Cap Breach |",\
+        "|---:|---:|---:|---:|---:|---:|---:|---:|---:|:---:|",\
+    ]\
+    for k in kpis_all:\
+        runway = k["min_runway_quarters"]\
+        runway_str = "\uc0\u8734 " if (isinstance(runway, float) and not math.isfinite(runway)) else int(runway)\
+        lines.append(\
+            f"| \{k['total_supply']:,\} | \{k['initial_float']:,\} | \{k['final_circulating']:,\} | \{k['cum_burn_sait']:,\} | "\
+            f"\{k['cum_burn_pct_total']*100:0.2f\}% | \{k['deflationary_quarters']\} | \{runway_str\} | "\
+            f"\{k['peak_unlock_pct_per_q']*100:0.2f\}% | \{k['max_overhang_vs_float']*100:0.1f\}% | "\
+            f"\{'YES' if k['cap_breach_any'] else 'no'\} |"\
+        )\
+    with open(os.path.join(args.outdir, "kpis_summary.md"), "w") as f:\
+        f.write("\\n".join(lines))\
+\
+    # Run manifest (reproducibility)\
+    manifest = \{\
+        "config": cfg,\
+        "price_mode": price_mode,\
+        "used_schedule_path": schedule_path,\
+        "used_price_csv": args.price_csv or None,\
+        "quarterly_cap_pct": quarterly_cap_pct,\
+        "schedule_totals_pct_per_q": sched_df[BUCKETS].sum(axis=1).round(6).tolist(),\
+        "total_supply_grid": [int(s) for s in supplies],\
+    \}\
+    with open(os.path.join(args.outdir, "run_manifest.json"), "w") as f:\
+        json.dump(manifest, f, indent=2)\
+\
+    # --- Consolidated Markdown report ---\
+    comp_lines = []\
+    comp_lines.extend(plain_english_intro(cfg, supplies, price_mode))\
+    comp_lines.append("# SAIT Tokenomics \'97 Consolidated Report")\
+    comp_lines.append("")\
+    comp_lines.append("## Executive Summary")\
+    comp_lines.append("- This report compares total-supply scenarios using the same cap-compliant unlock schedule, fee/burn settings, and price path.")\
+    comp_lines.append("- Burns scale with **usage** rather than supply, so SAIT burned is similar across caps; burn **percent** falls as supply grows.")\
+    comp_lines.append("- Overhang/Float and Treasury runway are the two most important operational risk flags.")\
+    comp_lines.append("")\
+\
+    # Inputs summary\
+    comp_lines.append("## Inputs & Assumptions")\
+    comp_lines.append(f"- Horizon: **\{cfg['quarters']\} quarters**")\
+    comp_lines.append(f"- Total-supply grid: **\{', '.join(f'\{int(s):,\}' for s in supplies)\}**")\
+    comp_lines.append(f"- Initial float: **\{cfg['initial_circulating_pct']*100:.2f\}%** of total (Q1 start)")\
+    comp_lines.append(f"- Unlock cap: **\{cfg['max_unlock_cap_per_month']*100:.2f\}%/mo \uc0\u8658  \{3*cfg['max_unlock_cap_per_month']*100:.2f\}%/qtr** (global)")\
+    comp_lines.append(f"- Usage: actions Q1=**\{cfg['base_actions_q1']:,\}**, growth QoQ=**\{cfg['actions_growth_qoq']*100:.1f\}%**")\
+    comp_lines.append(f"- Fees: **$\{cfg['fee_per_action_usd']:.2f\}/action** | Splits: burn=\{cfg['burn_share']:.2f\}, stakers=\{cfg['stakers_share']:.2f\}, treasury=\{cfg['treasury_share']:.2f\}")\
+    comp_lines.append(f"- Staking: %staked=**\{cfg['staked_pct_of_circ']*100:.1f\}%** | target APY=**\{cfg['target_staker_apy']*100:.1f\}%** (fee-funded cap)")\
+    comp_lines.append(f"- Treasury: start=**$\{cfg['starting_treasury_cash_usd']:,\}**, ops=**$\{cfg['ops_spend_per_q_usd']:,\}/qtr**")\
+    comp_lines.append(f"- Burn floor: **\{cfg.get('burn_floor_sait_per_q',0):,.0f\} SAIT/q** (\{cfg.get('burn_floor_finance','treasury')\})")\
+    comp_lines.append(f"- Price: **\{price_mode\}**")\
+    comp_lines.append("")\
+\
+    # Schedule diagnostics\
+    sched_totals_pct = sched_df[BUCKETS].sum(axis=1)\
+    comp_lines.append("## Schedule Diagnostics")\
+    comp_lines.append(f"- Total unlock over 16q: **\{sched_totals_pct.sum()*100:.2f\}%** of total supply")\
+    comp_lines.append(f"- Avg unlock per quarter: **\{sched_totals_pct.mean()*100:.2f\}%** | Max per quarter: **\{sched_totals_pct.max()*100:.2f\}%**")\
+    comp_lines.append("- Global cap breaches: **none** (excess spilled forward if needed)")\
+    comp_lines.append("")\
+    comp_lines.append("### Unlocks by Bucket (16q totals)")\
+    for b in BUCKETS:\
+        comp_lines.append(f"- \{b\}: **\{sched_df[b].sum()*100:.2f\}%**")\
+    comp_lines.append(f"- Total: **\{sched_totals_pct.sum()*100:.2f\}%**")\
+    comp_lines.append("")\
+\
+    # Comparison table\
+    comp_lines.append("## Scenario Comparison (Key KPIs)")\
+    comp_lines.append("| Total Supply | Init Float | Final Circ | Final Circ % | Cum Burn (SAIT) | Cum Burn % | Defl Qtrs | Runway Q (min) | Peak Unlock %/q | Max Overhang/Float | Avg Staker APY |")\
+    comp_lines.append("|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|")\
+    for k in kpis_all:\
+        comp_lines.append(\
+            f"| \{k['total_supply']:,\} | \{k['initial_float']:,\} | \{k['final_circulating']:,\} | \{k['final_circ_pct']\} | "\
+            f"\{k['cum_burn_sait']:,\} | \{k['cum_burn_pct_total']*100:0.2f\}% | \{k['deflationary_quarters']\} | \{k['min_runway_quarters']\} | "\
+            f"\{k['peak_unlock_pct_per_q']*100:0.2f\}% | \{k['max_overhang_vs_float']*100:0.1f\}% | \{k['avg_staker_apy']*100:0.2f\}% |"\
+        )\
+    comp_lines.append("")\
+\
+    # Recommendations\
+    comp_lines.append("## Recommendations")\
+    for r in consolidated_recommendations(kpis_all):\
+        comp_lines.append(f"- \{r\}")\
+    comp_lines.append("")\
+\
+    # Append each per-scenario report (already generated above)\
+    comp_lines.append("## Per-Scenario Details")\
+    for s in supplies:\
+        p = os.path.join(args.outdir, f"report_\{int(s)\}.md")\
+        if os.path.exists(p):\
+            comp_lines.append(f"\\n---\\n\\n### Scenario \'97 Total Supply \{int(s):,\}\\n")\
+            with open(p, "r") as rf:\
+                # skip the first H1, keep the rest\
+                lines_md = rf.read().splitlines()\
+                body = [ln for ln in lines_md if not ln.startswith("# SAIT Scenario")]\
+                comp_lines.extend(body)\
+                comp_lines.append("")\
+\
+    with open(os.path.join(args.outdir, "SAIT_Tokenomics_Report.md"), "w") as f:\
+        f.write("\\n".join(comp_lines))\
+\
+\
+if __name__ == "__main__":\
+    main()\
+\
+sims/sales.yaml\
+tiers:\
+  - quarter: 1   # Q4'25 in your narrative\
+    amount_sait: 50000000\
+    price_usd: 0.05\
+  - quarter: 2-5 # 2026 (4 quarters)\
+    amount_sait: 75000000\
+    price_usd: 0.10\
+  - quarter: 6-13  # 2027\'9628 window\
+    amount_sait: 25000000\
+    price_usd_range: [0.25, 0.50]  # the sim will let you pick mid/hi value\
+\
+sims/scenario_profiles.yaml\
+profiles:\
+  - name: base_mid\
+    overrides:\
+      total_supply_grid: [1000000000]\
+      initial_circulating_pct: 0.10\
+      actions_growth_qoq: 0.20\
+      fee_per_action_usd: 0.25\
+      burn_share: 0.50\
+      stakers_share: 0.20        # <-- add explicitly for clarity\
+      treasury_share: 0.30\
+      burn_floor_sait_per_q: 2000000\
+      staked_pct_of_circ: 0.25\
+      target_staker_apy: 0.12\
+\
+  - name: lean_supply_low_fee\
+    overrides:\
+      total_supply_grid: [1000000000, 500000000]\
+      initial_circulating_pct: 0.08\
+      fee_per_action_usd: 0.10\
+      burn_share: 0.60\
+      stakers_share: 0.15         # <-- trim stakers to protect runway at low fees\
+      treasury_share: 0.25\
+      burn_floor_sait_per_q: 3000000\
+\
+  - name: high_adoption_high_fee\
+    overrides:\
+      total_supply_grid: [1000000000, 5000000000]\
+      base_actions_q1: 200000\
+      actions_growth_qoq: 0.30\
+      fee_per_action_usd: 0.40\
+      burn_share: 0.55\
+      stakers_share: 0.20\
+      treasury_share: 0.25         # <-- trim treasury (fees are healthier here)\
+      burn_floor_sait_per_q: 1000000\
+\
+  - name: runway_guard\
+    overrides:\
+      burn_share: 0.45             # <-- small trim to make room\
+      stakers_share: 0.15          # <-- conservative yield early\
+      treasury_share: 0.40         # <-- maximize runway\
+      ops_spend_per_q_usd: 500000\
+      staked_pct_of_circ: 0.20\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\cf0 sims/config.yaml\
+\
+uarters: 16\
+total_supply_grid: [500000000, 1000000000, 5000000000, 10000000000, 100000000000]\
+initial_circulating_pct: 0.10\
+max_unlock_cap_per_month: 0.01\
+base_actions_q1: 200000\
+actions_growth_qoq: 0.15\
+fee_per_action_usd: 5.0\
+burn_share: 0.50\
+stakers_share: 0.30\
+treasury_share: 0.20\
+price_q1_usd: 0.05\
+price_growth_qoq: 0.05\
+staked_pct_of_circ: 0.20\
+target_staker_apy: 0.03\
+starting_treasury_cash_usd: 5000000\
+ops_spend_per_q_usd: 1000000\
+min_runway_quarters_alert: 6\
+max_overhang_vs_float_alert: 0.50\
+\
+# Burn floor (min SAIT per quarter) and finance mode\
+burn_floor_sait_per_q: 0\
+burn_floor_finance: treasury  # 'treasury' or 'ignore'\
+\
+sims/outputs/SAIT_Tokenomics_Report.md\
+\
+ SAIT Tokenomics \'97 Consolidated Report\
+\
+## Executive Summary\
+- This report compares total-supply scenarios using the same cap-compliant unlock schedule, fee/burn settings, and price path.\
+- Burns scale with **usage** rather than supply, so SAIT burned is similar across caps; burn **percent** falls as supply grows.\
+- Overhang/Float and Treasury runway are the two most important operational risk flags.\
+\
+## Inputs & Assumptions\
+- Horizon: **16 quarters**\
+- Total-supply grid: **500,000,000, 1,000,000,000, 5,000,000,000, 10,000,000,000, 100,000,000,000**\
+- Initial float: **10.00%** of total (Q1 start)\
+- Unlock cap: **1.00%/mo \uc0\u8658  3.00%/qtr** (global)\
+- Usage: actions Q1=**200,000**, growth QoQ=**15.0%**\
+- Fees: **$5.00/action** | Splits: burn=0.50, stakers=0.30, treasury=0.20\
+- Staking: %staked=**20.0%** | target APY=**3.0%** (fee-funded cap)\
+- Treasury: start=**$5,000,000**, ops=**$1,000,000/qtr**\
+- Burn floor: **0 SAIT/q** (treasury)\
+- Price: **custom CSV (16 rows)**\
+\
+## Schedule Diagnostics\
+- Total unlock over 16q: **44.00%** of total supply\
+- Avg unlock per quarter: **2.75%** | Max per quarter: **3.00%**\
+- Global cap breaches: **none** (excess spilled forward if needed)\
+\
+### Unlocks by Bucket (16q totals)\
+- Research: **17.06%**\
+- Ecosystem: **11.04%**\
+- Team: **4.81%**\
+- Partners: **5.89%**\
+- Treasury: **3.45%**\
+- Liquidity: **1.75%**\
+- Total: **44.00%**\
+\
+## Scenario Comparison (Key KPIs)\
+| Total Supply | Init Float | Final Circ | Final Circ % | Cum Burn (SAIT) | Cum Burn % | Defl Qtrs | Runway Q (min) | Peak Unlock %/q | Max Overhang/Float | Avg Staker APY |\
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|\
+| 500,000,000 | 50,000,000 | 138,864,608 | 27.77% | 131,135,392 | 26.23% | 0 | 7 | 3.00% | 50.0% | 3.00% |\
+| 1,000,000,000 | 100,000,000 | 408,864,611 | 40.89% | 131,135,392 | 13.11% | 0 | 7 | 3.00% | 50.0% | 3.00% |\
+| 5,000,000,000 | 500,000,000 | 2,568,864,612 | 51.38% | 131,135,392 | 2.62% | 0 | 7 | 3.00% | 50.0% | 3.00% |\
+| 10,000,000,000 | 1,000,000,000 | 5,268,864,606 | 52.69% | 131,135,392 | 1.31% | 0 | 7 | 3.00% | 50.0% | 2.45% |\
+| 100,000,000,000 | 10,000,000,000 | 53,868,864,610 | 53.87% | 131,135,392 | 0.13% | 0 | 7 | 3.00% | 50.0% | 0.43% |\
+\
+## Recommendations\
+- Increase burn intensity (raise burn_share) and/or adoption (actions growth, fee_per_action) to create at least 1\'962 deflationary quarters by Year 2.\
+- Reduce early unlocks (longer durations, stagger phases) or slightly increase initial float to bring Max Overhang/Float below 40%.\
+- Publish the cap-compliant unlock curve and overhang metric alongside governance proposals to set expectations.\
+- Add a burn floor (e.g., 2M SAIT/q) financed from treasury early on; remove when usage burns dominate.\
+\
+## Per-Scenario Details\
+\
+---\
+\
+### Scenario \'97 Total Supply 500,000,000\
+\
+\
+## Headline\
+- **Supply**: 16q unlocks = 44.00%; Final circ = 27.77% (138,864,608 SAIT).\
+- **Burns**: cumulative = 131,135,392 SAIT (26.23%); Deflationary quarters: 0 (first: \'97).\
+- **Treasury**: runway\uc0\u8776  7 q (min balance $-1,199,667 at Q12).\
+- **Overhang**: max = 50.00%; quarters > 40% = 9.\
+\
+## Unlocks by Bucket (16q total)\
+- Research: 17.06%\
+- Ecosystem: 11.04%\
+- Team: 4.81%\
+- Partners: 5.89%\
+- Treasury: 3.45%\
+- Liquidity: 1.75%\
+- **Total**: 44.00%\
+\
+## Notes\
+- Burns are driven by usage/fees/price, not by total supply \'97 hence identical SAIT burns across caps.\
+- Global cap enforcer ensures per-quarter total unlock \uc0\u8804  3% (given 1%/mo cap).\
+- Overhang is defined as next-2Q unlocks \'f7 starting float for the quarter.\
+\
+## Suggested levers if this scenario trips warnings\
+- Reduce early unlock pace (longer durations / stagger phases) to cut overhang.\
+- Raise burn_share / increase actions / fee_per_action / price to approach deflationary quarters.\
+- Consider a small increase in initial float only if liquidity depth is a concern (trade-off: more potential sellers).\
+\
+\
+---\
+\
+### Scenario \'97 Total Supply 1,000,000,000\
+\
+\
+## Headline\
+- **Supply**: 16q unlocks = 44.00%; Final circ = 40.89% (408,864,611 SAIT).\
+- **Burns**: cumulative = 131,135,392 SAIT (13.11%); Deflationary quarters: 0 (first: \'97).\
+- **Treasury**: runway\uc0\u8776  7 q (min balance $-1,199,667 at Q12).\
+- **Overhang**: max = 50.00%; quarters > 40% = 2.\
+\
+## Unlocks by Bucket (16q total)\
+- Research: 17.06%\
+- Ecosystem: 11.04%\
+- Team: 4.81%\
+- Partners: 5.89%\
+- Treasury: 3.45%\
+- Liquidity: 1.75%\
+- **Total**: 44.00%\
+\
+## Notes\
+- Burns are driven by usage/fees/price, not by total supply \'97 hence identical SAIT burns across caps.\
+- Global cap enforcer ensures per-quarter total unlock \uc0\u8804  3% (given 1%/mo cap).\
+- Overhang is defined as next-2Q unlocks \'f7 starting float for the quarter.\
+\
+## Suggested levers if this scenario trips warnings\
+- Reduce early unlock pace (longer durations / stagger phases) to cut overhang.\
+- Raise burn_share / increase actions / fee_per_action / price to approach deflationary quarters.\
+- Consider a small increase in initial float only if liquidity depth is a concern (trade-off: more potential sellers).\
+\
+\
+---\
+\
+### Scenario \'97 Total Supply 5,000,000,000\
+\
+\
+## Headline\
+- **Supply**: 16q unlocks = 44.00%; Final circ = 51.38% (2,568,864,612 SAIT).\
+- **Burns**: cumulative = 131,135,392 SAIT (2.62%); Deflationary quarters: 0 (first: \'97).\
+- **Treasury**: runway\uc0\u8776  7 q (min balance $-1,199,667 at Q12).\
+- **Overhang**: max = 50.00%; quarters > 40% = 2.\
+\
+## Unlocks by Bucket (16q total)\
+- Research: 17.06%\
+- Ecosystem: 11.04%\
+- Team: 4.81%\
+- Partners: 5.89%\
+- Treasury: 3.45%\
+- Liquidity: 1.75%\
+- **Total**: 44.00%\
+\
+## Notes\
+- Burns are driven by usage/fees/price, not by total supply \'97 hence identical SAIT burns across caps.\
+- Global cap enforcer ensures per-quarter total unlock \uc0\u8804  3% (given 1%/mo cap).\
+- Overhang is defined as next-2Q unlocks \'f7 starting float for the quarter.\
+\
+## Suggested levers if this scenario trips warnings\
+- Reduce early unlock pace (longer durations / stagger phases) to cut overhang.\
+- Raise burn_share / increase actions / fee_per_action / price to approach deflationary quarters.\
+- Consider a small increase in initial float only if liquidity depth is a concern (trade-off: more potential sellers).\
+\
+\
+---\
+\
+### Scenario \'97 Total Supply 10,000,000,000\
+\
+\
+## Headline\
+- **Supply**: 16q unlocks = 44.00%; Final circ = 52.69% (5,268,864,606 SAIT).\
+- **Burns**: cumulative = 131,135,392 SAIT (1.31%); Deflationary quarters: 0 (first: \'97).\
+- **Treasury**: runway\uc0\u8776  7 q (min balance $-1,199,667 at Q12).\
+- **Overhang**: max = 50.00%; quarters > 40% = 2.\
+\
+## Unlocks by Bucket (16q total)\
+- Research: 17.06%\
+- Ecosystem: 11.04%\
+- Team: 4.81%\
+- Partners: 5.89%\
+- Treasury: 3.45%\
+- Liquidity: 1.75%\
+- **Total**: 44.00%\
+\
+## Notes\
+- Burns are driven by usage/fees/price, not by total supply \'97 hence identical SAIT burns across caps.\
+- Global cap enforcer ensures per-quarter total unlock \uc0\u8804  3% (given 1%/mo cap).\
+- Overhang is defined as next-2Q unlocks \'f7 starting float for the quarter.\
+\
+## Suggested levers if this scenario trips warnings\
+- Reduce early unlock pace (longer durations / stagger phases) to cut overhang.\
+- Raise burn_share / increase actions / fee_per_action / price to approach deflationary quarters.\
+- Consider a small increase in initial float only if liquidity depth is a concern (trade-off: more potential sellers).\
+\
+\
+---\
+\
+### Scenario \'97 Total Supply 100,000,000,000\
+\
+\
+## Headline\
+- **Supply**: 16q unlocks = 44.00%; Final circ = 53.87% (53,868,864,610 SAIT).\
+- **Burns**: cumulative = 131,135,392 SAIT (0.13%); Deflationary quarters: 0 (first: \'97).\
+- **Treasury**: runway\uc0\u8776  7 q (min balance $-1,199,667 at Q12).\
+- **Overhang**: max = 50.00%; quarters > 40% = 2.\
+\
+## Unlocks by Bucket (16q total)\
+- Research: 17.06%\
+- Ecosystem: 11.04%\
+- Team: 4.81%\
+- Partners: 5.89%\
+- Treasury: 3.45%\
+- Liquidity: 1.75%\
+- **Total**: 44.00%\
+\
+## Notes\
+- Burns are driven by usage/fees/price, not by total supply \'97 hence identical SAIT burns across caps.\
+- Global cap enforcer ensures per-quarter total unlock \uc0\u8804  3% (given 1%/mo cap).\
+- Overhang is defined as next-2Q unlocks \'f7 starting float for the quarter.\
+\
+## Suggested levers if this scenario trips warnings\
+- Reduce early unlock pace (longer durations / stagger phases) to cut overhang.\
+- Raise burn_share / increase actions / fee_per_action / price to approach deflationary quarters.\
+- Consider a small increase in initial float only if liquidity depth is a concern (trade-off: more potential sellers).\
+\
+sims/outputs/derived_unlock_schedule.csv\
+Quarter,Research,Ecosystem,Team,Partners,Treasury,Liquidity\
+Q1,0.010000000000000002,0.005000000000000001,0.0025000000000000005,0.0025000000000000005,0.0025000000000000005,0.0025000000000000005\
+Q2,0.010000000000000002,0.005000000000000001,0.0025000000000000005,0.0025000000000000005,0.0025000000000000005,0.0025000000000000005\
+Q3,0.010000000000000002,0.005000000000000001,0.0025000000000000005,0.0025000000000000005,0.0025000000000000005,0.0025000000000000005\
+Q4,0.010000000000000002,0.005000000000000001,0.0025000000000000005,0.0025000000000000005,0.0025000000000000005,0.0025000000000000005\
+Q5,0.007500000000000001,0.00875,0.0,0.005000000000000001,0.0025000000000000005,0.0012500000000000002\
+Q6,0.007500000000000001,0.00875,0.0,0.005000000000000001,0.0025000000000000005,0.0012500000000000002\
+Q7,0.007500000000000001,0.00875,0.0,0.005000000000000001,0.0025000000000000005,0.0012500000000000002\
+Q8,0.007500000000000001,0.00875,0.0,0.005000000000000001,0.0025000000000000005,0.0012500000000000002\
+Q9,0.011368421052631576,0.00813157894736842,0.0031578947368421048,0.004421052631578947,0.0022105263157894735,0.0007105263157894736\
+Q10,0.01136842105263158,0.008131578947368422,0.0031578947368421056,0.004421052631578949,0.0022105263157894744,0.0007105263157894738\
+Q11,0.012175837320574161,0.007324162679425837,0.00423444976076555,0.003882775119617225,0.0019413875598086126,0.0004413875598086124\
+Q12,0.012693088367224879,0.006806911632775119,0.004924117822966507,0.003537941088516746,0.001768970544258373,0.00026897054425837323\
+Q13,0.013018455961085815,0.006481544038914183,0.005357941281447754,0.0033210293592761224,0.0016605146796380612,0.00016051467963806143\
+Q14,0.013219099310633394,0.006280900689366608,0.00562546574751119,0.0031872671262444057,0.0015936335631222028,9.363356312220254e-05\
+Q15,0.013340177193981067,0.006159822806018933,0.005786902925308091,0.003106548537345955,0.0015532742686729774,5.327426867297731e-05\
+Q16,0.013411526660953807,0.006088473339046195,0.005882035547938409,0.003058982226030797,0.0015294911130153985,2.9491113015398163e-05\
+\
+sims/outputs/kpis_summary.csv\
+\
+# SAIT Tokenomics \'97 KPI Summary\
+\
+| Total Supply | Init Float | Final Circ | Cum Burn (SAIT) | Cum Burn % | Deflationary Qtrs | Min Runway Qtrs | Peak Unlock %/q | Max Overhang/Float | Cap Breach |\
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|:---:|\
+| 500,000,000 | 50,000,000 | 138,864,608 | 131,135,392 | 26.23% | 0 | 7 | 3.00% | 50.0% | no |\
+| 1,000,000,000 | 100,000,000 | 408,864,611 | 131,135,392 | 13.11% | 0 | 7 | 3.00% | 50.0% | no |\
+| 5,000,000,000 | 500,000,000 | 2,568,864,612 | 131,135,392 | 2.62% | 0 | 7 | 3.00% | 50.0% | no |\
+| 10,000,000,000 | 1,000,000,000 | 5,268,864,606 | 131,135,392 | 1.31% | 0 | 7 | 3.00% | 50.0% | no |\
+| 100,000,000,000 | 10,000,000,000 | 53,868,864,610 | 131,135,392 | 0.13% | 0 | 7 | 3.00% | 50.0% | no |\
+\
+sims/outputs/report_1000000000.md\
+\
+# SAIT Scenario \'97 Total Supply 1,000,000,000\
+\
+## Headline\
+- **Supply**: 16q unlocks = 44.00%; Final circ = 40.89% (408,864,611 SAIT).\
+- **Burns**: cumulative = 131,135,392 SAIT (13.11%); Deflationary quarters: 0 (first: \'97).\
+- **Treasury**: runway\uc0\u8776  7 q (min balance $-1,199,667 at Q12).\
+- **Overhang**: max = 50.00%; quarters > 40% = 2.\
+\
+## Unlocks by Bucket (16q total)\
+- Research: 17.06%\
+- Ecosystem: 11.04%\
+- Team: 4.81%\
+- Partners: 5.89%\
+- Treasury: 3.45%\
+- Liquidity: 1.75%\
+- **Total**: 44.00%\
+\
+## Notes\
+- Burns are driven by usage/fees/price, not by total supply \'97 hence identical SAIT burns across caps.\
+- Global cap enforcer ensures per-quarter total unlock \uc0\u8804  3% (given 1%/mo cap).\
+- Overhang is defined as next-2Q unlocks \'f7 starting float for the quarter.\
+\
+## Suggested levers if this scenario trips warnings\
+- Reduce early unlock pace (longer durations / stagger phases) to cut overhang.\
+- Raise burn_share / increase actions / fee_per_action / price to approach deflationary quarters.\
+- Consider a small increase in initial float only if liquidity depth is a concern (trade-off: more potential sellers).\
+\
+sims/outputs/report_10000000000.md\
+\
+# SAIT Scenario \'97 Total Supply 10,000,000,000\
+\
+## Headline\
+- **Supply**: 16q unlocks = 44.00%; Final circ = 52.69% (5,268,864,606 SAIT).\
+- **Burns**: cumulative = 131,135,392 SAIT (1.31%); Deflationary quarters: 0 (first: \'97).\
+- **Treasury**: runway\uc0\u8776  7 q (min balance $-1,199,667 at Q12).\
+- **Overhang**: max = 50.00%; quarters > 40% = 2.\
+\
+## Unlocks by Bucket (16q total)\
+- Research: 17.06%\
+- Ecosystem: 11.04%\
+- Team: 4.81%\
+- Partners: 5.89%\
+- Treasury: 3.45%\
+- Liquidity: 1.75%\
+- **Total**: 44.00%\
+\
+## Notes\
+- Burns are driven by usage/fees/price, not by total supply \'97 hence identical SAIT burns across caps.\
+- Global cap enforcer ensures per-quarter total unlock \uc0\u8804  3% (given 1%/mo cap).\
+- Overhang is defined as next-2Q unlocks \'f7 starting float for the quarter.\
+\
+## Suggested levers if this scenario trips warnings\
+- Reduce early unlock pace (longer durations / stagger phases) to cut overhang.\
+- Raise burn_share / increase actions / fee_per_action / price to approach deflationary quarters.\
+- Consider a small increase in initial float only if liquidity depth is a concern (trade-off: more potential sellers).\
+\
+sims/outputs/report_100000000000.md\
+\
+SAIT Scenario \'97 Total Supply 100,000,000,000\
+\
+## Headline\
+- **Supply**: 16q unlocks = 44.00%; Final circ = 53.87% (53,868,864,610 SAIT).\
+- **Burns**: cumulative = 131,135,392 SAIT (0.13%); Deflationary quarters: 0 (first: \'97).\
+- **Treasury**: runway\uc0\u8776  7 q (min balance $-1,199,667 at Q12).\
+- **Overhang**: max = 50.00%; quarters > 40% = 2.\
+\
+## Unlocks by Bucket (16q total)\
+- Research: 17.06%\
+- Ecosystem: 11.04%\
+- Team: 4.81%\
+- Partners: 5.89%\
+- Treasury: 3.45%\
+- Liquidity: 1.75%\
+- **Total**: 44.00%\
+\
+## Notes\
+- Burns are driven by usage/fees/price, not by total supply \'97 hence identical SAIT burns across caps.\
+- Global cap enforcer ensures per-quarter total unlock \uc0\u8804  3% (given 1%/mo cap).\
+- Overhang is defined as next-2Q unlocks \'f7 starting float for the quarter.\
+\
+## Suggested levers if this scenario trips warnings\
+- Reduce early unlock pace (longer durations / stagger phases) to cut overhang.\
+- Raise burn_share / increase actions / fee_per_action / price to approach deflationary quarters.\
+- Consider a small increase in initial float only if liquidity depth is a concern (trade-off: more potential sellers).\
+\
+sims/outputs/report_500000000.md\
+\
+# SAIT Scenario \'97 Total Supply 500,000,000\
+\
+## Headline\
+- **Supply**: 16q unlocks = 44.00%; Final circ = 27.77% (138,864,608 SAIT).\
+- **Burns**: cumulative = 131,135,392 SAIT (26.23%); Deflationary quarters: 0 (first: \'97).\
+- **Treasury**: runway\uc0\u8776  7 q (min balance $-1,199,667 at Q12).\
+- **Overhang**: max = 50.00%; quarters > 40% = 9.\
+\
+## Unlocks by Bucket (16q total)\
+- Research: 17.06%\
+- Ecosystem: 11.04%\
+- Team: 4.81%\
+- Partners: 5.89%\
+- Treasury: 3.45%\
+- Liquidity: 1.75%\
+- **Total**: 44.00%\
+\
+## Notes\
+- Burns are driven by usage/fees/price, not by total supply \'97 hence identical SAIT burns across caps.\
+- Global cap enforcer ensures per-quarter total unlock \uc0\u8804  3% (given 1%/mo cap).\
+- Overhang is defined as next-2Q unlocks \'f7 starting float for the quarter.\
+\
+## Suggested levers if this scenario trips warnings\
+- Reduce early unlock pace (longer durations / stagger phases) to cut overhang.\
+- Raise burn_share / increase actions / fee_per_action / price to approach deflationary quarters.\
+- Consider a small increase in initial float only if liquidity depth is a concern (trade-off: more potential sellers).\
+\
+sims/outputs/report_5000000000.md\
+\
+SAIT Scenario \'97 Total Supply 5,000,000,000\
+\
+## Headline\
+- **Supply**: 16q unlocks = 44.00%; Final circ = 51.38% (2,568,864,612 SAIT).\
+- **Burns**: cumulative = 131,135,392 SAIT (2.62%); Deflationary quarters: 0 (first: \'97).\
+- **Treasury**: runway\uc0\u8776  7 q (min balance $-1,199,667 at Q12).\
+- **Overhang**: max = 50.00%; quarters > 40% = 2.\
+\
+## Unlocks by Bucket (16q total)\
+- Research: 17.06%\
+- Ecosystem: 11.04%\
+- Team: 4.81%\
+- Partners: 5.89%\
+- Treasury: 3.45%\
+- Liquidity: 1.75%\
+- **Total**: 44.00%\
+\
+## Notes\
+- Burns are driven by usage/fees/price, not by total supply \'97 hence identical SAIT burns across caps.\
+- Global cap enforcer ensures per-quarter total unlock \uc0\u8804  3% (given 1%/mo cap).\
+- Overhang is defined as next-2Q unlocks \'f7 starting float for the quarter.\
+\
+## Suggested levers if this scenario trips warnings\
+- Reduce early unlock pace (longer durations / stagger phases) to cut overhang.\
+- Raise burn_share / increase actions / fee_per_action / price to approach deflationary quarters.\
+- Consider a small increase in initial float only if liquidity depth is a concern (trade-off: more potential sellers).\
+\
+sims/outputs/results_1000000000.csv\
+\
+Quarter,Starting_Circ_SAIT,Price_USD,Fee_Actions,Fee_Revenue_USD,Burns_USD,Burns_SAIT,Unlocks_SAIT,Ending_Circ_SAIT,Net_Issuance_SAIT,Overhang_2Q_SAIT,Overhang_vs_Float,Staked_Value_USD,Stakers_Payout_USD,Realized_Staker_APY,Treasury_Cash_USD,Unlocks_Cap_Breached,Cumulative_Burns_SAIT,Cumulative_Burns_%Total\
+Q1,100000000.0,0.05,200000.0,1000000.0,500000.0,10000000.0,25000000.0,115000000.0,15000000.0,50000000.0,0.5,1075000.0,8062.5,0.03,4200000.0,False,10000000.0,0.01\
+Q2,115000000.0,0.055,230000.0,1149999.9999999998,574999.9999999999,10454545.0,25000000.0,129545455.0,14545455.0,50000000.0,0.43478260869565216,1345000.0000000002,10087.500000000002,0.03,3430000.0,False,20454545.0,0.020454545\
+Q3,129545455.0,0.0605,264500.0,1322499.9999999998,661249.9999999999,10929752.0,25000000.0,143615702.0,14070248.0,50000000.0,0.38596491228070173,1652625.0,12394.6875,0.03,2694500.0,False,31384297.0,0.031384297\
+Q4,143615702.0,0.06655,304175.0,1520874.9999999995,760437.4999999997,11426559.0,25000000.0,157189144.0,13573441.0,50000000.0,0.3481513451301971,2001856.2500000002,15013.921875000002,0.03,1998675.0,False,42810856.0,0.042810856\
+Q5,157189144.0,0.1,349801.0,1749006.249999999,874503.1249999995,8745031.0,25000000.0,173444112.0,16254969.0,50000000.0,0.31808812546676624,3306332.55752254,24797.49418141905,0.03,1348476.25,False,51555887.0,0.051555887\
+Q6,173444112.0,0.11,402271.0,2011357.1874999988,1005678.5937499993,9142533.0,25000000.0,189301580.0,15857467.0,50000000.0,0.2882772978053345,3990202.6101497933,29926.51957612345,0.03,750747.6875,False,60698420.0,0.06069842\
+Q7,189301580.0,0.121,462612.0,2313060.7656249986,1156530.3828124993,9558102.0,25000000.0,204743477.0,15441898.0,55000000.0,0.2905416855043267,4767945.187571024,35759.58890678267,0.029999999999999995,213359.84062499925,False,70256522.0,0.070256522\
+Q8,204743477.0,0.1331,532004.0,2660019.880468748,1330009.940234374,9992562.0,25000000.0,219750916.0,15007438.0,60000000.0,0.29304962877365737,5650020.370195313,42375.15277646485,0.03,-254636.18328125123,False,80249084.0,0.080249084\
+Q9,219750916.0,0.25,611805.0,3059022.8625390604,1529511.4312695302,6118046.0,30000000.0,243632870.0,23881954.0,60000001.0,0.27303640945674634,11584594.642319847,86884.45981739885,0.03,-642831.6107734386,False,86367130.0,0.08636713\
+Q10,243632870.0,0.3,703575.0,3517876.291919919,1758938.1459599596,5863127.0,30000000.0,267769743.0,24136873.0,60000002.0,0.24627219637471479,15342078.384435477,115065.58788326607,0.03,-939256.3523894548,False,92230257.0,0.092230257\
+Q11,267769743.0,0.35,809112.0,4045557.735707907,2022778.8678539535,5779368.0,30000001.0,291990376.0,24220633.0,60000001.0,0.22407311731984964,19591604.14636066,146937.03109770495,0.03,-1130144.805247873,True,98009625.0,0.098009625\
+Q12,291990376.0,0.4,930478.0,4652391.396064093,2326195.6980320467,5815489.0,30000001.0,316174887.0,24184512.0,60000001.0,0.20548622833594607,24326610.521139964,182449.57890854974,0.030000000000000002,-1199666.5260350555,True,103825114.0,0.103825114\
+Q13,316174887.0,0.45,1070050.0,5350250.1054737065,2675125.0527368532,5944722.0,30000000.0,340230165.0,24055278.0,60000001.0,0.18976839525419337,29538227.359980162,221536.70519985122,0.03,-1129616.5049403142,False,109769836.0,0.109769836\
+Q14,340230165.0,0.5,1230558.0,6152787.621294762,3076393.810647381,6152788.0,30000001.0,364077378.0,23847213.0,60000000.0,0.17635120622175832,35215377.17416468,264115.3288062351,0.03,-899058.9806813616,True,115922624.0,0.115922624\
+Q15,364077378.0,0.5,1415141.0,7075705.764488976,3537852.882244488,7075706.0,30000000.0,387001673.0,22924294.0,30000000.0,0.08240006596753072,37553952.55487549,281654.64416156616,0.029999999999999995,-483917.82778356597,False,122998330.0,0.12299833\
+Q16,387001673.0,0.5,1627412.0,8137061.629162321,4068530.8145811604,8137062.0,30000000.0,408864611.0,21862938.0,0.0,0.0,39793314.185192935,298449.856388947,0.03,143494.49804889783,False,131135392.0,0.131135392\
+\
+sims/outputs/results_10000000000.csv\
+\
+Quarter,Starting_Circ_SAIT,Price_USD,Fee_Actions,Fee_Revenue_USD,Burns_USD,Burns_SAIT,Unlocks_SAIT,Ending_Circ_SAIT,Net_Issuance_SAIT,Overhang_2Q_SAIT,Overhang_vs_Float,Staked_Value_USD,Stakers_Payout_USD,Realized_Staker_APY,Treasury_Cash_USD,Unlocks_Cap_Breached,Cumulative_Burns_SAIT,Cumulative_Burns_%Total\
+Q1,1000000000.0,0.05,200000.0,1000000.0,500000.0,10000000.0,250000000.0,1240000000.0,240000000.0,500000000.0,0.5,11200000.0,84000.0,0.03,4200000.0,False,10000000.0,0.001\
+Q2,1240000000.0,0.055,230000.0,1149999.9999999998,574999.9999999999,10454545.0,250000000.0,1479545455.0,239545455.0,500000000.0,0.4032258064516129,14957500.0,112181.25,0.03,3430000.0,False,20454545.0,0.0020454545\
+Q3,1479545455.0,0.0605,264500.0,1322499.9999999998,661249.9999999999,10929752.0,250000000.0,1718615702.0,239070248.0,500000000.0,0.3379416282642089,19348875.0,145116.5625,0.03,2694500.0,False,31384297.0,0.0031384297\
+Q4,1718615702.0,0.06655,304175.0,1520874.9999999995,760437.4999999997,11426559.0,250000000.0,1957189144.0,238573441.0,500000000.0,0.29093182337312606,24462481.25,183468.609375,0.03,1998675.0,False,42810856.0,0.0042810856\
+Q5,1957189144.0,0.1,349801.0,1749006.249999999,874503.1249999995,8745031.0,250000000.0,2198444112.0,241254969.0,500000000.0,0.2554684107360072,41556332.55752255,311672.49418141914,0.030000000000000002,1348476.25,False,51555887.0,0.0051555887\
+Q6,2198444112.0,0.11,402271.0,2011357.1874999988,1005678.5937499993,9142533.0,250000000.0,2439301580.0,240857467.0,500000000.0,0.2274335732319427,51015202.61014981,382614.01957612357,0.03,750747.6875,False,60698420.0,0.006069842\
+Q7,2439301580.0,0.121,462612.0,2313060.7656249986,1156530.3828124993,9558102.0,250000000.0,2679743477.0,240441898.0,549999999.0,0.2254743749620937,61940445.18757104,464553.3389067828,0.03,213359.84062499925,False,70256522.0,0.0070256522\
+Q8,2679743477.0,0.1331,532004.0,2660019.880468748,1330009.940234374,9992562.0,250000000.0,2919750916.0,240007438.0,599999998.0,0.2239020275990047,74529270.37019534,558969.527776465,0.03,-254636.18328125123,False,80249084.0,0.0080249084\
+Q9,2919750916.0,0.25,611805.0,3059022.8625390604,1529511.4312695302,6118046.0,299999999.0,3213632869.0,293881953.0,600000000.0,0.2054969815308083,153334594.61731988,917706.8587617181,0.0239399819995496,-642831.6107734386,False,86367130.0,0.008636713\
+Q10,3213632869.0,0.3,703575.0,3517876.291919919,1758938.1459599596,5863127.0,299999999.0,3507769741.0,294136872.0,600000000.0,0.18670458775514026,201642078.29443556,1055362.8875759756,0.020935370166834846,-939256.3523894548,False,92230257.0,0.0092230257\
+Q11,3507769741.0,0.35,809112.0,4045557.735707907,2022778.8678539535,5779368.0,300000001.0,3801990374.0,294220633.0,600000000.0,0.17104885563495303,255841604.0063607,1213667.320712372,0.018975292551436596,-1130144.805247873,True,98009625.0,0.0098009625\
+Q12,3801990374.0,0.4,930478.0,4652391.396064093,2326195.6980320467,5815489.0,299999999.0,4096174883.0,294184510.0,600000001.0,0.15781207789489235,315926610.28114,1395717.418819228,0.01767141321305214,-1199666.5260350555,False,103825114.0,0.0103825114\
+Q13,4096174883.0,0.45,1070050.0,5350250.1054737065,2675125.0527368532,5944722.0,300000001.0,4390230162.0,294055279.0,600000000.0,0.1464781209495598,381888227.0449803,1605075.031642112,0.016811987570939806,-1129616.5049403142,True,109769836.0,0.0109769836\
+Q14,4390230162.0,0.5,1230558.0,6152787.621294762,3076393.810647381,6152788.0,300000000.0,4684077374.0,293847212.0,599999999.0,0.13666709417337675,453715376.8241648,1845836.2863884286,0.016273076740828854,-899058.9806813616,False,115922624.0,0.0115922624\
+Q15,4684077374.0,0.5,1415141.0,7075705.764488976,3537852.882244488,7075706.0,300000000.0,4977001669.0,292924294.0,299999999.0,0.0640467641797746,483053952.1548756,2122711.729346693,0.017577429766405177,-483917.82778356597,False,122998330.0,0.012299833\
+Q16,4977001669.0,0.5,1627412.0,8137061.629162321,4068530.8145811604,8137062.0,299999999.0,5268864606.0,291862937.0,0.0,0.0,512293313.7351929,2441118.488748696,0.019060318948535198,143494.49804889783,False,131135392.0,0.0131135392\
+\
+sims/outputs/results_100000000000.csv\
+\
+\
++17\
+Lines changed: 17 additions & 0 deletions\
+Original file line number	Diff line number	Diff line change\
+@@ -0,0 +1,17 @@\
+Quarter,Starting_Circ_SAIT,Price_USD,Fee_Actions,Fee_Revenue_USD,Burns_USD,Burns_SAIT,Unlocks_SAIT,Ending_Circ_SAIT,Net_Issuance_SAIT,Overhang_2Q_SAIT,Overhang_vs_Float,Staked_Value_USD,Stakers_Payout_USD,Realized_Staker_APY,Treasury_Cash_USD,Unlocks_Cap_Breached,Cumulative_Burns_SAIT,Cumulative_Burns_%Total\
+Q1,10000000000.0,0.05,200000.0,1000000.0,500000.0,10000000.0,2500000000.0,12490000000.0,2490000000.0,5000000000.0,0.5,112450000.0,300000.0,0.01067140951534015,4200000.0,False,10000000.0,0.0001\
+Q2,12490000000.0,0.055,230000.0,1149999.9999999998,574999.9999999999,10454545.0,2500000000.0,14979545455.0,2489545455.0,5000000000.0,0.400320256204964,151082500.00000003,344999.99999999994,0.009134082372213853,3430000.0,False,20454545.0,0.00020454545\
+Q3,14979545455.0,0.0605,264500.0,1322499.9999999998,661249.9999999999,10929752.0,2500000000.0,17468615702.0,2489070248.0,5000000000.0,0.3337884994689729,196311375.00000003,396749.99999999994,0.008084095992909221,2694500.0,False,31384297.0,0.00031384297\
+Q4,17468615702.0,0.06655,304175.0,1520874.9999999995,760437.4999999997,11426559.0,2500000000.0,19957189144.0,2488573441.0,5000000000.0,0.286227602985756,249068731.25000003,456262.4999999998,0.007327495470188609,1998675.0,False,42810856.0,0.00042810856\
+Q5,19957189144.0,0.1,349801.0,1749006.249999999,874503.1249999995,8745031.0,2500000000.0,22448444112.0,2491254969.0,5000000000.0,0.25053628364434294,424056332.5575226,524701.8749999997,0.0049493601176567705,1348476.25,False,51555887.0,0.00051555887\
+Q6,22448444112.0,0.11,402271.0,2011357.1874999988,1005678.5937499993,9142533.0,2500000000.0,24939301580.0,2490857467.0,5000000000.0,0.22273258560807224,521265202.6101499,603407.1562499997,0.004630327543281519,750747.6875,False,60698420.0,0.0006069842\
+Q7,24939301580.0,0.121,462612.0,2313060.7656249986,1156530.3828124993,9558102.0,2500000000.0,27429743477.0,2490441898.0,5500000001.0,0.22053544616915757,633665445.187571,693918.2296874996,0.004380344454364831,213359.84062499925,False,70256522.0,0.00070256522\
+Q8,27429743477.0,0.1331,532004.0,2660019.880468748,1330009.940234374,9992562.0,2500000000.0,29919750916.0,2490007438.0,6000000002.0,0.21874065307893956,763321770.3701954,798005.9641406244,0.004181753986938473,-254636.18328125123,False,80249084.0,0.00080249084\
+Q9,29919750916.0,0.25,611805.0,3059022.8625390604,1529511.4312695302,6118046.0,3000000001.0,32913632871.0,2993881955.0,6000000001.0,0.2005364288594323,1570834594.66732,917706.8587617181,0.0023368643952129797,-642831.6107734386,True,86367130.0,0.0008636713\
+Q10,32913632871.0,0.3,703575.0,3517876.291919919,1758938.1459599596,5863127.0,3000000001.0,35907769745.0,2994136874.0,5999999999.0,0.1822952823992123,2064642078.4744353,1055362.8875759756,0.0020446408577622006,-939256.3523894548,True,92230257.0,0.00092230257\
+Q11,35907769745.0,0.35,809112.0,4045557.735707907,2022778.8678539535,5779368.0,3000000000.0,38901990377.0,2994220632.0,5999999999.0,0.16709475530330786,2618341604.25136,1213667.320712372,0.0018541008075367393,-1130144.805247873,False,98009625.0,0.00098009625\
+Q12,38901990377.0,0.4,930478.0,4652391.396064093,2326195.6980320467,5815489.0,2999999999.0,41896174886.0,2994184510.0,6000000000.0,0.15423375364370548,3231926610.5211406,1395717.418819228,0.0017274122676865758,-1199666.5260350555,False,103825114.0,0.00103825114\
+Q13,41896174886.0,0.45,1070050.0,5350250.1054737065,2675125.0527368532,5944722.0,3000000000.0,44890230164.0,2994055278.0,6000000001.0,0.14321116467720443,3905388227.2699804,1605075.031642112,0.0016439595125876869,-1129616.5049403142,False,109769836.0,0.00109769836\
+Q14,44890230164.0,0.5,1230558.0,6152787.621294762,3076393.810647381,6152788.0,3000000000.0,47884077376.0,2993847212.0,6000000001.0,0.13365937263125793,4638715377.024165,1845836.2863884286,0.0015916788475800574,-899058.9806813616,False,115922624.0,0.00115922624\
+Q15,47884077376.0,0.5,1415141.0,7075705.764488976,3537852.882244488,7075706.0,3000000001.0,50877001672.0,2992924295.0,3000000000.0,0.06265130632916044,4938053952.404876,2122711.729346693,0.0017194722858893947,-483917.82778356597,True,122998330.0,0.0012299833\
+Q16,50877001672.0,0.5,1627412.0,8137061.629162321,4068530.8145811604,8137062.0,3000000000.0,53868864610.0,2991862938.0,0.0,0.0,5237293314.085194,2441118.488748696,0.0018644122773750665,143494.49804889783,False,131135392.0,0.00131135392\
+\
+sims/outputs/run_manifest.json\
+\
+config": \{\
+    "quarters": 16,\
+    "total_supply_grid": [\
+      500000000,\
+      1000000000,\
+      5000000000,\
+      10000000000,\
+      100000000000\
+    ],\
+    "initial_circulating_pct": 0.1,\
+    "max_unlock_cap_per_month": 0.01,\
+    "base_actions_q1": 200000,\
+    "actions_growth_qoq": 0.15,\
+    "fee_per_action_usd": 5.0,\
+    "burn_share": 0.5,\
+    "stakers_share": 0.3,\
+    "treasury_share": 0.2,\
+    "price_q1_usd": 0.05,\
+    "price_growth_qoq": 0.05,\
+    "staked_pct_of_circ": 0.2,\
+    "target_staker_apy": 0.03,\
+    "starting_treasury_cash_usd": 5000000,\
+    "ops_spend_per_q_usd": 1000000,\
+    "min_runway_quarters_alert": 6,\
+    "max_overhang_vs_float_alert": 0.5,\
+    "burn_floor_sait_per_q": 0,\
+    "burn_floor_finance": "treasury"\
+  \},\
+  "price_mode": "custom CSV (16 rows)",\
+  "used_schedule_path": "outputs/derived_unlock_schedule.csv",\
+  "used_price_csv": "prices.csv",\
+  "quarterly_cap_pct": 0.03,\
+  "schedule_totals_pct_per_q": [\
+    0.025,\
+    0.025,\
+    0.025,\
+    0.025,\
+    0.025,\
+    0.025,\
+    0.025,\
+    0.025,\
+    0.03,\
+    0.03,\
+    0.03,\
+    0.03,\
+    0.03,\
+    0.03,\
+    0.03,\
+    0.03\
+  ],\
+  "total_supply_grid": [\
+    500000000,\
+    1000000000,\
+    5000000000,\
+    10000000000,\
+    100000000000\
+  ]\
+\}\
+\
+sims/phases.yaml\
+\
+phases:\
+  - name: Phase 1\
+    start_quarter: 1\
+    total_pct: 0.10\
+    duration_quarters: 4\
+    buckets:\
+      Research: 0.40\
+      Ecosystem: 0.20\
+      Team: 0.10\
+      Partners: 0.10\
+      Treasury: 0.10\
+      Liquidity: 0.10\
+  - name: Phase 2\
+    start_quarter: 5\
+    total_pct: 0.15\
+    duration_quarters: 6\
+    buckets:\
+      Ecosystem: 0.35\
+      Research: 0.30\
+      Partners: 0.20\
+      Treasury: 0.10\
+      Liquidity: 0.05\
+  - name: Phase 3\
+    start_quarter: 9\
+    total_pct: 0.25\
+    duration_quarters: 8\
+    buckets:\
+      Research: 0.45\
+      Team: 0.20\
+      Ecosystem: 0.20\
+      Partners: 0.10\
+      Treasury: 0.05\
+\
+sims/prices.csv\
+Price_USD\
+0.05\
+0.055\
+0.0605\
+0.06655\
+0.10\
+0.11\
+0.121\
+0.1331\
+0.25\
+0.30\
+0.35\
+0.40\
+0.45\
+0.50\
+0.50\
+0.50\
+\
+sims/sait_models.py\
+\
+sims/outputs/SAIT_Tokenomics_Report.md\
+\
+# Python__pycache__/*.pyc.venv/.env# Simulator outputs (reproducible)sims/outputs/*.csvsims/outputs/*results_*.csvsims/outputs/*run_manifest.jsonsims/outputs_scenarios/*/results_*.csvsims/outputs_scenarios/*/kpis_summary.csvsims/outputs_scenarios/*/run_manifest.json# (Optional) keep human-readable reports; comment these out if you *do* want them# sims/outputs/*report_*.md# sims/outputs/SAIT_Tokenomics_Report.md# sims/outputs_scenarios/*/SAIT_Tokenomics_Report.md# sims/outputs_scenarios/*/kpis_summary.md\
+Collapse file: requirements.txt\uc0\u8206 requirements.txt\u8206 Copy file name to clipboard+3Lines changed: 3 additions & 0 deletionsOriginal file line numberDiff line numberDiff line change@@ -0,0 +1,3 @@numpy>=1.26,<3pandas>=2.0,<3PyYAML>=6.0,<7\
+Collapse file: sims/config.yaml\uc0\u8206 sims/config.yaml\u8206 Copy file name to clipboard+33-21Lines changed: 33 additions & 21 deletionsOriginal file line numberDiff line numberDiff line change@@ -1,22 +1,34 @@quarters: 16total_supply_grid: [500000000, 1000000000, 5000000000, 10000000000, 100000000000]initial_circulating_pct: 0.10max_unlock_cap_per_month: 0.01base_actions_q1: 200000actions_growth_qoq: 0.15fee_per_action_usd: 5.0burn_share: 0.50stakers_share: 0.30treasury_share: 0.20# horizon & capsquarters: 16                     # Q4'25 through Q1'29 (adjust as you like)max_unlock_cap_per_month: 0.01   # \u8804 1%/mo  \u8658  3%/q (global cap)# circulating startinitial_circulating_pct: 0.10    # early scarcity target (you said <15%)# usage/fees \u8594  burns/staking/treasury (governance-set)base_actions_q1: 100000          # pick a realistic starting usage countactions_growth_qoq: 0.20         # +20% QoQ usage growth (tune)fee_per_action_usd: 0.25         # compliance/tx fee unit economics (tune)burn_share: 0.50                 # 50% of fees \u8594  burn potstakers_share: 0.20              # 20% \u8594  stakerstreasury_share: 0.30             # 30% \u8594  treasury# staking economicsstaked_pct_of_circ: 0.25         # 25% of circulating tokens stakedtarget_staker_apy: 0.12          # 12% APY cap from fees (quarterly capped in code)# treasury runwaystarting_treasury_cash_usd: 1500000ops_spend_per_q_usd: 600000# burn floor (to enforce \'93credibility\'94 even if early fees are low)burn_floor_sait_per_q: 2000000burn_floor_finance: "treasury"   # treasury tops up the difference# price path (only used if you don't give prices.csv)price_q1_usd: 0.05price_growth_qoq: 0.05staked_pct_of_circ: 0.20target_staker_apy: 0.03starting_treasury_cash_usd: 5000000ops_spend_per_q_usd: 1000000min_runway_quarters_alert: 6max_overhang_vs_float_alert: 0.50# Burn floor (min SAIT per quarter) and finance modeburn_floor_sait_per_q: 0burn_floor_finance: treasury  # 'treasury' or 'ignore'price_growth_qoq: 0.35           # *narrative* mid-case; switch to prices.csv for scenarios# total-supply grid (you can still sweep; your business plan anchors 1B)total_supply_grid: [1000000000]\
+Collapse file: sims/outputs/SAIT_Tokenomics_Report.md\
+\
+# Python__pycache__/*.pyc.venv/.env# Simulator outputs (reproducible)sims/outputs/*.csvsims/outputs/*results_*.csvsims/outputs/*run_manifest.jsonsims/outputs_scenarios/*/results_*.csvsims/outputs_scenarios/*/kpis_summary.csvsims/outputs_scenarios/*/run_manifest.json# (Optional) keep human-readable reports; comment these out if you *do* want them# sims/outputs/*report_*.md# sims/outputs/SAIT_Tokenomics_Report.md# sims/outputs_scenarios/*/SAIT_Tokenomics_Report.md# sims/outputs_scenarios/*/kpis_summary.md\
+Collapse file: requirements.txt\uc0\u8206 requirements.txt\u8206 Copy file name to clipboard+3Lines changed: 3 additions & 0 deletionsOriginal file line numberDiff line numberDiff line change@@ -0,0 +1,3 @@numpy>=1.26,<3pandas>=2.0,<3PyYAML>=6.0,<7\
+Collapse file: sims/config.yaml\uc0\u8206 sims/config.yaml\u8206 Copy file name to clipboard+33-21Lines changed: 33 additions & 21 deletionsOriginal file line numberDiff line numberDiff line change@@ -1,22 +1,34 @@quarters: 16total_supply_grid: [500000000, 1000000000, 5000000000, 10000000000, 100000000000]initial_circulating_pct: 0.10max_unlock_cap_per_month: 0.01base_actions_q1: 200000actions_growth_qoq: 0.15fee_per_action_usd: 5.0burn_share: 0.50stakers_share: 0.30treasury_share: 0.20# horizon & capsquarters: 16                     # Q4'25 through Q1'29 (adjust as you like)max_unlock_cap_per_month: 0.01   # \u8804 1%/mo  \u8658  3%/q (global cap)# circulating startinitial_circulating_pct: 0.10    # early scarcity target (you said <15%)# usage/fees \u8594  burns/staking/treasury (governance-set)base_actions_q1: 100000          # pick a realistic starting usage countactions_growth_qoq: 0.20         # +20% QoQ usage growth (tune)fee_per_action_usd: 0.25         # compliance/tx fee unit economics (tune)burn_share: 0.50                 # 50% of fees \u8594  burn potstakers_share: 0.20              # 20% \u8594  stakerstreasury_share: 0.30             # 30% \u8594  treasury# staking economicsstaked_pct_of_circ: 0.25         # 25% of circulating tokens stakedtarget_staker_apy: 0.12          # 12% APY cap from fees (quarterly capped in code)# treasury runwaystarting_treasury_cash_usd: 1500000ops_spend_per_q_usd: 600000# burn floor (to enforce \'93credibility\'94 even if early fees are low)burn_floor_sait_per_q: 2000000burn_floor_finance: "treasury"   # treasury tops up the difference# price path (only used if you don't give prices.csv)price_q1_usd: 0.05price_growth_qoq: 0.05staked_pct_of_circ: 0.20target_staker_apy: 0.03starting_treasury_cash_usd: 5000000ops_spend_per_q_usd: 1000000min_runway_quarters_alert: 6max_overhang_vs_float_alert: 0.50# Burn floor (min SAIT per quarter) and finance modeburn_floor_sait_per_q: 0burn_floor_finance: treasury  # 'treasury' or 'ignore'price_growth_qoq: 0.35           # *narrative* mid-case; switch to prices.csv for scenarios# total-supply grid (you can still sweep; your business plan anchors 1B)total_supply_grid: [1000000000]\
+Collapse file: sims/outputs/derived_unlock_schedule.csv\
+\
+ Python__pycache__/*.pyc.venv/.env# Simulator outputs (reproducible)sims/outputs/*.csvsims/outputs/*results_*.csvsims/outputs/*run_manifest.jsonsims/outputs_scenarios/*/results_*.csvsims/outputs_scenarios/*/kpis_summary.csvsims/outputs_scenarios/*/run_manifest.json# (Optional) keep human-readable reports; comment these out if you *do* want them# sims/outputs/*report_*.md# sims/outputs/SAIT_Tokenomics_Report.md# sims/outputs_scenarios/*/SAIT_Tokenomics_Report.md# sims/outputs_scenarios/*/kpis_summary.md\
+Collapse file: requirements.txt\uc0\u8206 requirements.txt\u8206 Copy file name to clipboard+3Lines changed: 3 additions & 0 deletionsOriginal file line numberDiff line numberDiff line change@@ -0,0 +1,3 @@numpy>=1.26,<3pandas>=2.0,<3PyYAML>=6.0,<7\
+Collapse file: sims/config.yaml\uc0\u8206 sims/config.yaml\u8206 Copy file name to clipboard+33-21Lines changed: 33 additions & 21 deletionsOriginal file line numberDiff line numberDiff line change@@ -1,22 +1,34 @@quarters: 16total_supply_grid: [500000000, 1000000000, 5000000000, 10000000000, 100000000000]initial_circulating_pct: 0.10max_unlock_cap_per_month: 0.01base_actions_q1: 200000actions_growth_qoq: 0.15fee_per_action_usd: 5.0burn_share: 0.50stakers_share: 0.30treasury_share: 0.20# horizon & capsquarters: 16                     # Q4'25 through Q1'29 (adjust as you like)max_unlock_cap_per_month: 0.01   # \u8804 1%/mo  \u8658  3%/q (global cap)# circulating startinitial_circulating_pct: 0.10    # early scarcity target (you said <15%)# usage/fees \u8594  burns/staking/treasury (governance-set)base_actions_q1: 100000          # pick a realistic starting usage countactions_growth_qoq: 0.20         # +20% QoQ usage growth (tune)fee_per_action_usd: 0.25         # compliance/tx fee unit economics (tune)burn_share: 0.50                 # 50% of fees \u8594  burn potstakers_share: 0.20              # 20% \u8594  stakerstreasury_share: 0.30             # 30% \u8594  treasury# staking economicsstaked_pct_of_circ: 0.25         # 25% of circulating tokens stakedtarget_staker_apy: 0.12          # 12% APY cap from fees (quarterly capped in code)# treasury runwaystarting_treasury_cash_usd: 1500000ops_spend_per_q_usd: 600000# burn floor (to enforce \'93credibility\'94 even if early fees are low)burn_floor_sait_per_q: 2000000burn_floor_finance: "treasury"   # treasury tops up the difference# price path (only used if you don't give prices.csv)price_q1_usd: 0.05price_growth_qoq: 0.05staked_pct_of_circ: 0.20target_staker_apy: 0.03starting_treasury_cash_usd: 5000000ops_spend_per_q_usd: 1000000min_runway_quarters_alert: 6max_overhang_vs_float_alert: 0.50# Burn floor (min SAIT per quarter) and finance modeburn_floor_sait_per_q: 0burn_floor_finance: treasury  # 'treasury' or 'ignore'price_growth_qoq: 0.35           # *narrative* mid-case; switch to prices.csv for scenarios# total-supply grid (you can still sweep; your business plan anchors 1B)total_supply_grid: [1000000000]\
+Collapse file: sims/outputs/kpis_summary.csv\
+\
+ Python__pycache__/*.pyc.venv/.env# Simulator outputs (reproducible)sims/outputs/*.csvsims/outputs/*results_*.csvsims/outputs/*run_manifest.jsonsims/outputs_scenarios/*/results_*.csvsims/outputs_scenarios/*/kpis_summary.csvsims/outputs_scenarios/*/run_manifest.json# (Optional) keep human-readable reports; comment these out if you *do* want them# sims/outputs/*report_*.md# sims/outputs/SAIT_Tokenomics_Report.md# sims/outputs_scenarios/*/SAIT_Tokenomics_Report.md# sims/outputs_scenarios/*/kpis_summary.md\
+Collapse file: requirements.txt\uc0\u8206 requirements.txt\u8206 Copy file name to clipboard+3Lines changed: 3 additions & 0 deletionsOriginal file line numberDiff line numberDiff line change@@ -0,0 +1,3 @@numpy>=1.26,<3pandas>=2.0,<3PyYAML>=6.0,<7\
+Collapse file: sims/config.yaml\uc0\u8206 sims/config.yaml\u8206 Copy file name to clipboard+33-21Lines changed: 33 additions & 21 deletionsOriginal file line numberDiff line numberDiff line change@@ -1,22 +1,34 @@quarters: 16total_supply_grid: [500000000, 1000000000, 5000000000, 10000000000, 100000000000]initial_circulating_pct: 0.10max_unlock_cap_per_month: 0.01base_actions_q1: 200000actions_growth_qoq: 0.15fee_per_action_usd: 5.0burn_share: 0.50stakers_share: 0.30treasury_share: 0.20# horizon & capsquarters: 16                     # Q4'25 through Q1'29 (adjust as you like)max_unlock_cap_per_month: 0.01   # \u8804 1%/mo  \u8658  3%/q (global cap)# circulating startinitial_circulating_pct: 0.10    # early scarcity target (you said <15%)# usage/fees \u8594  burns/staking/treasury (governance-set)base_actions_q1: 100000          # pick a realistic starting usage countactions_growth_qoq: 0.20         # +20% QoQ usage growth (tune)fee_per_action_usd: 0.25         # compliance/tx fee unit economics (tune)burn_share: 0.50                 # 50% of fees \u8594  burn potstakers_share: 0.20              # 20% \u8594  stakerstreasury_share: 0.30             # 30% \u8594  treasury# staking economicsstaked_pct_of_circ: 0.25         # 25% of circulating tokens stakedtarget_staker_apy: 0.12          # 12% APY cap from fees (quarterly capped in code)# treasury runwaystarting_treasury_cash_usd: 1500000ops_spend_per_q_usd: 600000# burn floor (to enforce \'93credibility\'94 even if early fees are low)burn_floor_sait_per_q: 2000000burn_floor_finance: "treasury"   # treasury tops up the difference# price path (only used if you don't give prices.csv)price_q1_usd: 0.05price_growth_qoq: 0.05staked_pct_of_circ: 0.20target_staker_apy: 0.03starting_treasury_cash_usd: 5000000ops_spend_per_q_usd: 1000000min_runway_quarters_alert: 6max_overhang_vs_float_alert: 0.50# Burn floor (min SAIT per quarter) and finance modeburn_floor_sait_per_q: 0burn_floor_finance: treasury  # 'treasury' or 'ignore'price_growth_qoq: 0.35           # *narrative* mid-case; switch to prices.csv for scenarios# total-supply grid (you can still sweep; your business plan anchors 1B)total_supply_grid: [1000000000]\
+Collapse file: sims/outputs/SAIT_Tokenomics_Report.md\uc0\u8206 sims/outputs/SAIT_Tokenomics_Report.md\u8206 Copy file name to clipboardExpand all lines: sims/outputs/SAIT_Tokenomics_Report.md+53-156Lines changed: 53 additions & 156 deletionsDisplay the source diffDisplay the rich diffOriginal file line numberDiff line numberDiff line change@@ -1,3 +1,29 @@# SAIT Tokenomics Simulation \'97 Plain English Context## What this isWe modeled SAIT\'92s tokenomics to see how unlocks, burns, staking, and treasury cash interact.It shows whether SAIT stays scarce, whether the treasury runs out, and whether the design is credible.## Key assumptions in this run- **Total Supply**: 1,000,000,000 SAIT (fixed, no inflation).- **Initial circulation**: 10.0% of supply unlocked in Q1.- **Unlock cap**: \u8804  1.00% per month (\u8776  3.00% per quarter).- **Fee per action**: $0.25.- **Fee split**: 50% burn, 20% stakers, 30% treasury.- **Usage start**: 100,000 actions in Q1, growing 20.0% per quarter.- **Staking**: 25% of circulating tokens staked, with 12% APY cap.- **Treasury**: start $1,500,000, spending $600,000/quarter.- **Burn floor**: 2,000,000 SAIT per quarter, mode=treasury.- **Price path**: custom CSV (16 rows).## How to read the results- **Deflationary quarters**: times when burns exceed unlocks (circulating supply shrinks).- **Overhang vs Float**: supply waiting to unlock relative to what\'92s circulating (dump risk).- **Treasury runway**: quarters before treasury cash runs out.- **Crowdfund proceeds**: cash raised from planned sales (tiers).The following sections show KPI tables, per-scenario reports, and recommendations.# SAIT Tokenomics \'97 Consolidated Report## Executive Summary@@ -7,190 +33,61 @@## Inputs & Assumptions- Horizon: **16 quarters**- Total-supply grid: **500,000,000, 1,000,000,000, 5,000,000,000, 10,000,000,000, 100,000,000,000**- Total-supply grid: **1,000,000,000**- Initial float: **10.00%** of total (Q1 start)- Unlock cap: **1.00%/mo \u8658  3.00%/qtr** (global)- Usage: actions Q1=**200,000**, growth QoQ=**15.0%**- Fees: **$5.00/action** | Splits: burn=0.50, stakers=0.30, treasury=0.20- Staking: %staked=**20.0%** | target APY=**3.0%** (fee-funded cap)- Treasury: start=**$5,000,000**, ops=**$1,000,000/qtr**- Burn floor: **0 SAIT/q** (treasury)- Usage: actions Q1=**100,000**, growth QoQ=**20.0%**- Fees: **$0.25/action** | Splits: burn=0.50, stakers=0.20, treasury=0.30- Staking: %staked=**25.0%** | target APY=**12.0%** (fee-funded cap)- Treasury: start=**$1,500,000**, ops=**$600,000/qtr**- Burn floor: **2,000,000 SAIT/q** (treasury)- Price: **custom CSV (16 rows)**## Schedule Diagnostics- Total unlock over 16q: **44.00%** of total supply- Avg unlock per quarter: **2.75%** | Max per quarter: **3.00%**- Total unlock over 16q: **28.00%** of total supply- Avg unlock per quarter: **1.75%** | Max per quarter: **3.00%**- Global cap breaches: **none** (excess spilled forward if needed)### Unlocks by Bucket (16q totals)- Research: **17.06%**- Ecosystem: **11.04%**- Team: **4.81%**- Partners: **5.89%**- Treasury: **3.45%**- Liquidity: **1.75%**- Total: **44.00%**- Research: **11.60%**- Ecosystem: **8.80%**- Team: **2.10%**- Partners: **3.00%**- Treasury: **1.30%**- Liquidity: **1.20%**- Total: **28.00%**## Scenario Comparison (Key KPIs)| Total Supply | Init Float | Final Circ | Final Circ % | Cum Burn (SAIT) | Cum Burn % | Defl Qtrs | Runway Q (min) | Peak Unlock %/q | Max Overhang/Float | Avg Staker APY ||---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|| 500,000,000 | 50,000,000 | 138,864,608 | 27.77% | 131,135,392 | 26.23% | 0 | 7 | 3.00% | 50.0% | 3.00% || 1,000,000,000 | 100,000,000 | 408,864,611 | 40.89% | 131,135,392 | 13.11% | 0 | 7 | 3.00% | 50.0% | 3.00% || 5,000,000,000 | 500,000,000 | 2,568,864,612 | 51.38% | 131,135,392 | 2.62% | 0 | 7 | 3.00% | 50.0% | 3.00% || 10,000,000,000 | 1,000,000,000 | 5,268,864,606 | 52.69% | 131,135,392 | 1.31% | 0 | 7 | 3.00% | 50.0% | 2.45% || 100,000,000,000 | 10,000,000,000 | 53,868,864,610 | 53.87% | 131,135,392 | 0.13% | 0 | 7 | 3.00% | 50.0% | 0.43% || 1,000,000,000 | 100,000,000 | 347,999,998 | 34.80% | 32,000,000 | 3.20% | 3 | inf | 3.00% | 60.0% | 0.74% |## Recommendations- Increase burn intensity (raise burn_share) and/or adoption (actions growth, fee_per_action) to create at least 1\'962 deflationary quarters by Year 2.- Reduce early unlocks (longer durations, stagger phases) or slightly increase initial float to bring Max Overhang/Float below 40%.- Publish the cap-compliant unlock curve and overhang metric alongside governance proposals to set expectations.- Add a burn floor (e.g., 2M SAIT/q) financed from treasury early on; remove when usage burns dominate.## Per-Scenario Details---### Scenario \'97 Total Supply 500,000,000## Headline- **Supply**: 16q unlocks = 44.00%; Final circ = 27.77% (138,864,608 SAIT).- **Burns**: cumulative = 131,135,392 SAIT (26.23%); Deflationary quarters: 0 (first: \'97).- **Treasury**: runway\u8776  7 q (min balance $-1,199,667 at Q12).- **Overhang**: max = 50.00%; quarters > 40% = 9.## Unlocks by Bucket (16q total)- Research: 17.06%- Ecosystem: 11.04%- Team: 4.81%- Partners: 5.89%- Treasury: 3.45%- Liquidity: 1.75%- **Total**: 44.00%## Notes- Burns are driven by usage/fees/price, not by total supply \'97 hence identical SAIT burns across caps.- Global cap enforcer ensures per-quarter total unlock \u8804  3% (given 1%/mo cap).- Overhang is defined as next-2Q unlocks \'f7 starting float for the quarter.## Suggested levers if this scenario trips warnings- Reduce early unlock pace (longer durations / stagger phases) to cut overhang.- Raise burn_share / increase actions / fee_per_action / price to approach deflationary quarters.- Consider a small increase in initial float only if liquidity depth is a concern (trade-off: more potential sellers).---### Scenario \'97 Total Supply 1,000,000,000## Headline- **Supply**: 16q unlocks = 44.00%; Final circ = 40.89% (408,864,611 SAIT).- **Burns**: cumulative = 131,135,392 SAIT (13.11%); Deflationary quarters: 0 (first: \'97).- **Treasury**: runway\u8776  7 q (min balance $-1,199,667 at Q12).- **Overhang**: max = 50.00%; quarters > 40% = 2.## Unlocks by Bucket (16q total)- Research: 17.06%- Ecosystem: 11.04%- Team: 4.81%- Partners: 5.89%- Treasury: 3.45%- Liquidity: 1.75%- **Total**: 44.00%## Notes- Burns are driven by usage/fees/price, not by total supply \'97 hence identical SAIT burns across caps.- Global cap enforcer ensures per-quarter total unlock \u8804  3% (given 1%/mo cap).- Overhang is defined as next-2Q unlocks \'f7 starting float for the quarter.## Suggested levers if this scenario trips warnings- Reduce early unlock pace (longer durations / stagger phases) to cut overhang.- Raise burn_share / increase actions / fee_per_action / price to approach deflationary quarters.- Consider a small increase in initial float only if liquidity depth is a concern (trade-off: more potential sellers).---### Scenario \'97 Total Supply 5,000,000,000## Headline- **Supply**: 16q unlocks = 44.00%; Final circ = 51.38% (2,568,864,612 SAIT).- **Burns**: cumulative = 131,135,392 SAIT (2.62%); Deflationary quarters: 0 (first: \'97).- **Treasury**: runway\u8776  7 q (min balance $-1,199,667 at Q12).- **Overhang**: max = 50.00%; quarters > 40% = 2.## Unlocks by Bucket (16q total)- Research: 17.06%- Ecosystem: 11.04%- Team: 4.81%- Partners: 5.89%- Treasury: 3.45%- Liquidity: 1.75%- **Total**: 44.00%## Notes- Burns are driven by usage/fees/price, not by total supply \'97 hence identical SAIT burns across caps.- Global cap enforcer ensures per-quarter total unlock \u8804  3% (given 1%/mo cap).- Overhang is defined as next-2Q unlocks \'f7 starting float for the quarter.## Suggested levers if this scenario trips warnings- Reduce early unlock pace (longer durations / stagger phases) to cut overhang.- Raise burn_share / increase actions / fee_per_action / price to approach deflationary quarters.- Consider a small increase in initial float only if liquidity depth is a concern (trade-off: more potential sellers).---### Scenario \'97 Total Supply 10,000,000,000## Headline- **Supply**: 16q unlocks = 44.00%; Final circ = 52.69% (5,268,864,606 SAIT).- **Burns**: cumulative = 131,135,392 SAIT (1.31%); Deflationary quarters: 0 (first: \'97).- **Treasury**: runway\u8776  7 q (min balance $-1,199,667 at Q12).- **Overhang**: max = 50.00%; quarters > 40% = 2.## Unlocks by Bucket (16q total)- Research: 17.06%- Ecosystem: 11.04%- Team: 4.81%- Partners: 5.89%- Treasury: 3.45%- Liquidity: 1.75%- **Total**: 44.00%## Notes- Burns are driven by usage/fees/price, not by total supply \'97 hence identical SAIT burns across caps.- Global cap enforcer ensures per-quarter total unlock \u8804  3% (given 1%/mo cap).- Overhang is defined as next-2Q unlocks \'f7 starting float for the quarter.## Suggested levers if this scenario trips warnings- Reduce early unlock pace (longer durations / stagger phases) to cut overhang.- Raise burn_share / increase actions / fee_per_action / price to approach deflationary quarters.- Consider a small increase in initial float only if liquidity depth is a concern (trade-off: more potential sellers).---### Scenario \'97 Total Supply 100,000,000,000## Headline- **Supply**: 16q unlocks = 44.00%; Final circ = 53.87% (53,868,864,610 SAIT).- **Burns**: cumulative = 131,135,392 SAIT (0.13%); Deflationary quarters: 0 (first: \'97).- **Treasury**: runway\u8776  7 q (min balance $-1,199,667 at Q12).- **Overhang**: max = 50.00%; quarters > 40% = 2.- **Supply**: 16q unlocks = 28.00%; Final circ = 34.80% (347,999,998 SAIT).- **Burns**: cumulative = 32,000,000 SAIT (3.20%); Deflationary quarters: 3 (first: Q14).- **Treasury**: runway\u8776  inf q (min balance $3,400,000 at Q1).- **Overhang**: max = 60.00%; quarters > 40% = 2.## Unlocks by Bucket (16q total)- Research: 17.06%- Ecosystem: 11.04%- Team: 4.81%- Partners: 5.89%- Treasury: 3.45%- Liquidity: 1.75%- **Total**: 44.00%- Research: 11.60%- Ecosystem: 8.80%- Team: 2.10%- Partners: 3.00%- Treasury: 1.30%- Liquidity: 1.20%- **Total**: 28.00%## Notes- Burns are driven by usage/fees/price, not by total supply \'97 hence identical SAIT burns across caps.\
+Collapse file: sims/outputs/report_1000000000.\
+\
+ Python__pycache__/*.pyc.venv/.env# Simulator outputs (reproducible)sims/outputs/*.csvsims/outputs/*results_*.csvsims/outputs/*run_manifest.jsonsims/outputs_scenarios/*/results_*.csvsims/outputs_scenarios/*/kpis_summary.csvsims/outputs_scenarios/*/run_manifest.json# (Optional) keep human-readable reports; comment these out if you *do* want them# sims/outputs/*report_*.md# sims/outputs/SAIT_Tokenomics_Report.md# sims/outputs_scenarios/*/SAIT_Tokenomics_Report.md# sims/outputs_scenarios/*/kpis_summary.md\
+Collapse file: requirements.txt\uc0\u8206 requirements.txt\u8206 Copy file name to clipboard+3Lines changed: 3 additions & 0 deletionsOriginal file line numberDiff line numberDiff line change@@ -0,0 +1,3 @@numpy>=1.26,<3pandas>=2.0,<3PyYAML>=6.0,<7\
+Collapse file: sims/config.yaml\uc0\u8206 sims/config.yaml\u8206 Copy file name to clipboard+33-21Lines changed: 33 additions & 21 deletionsOriginal file line numberDiff line numberDiff line change@@ -1,22 +1,34 @@quarters: 16total_supply_grid: [500000000, 1000000000, 5000000000, 10000000000, 100000000000]initial_circulating_pct: 0.10max_unlock_cap_per_month: 0.01base_actions_q1: 200000actions_growth_qoq: 0.15fee_per_action_usd: 5.0burn_share: 0.50stakers_share: 0.30treasury_share: 0.20# horizon & capsquarters: 16                     # Q4'25 through Q1'29 (adjust as you like)max_unlock_cap_per_month: 0.01   # \u8804 1%/mo  \u8658  3%/q (global cap)# circulating startinitial_circulating_pct: 0.10    # early scarcity target (you said <15%)# usage/fees \u8594  burns/staking/treasury (governance-set)base_actions_q1: 100000          # pick a realistic starting usage countactions_growth_qoq: 0.20         # +20% QoQ usage growth (tune)fee_per_action_usd: 0.25         # compliance/tx fee unit economics (tune)burn_share: 0.50                 # 50% of fees \u8594  burn potstakers_share: 0.20              # 20% \u8594  stakerstreasury_share: 0.30             # 30% \u8594  treasury# staking economicsstaked_pct_of_circ: 0.25         # 25% of circulating tokens stakedtarget_staker_apy: 0.12          # 12% APY cap from fees (quarterly capped in code)# treasury runwaystarting_treasury_cash_usd: 1500000ops_spend_per_q_usd: 600000# burn floor (to enforce \'93credibility\'94 even if early fees are low)burn_floor_sait_per_q: 2000000burn_floor_finance: "treasury"   # treasury tops up the difference# price path (only used if you don't give prices.csv)price_q1_usd: 0.05price_growth_qoq: 0.05staked_pct_of_circ: 0.20target_staker_apy: 0.03starting_treasury_cash_usd: 5000000ops_spend_per_q_usd: 1000000min_runway_quarters_alert: 6max_overhang_vs_float_alert: 0.50# Burn floor (min SAIT per quarter) and finance modeburn_floor_sait_per_q: 0burn_floor_finance: treasury  # 'treasury' or 'ignore'price_growth_qoq: 0.35           # *narrative* mid-case; switch to prices.csv for scenarios# total-supply grid (you can still sweep; your business plan anchors 1B)total_supply_grid: [1000000000]\
+Collapse file: sims/outputs/report_1000000000.md\
+\
+# Python__pycache__/*.pyc.venv/.env# Simulator outputs (reproducible)sims/outputs/*.csvsims/outputs/*results_*.csvsims/outputs/*run_manifest.jsonsims/outputs_scenarios/*/results_*.csvsims/outputs_scenarios/*/kpis_summary.csvsims/outputs_scenarios/*/run_manifest.json# (Optional) keep human-readable reports; comment these out if you *do* want them# sims/outputs/*report_*.md# sims/outputs/SAIT_Tokenomics_Report.md# sims/outputs_scenarios/*/SAIT_Tokenomics_Report.md# sims/outputs_scenarios/*/kpis_summary.md\
+Collapse file: requirements.txt\uc0\u8206 requirements.txt\u8206 Copy file name to clipboard+3Lines changed: 3 additions & 0 deletionsOriginal file line numberDiff line numberDiff line change@@ -0,0 +1,3 @@numpy>=1.26,<3pandas>=2.0,<3PyYAML>=6.0,<7\
+Collapse file: sims/config.yaml\uc0\u8206 sims/config.yaml\u8206 Copy file name to clipboard+33-21Lines changed: 33 additions & 21 deletionsOriginal file line numberDiff line numberDiff line change@@ -1,22 +1,34 @@quarters: 16total_supply_grid: [500000000, 1000000000, 5000000000, 10000000000, 100000000000]initial_circulating_pct: 0.10max_unlock_cap_per_month: 0.01base_actions_q1: 200000actions_growth_qoq: 0.15fee_per_action_usd: 5.0burn_share: 0.50stakers_share: 0.30treasury_share: 0.20# horizon & capsquarters: 16                     # Q4'25 through Q1'29 (adjust as you like)max_unlock_cap_per_month: 0.01   # \u8804 1%/mo  \u8658  3%/q (global cap)# circulating startinitial_circulating_pct: 0.10    # early scarcity target (you said <15%)# usage/fees \u8594  burns/staking/treasury (governance-set)base_actions_q1: 100000          # pick a realistic starting usage countactions_growth_qoq: 0.20         # +20% QoQ usage growth (tune)fee_per_action_usd: 0.25         # compliance/tx fee unit economics (tune)burn_share: 0.50                 # 50% of fees \u8594  burn potstakers_share: 0.20              # 20% \u8594  stakerstreasury_share: 0.30             # 30% \u8594  treasury# staking economicsstaked_pct_of_circ: 0.25         # 25% of circulating tokens stakedtarget_staker_apy: 0.12          # 12% APY cap from fees (quarterly capped in code)# treasury runwaystarting_treasury_cash_usd: 1500000ops_spend_per_q_usd: 600000# burn floor (to enforce \'93credibility\'94 even if early fees are low)burn_floor_sait_per_q: 2000000burn_floor_finance: "treasury"   # treasury tops up the difference# price path (only used if you don't give prices.csv)price_q1_usd: 0.05price_growth_qoq: 0.05staked_pct_of_circ: 0.20target_staker_apy: 0.03starting_treasury_cash_usd: 5000000ops_spend_per_q_usd: 1000000min_runway_quarters_alert: 6max_overhang_vs_float_alert: 0.50# Burn floor (min SAIT per quarter) and finance modeburn_floor_sait_per_q: 0burn_floor_finance: treasury  # 'treasury' or 'ignore'price_growth_qoq: 0.35           # *narrative* mid-case; switch to prices.csv for scenarios# total-supply grid (you can still sweep; your business plan anchors 1B)total_supply_grid: [1000000000]\
+Collapse file: sims/outputs/results_1000000000.csv\
+\
+sims/run_scenarios.py\
+\
+#!/usr/bin/env python3\
+import argparse, os, shutil, yaml, subprocess, json\
+\
+BASE_CFG = "sims/config.yaml"\
+PHASES = "sims/phases.yaml"\
+PRICES = "sims/prices.csv"\
+\
+def deep_merge(a, b):\
+    out = dict(a)\
+    for k, v in b.items():\
+        if isinstance(v, dict) and isinstance(out.get(k), dict):\
+            out[k] = deep_merge(out[k], v)\
+        else:\
+            out[k] = v\
+    return out\
+\
+def main():\
+    ap = argparse.ArgumentParser()\
+    ap.add_argument("--profiles", default="sims/scenario_profiles.yaml")\
+    ap.add_argument("--outroot", default="sims/outputs_scenarios")\
+    args = ap.parse_args()\
+\
+    os.makedirs(args.outroot, exist_ok=True)\
+    base_cfg = yaml.safe_load(open(BASE_CFG))\
+    profs = yaml.safe_load(open(args.profiles))["profiles"]\
+\
+    for p in profs:\
+        name = p["name"]\
+        overrides = p.get("overrides", \{\})\
+        workdir = os.path.join(args.outroot, name)\
+        os.makedirs(workdir, exist_ok=True)\
+\
+        cfg = deep_merge(base_cfg, overrides)\
+        cfg_path = os.path.join(workdir, "config.yaml")\
+        with open(cfg_path, "w") as f: yaml.safe_dump(cfg, f, sort_keys=False)\
+\
+        # copy shared inputs\
+        shutil.copyfile(PHASES, os.path.join(workdir, "phases.yaml"))\
+        shutil.copyfile(PRICES, os.path.join(workdir, "prices.csv"))\
+\
+        # run sim\
+        cmd = [\
+            "python", "sims/sait_models.py",\
+            "--config", cfg_path,\
+            "--phase_yaml", os.path.join(workdir, "phases.yaml"),\
+            "--price_csv", os.path.join(workdir, "prices.csv"),\
+            "--outdir", workdir,\
+            "--verbose"\
+        ]\
+        print("==>", name, " ".join(cmd))\
+        subprocess.run(cmd, check=True)\
+\
+    # optional: build a cross-profile index\
+    index_rows = []\
+    for p in profs:\
+        workdir = os.path.join(args.outroot, p["name"])\
+        kpi_csv = os.path.join(workdir, "kpis_summary.csv")\
+        if os.path.exists(kpi_csv):\
+            index_rows.append(\{"profile": p["name"], "kpi_csv": kpi_csv\})\
+    with open(os.path.join(args.outroot, "INDEX.json"), "w") as f:\
+        json.dump(index_rows, f, indent=2)\
+\
+if __name__ == "__main__":\
+    main()\
+\
+#!/usr/bin/env python3\
+"""\
+SAIT Tokenomics Simulator (CLI)\
+- Reads a YAML config and either:\
+  a) per-quarter unlock schedule CSV (percent of total), or\
+  b) Phase YAML and generates a cap-compliant schedule.\
+- Optionally overrides price path with a per-quarter price CSV.\
+- Sweeps over multiple total-supply values.\
+- Prints enriched KPI table, plus writes detailed CSVs/MD/JSON to outputs.\
+\
+Usage:\
+  python3 sait_models.py \\\
+    --config config.yaml \\\
+    --phase_yaml phases.yaml \\\
+    --price_csv prices.csv \\\
+    --outdir outputs \\\
+    --verbose\
+"""\
+\
+import argparse\
+import json\
+import math\
+import os\
+from typing import Optional\
+\
+import numpy as np\
+import pandas as pd\
+import yaml\
+\
+BUCKETS = ["Research", "Ecosystem", "Team", "Partners", "Treasury", "Liquidity"]\
+\
+\
+# ---------------------------\
+# Helpers\
+# ---------------------------\
+\
+def geometric_series(q: int, start: float, growth: float) -> np.ndarray:\
+    """Q-length geometric series: x0=start; x_t = x_\{t-1\}*(1+growth)."""\
+    arr = [float(start)]\
+    for _ in range(1, q):\
+        arr.append(arr[-1] * (1.0 + float(growth)))\
+    return np.array(arr, dtype=float)\
+\
+\
+def load_inputs(config_path: str) -> dict:\
+    with open(config_path, "r") as f:\
+        cfg = yaml.safe_load(f)\
+    return cfg\
+\
+\
+def load_schedule_csv(path: str) -> pd.DataFrame:\
+    sched = pd.read_csv(path)\
+    required_cols = ["Quarter"] + BUCKETS\
+    missing = [c for c in required_cols if c not in sched.columns]\
+    if missing:\
+        raise ValueError(f"unlock schedule missing columns: \{missing\}")\
+    if (sched[BUCKETS] < 0).any().any():\
+        raise ValueError("unlock schedule contains negative percentages")\
+    return sched\
+\
+\
+def load_price_csv(path: str, Q: int) -> np.ndarray:\
+    df = pd.read_csv(path)\
+    if "Price_USD" not in df.columns:\
+        # allow single-column CSV\
+        first = df.columns[0]\
+        df = df.rename(columns=\{first: "Price_USD"\})\
+    series = df["Price_USD"].astype(float).values\
+    if len(series) < Q:\
+        raise ValueError(f"price_csv has \{len(series)\} rows but needs \{Q\}")\
+    return series[:Q]\
+\
+def load_sales_yaml(path: str, Q: int) -> list[dict]:\
+    with open(path, "r") as f:\
+        y = yaml.safe_load(f) or \{\}\
+    tiers = y.get("tiers", [])\
+    packed = []\
+    for t in tiers:\
+        q = t["quarter"]\
+        if isinstance(q, str) and "-" in q:\
+            a, b = q.split("-")\
+            qs = list(range(int(a), int(b)+1))\
+        else:\
+            qs = [int(q)]\
+        amt = int(t["amount_sait"])\
+        price = t.get("price_usd", None)\
+        prange = t.get("price_usd_range", None)\
+        if prange:\
+            lo, hi = float(prange[0]), float(prange[1])\
+            price = (lo + hi) / 2.0  # choose mid by default; you can parametrize\
+        assert price is not None\
+        for qi in qs:\
+            if 1 <= qi <= Q:\
+                packed.append(\{"quarter": qi, "amount_sait": amt // len(qs), "price_usd": float(price)\})\
+    return packed\
+\
+\
+# ---------------------------\
+# Phase YAML -> Schedule CSV\
+# ---------------------------\
+\
+def generate_schedule_from_phases(phase_yaml_path: str, Q: int, quarterly_cap_pct: float) -> pd.DataFrame:\
+    """\
+    Phase YAML format:\
+    phases:\
+      - name: Phase 1\
+        start_quarter: 1\
+        total_pct: 0.10               # fraction of TOTAL supply unlocked over the phase\
+        duration_quarters: 4          # optional; if omitted, computed min to fit cap\
+        buckets:                      # weights across buckets (sum to 1.0)\
+          Research: 0.40\
+          Ecosystem: 0.20\
+          Team: 0.10\
+          Partners: 0.10\
+          Treasury: 0.10\
+          Liquidity: 0.10\
+\
+    Returns a DataFrame with Quarter + BUCKETS (percent of total per quarter).\
+    """\
+    with open(phase_yaml_path, "r") as f:\
+        y = yaml.safe_load(f)\
+    phases = y.get("phases", [])\
+    if not phases:\
+        raise ValueError("phase YAML has no 'phases' list")\
+\
+    rows = [\{"Quarter": f"Q\{i + 1\}", **\{b: 0.0 for b in BUCKETS\}\} for i in range(Q)]\
+    df = pd.DataFrame(rows)\
+\
+    for ph in phases:\
+        name = ph.get("name", "Phase")\
+        start = int(ph["start_quarter"])\
+        total_pct = float(ph["total_pct"])\
+        weights = ph.get("buckets", \{\})\
+        w = np.array([float(weights.get(b, 0.0)) for b in BUCKETS], dtype=float)\
+        if w.sum() <= 0:\
+            raise ValueError(f"\{name\}: bucket weights must sum > 0")\
+        w = w / w.sum()\
+\
+        dur = ph.get("duration_quarters", None)\
+        if dur is None:\
+            dur = math.ceil(total_pct / quarterly_cap_pct)\
+        per_q_total = total_pct / dur\
+        if per_q_total > quarterly_cap_pct:\
+            dur = math.ceil(total_pct / quarterly_cap_pct)\
+            per_q_total = total_pct / dur\
+\
+        for i in range(dur):\
+            q_index = start - 1 + i\
+            if q_index >= Q:\
+                break\
+            for bi, b in enumerate(BUCKETS):\
+                df.at[q_index, b] += per_q_total * w[bi]\
+\
+    return df\
+\
+\
+def enforce_global_quarterly_cap(sched_df: pd.DataFrame, quarterly_cap_pct: float) -> pd.DataFrame:\
+    """\
+    If any quarter\'92s total % exceeds cap, spill the excess forward (preserving bucket ratios).\
+    """\
+    df = sched_df.copy()\
+    Q = len(df)\
+    cols = BUCKETS[:]\
+    totals = df[cols].sum(axis=1).values\
+\
+    for i in range(Q):\
+        if totals[i] > quarterly_cap_pct + 1e-12:\
+            row = df.loc[i, cols].astype(float)\
+            s = row.sum()\
+            if s > 0:\
+                # scale down to cap\
+                df.loc[i, cols] = row * (quarterly_cap_pct / s)\
+                excess = s - quarterly_cap_pct\
+                # spill to next quarter (preserving proportions)\
+                if i + 1 < Q:\
+                    next_row = df.loc[i + 1, cols].astype(float)\
+                    df.loc[i + 1, cols] = next_row + (row / s) * excess\
+            totals = df[cols].sum(axis=1).values\
+\
+    return df\
+\
+# ===== Extra helpers for richer output =====\
+\
+def pct(x: float) -> str:\
+    return f"\{x*100:0.2f\}%"\
+\
+def ansi(color: str, s: str) -> str:\
+    codes = \{"red":"\\033[31m", "yellow":"\\033[33m", "green":"\\033[32m", "reset":"\\033[0m"\}\
+    return f"\{codes.get(color,'')\}\{s\}\{codes['reset']\}"\
+\
+def bucket_totals_pct(sched_df: pd.DataFrame) -> dict:\
+    totals = \{b: float(sched_df[b].sum()) for b in BUCKETS\}\
+    totals["Total"] = float(sum(totals[b] for b in BUCKETS))\
+    return totals\
+\
+def find_min_treasury_point(out: pd.DataFrame) -> tuple[float, str]:\
+    idx = int(out["Treasury_Cash_USD"].idxmin())\
+    return float(out["Treasury_Cash_USD"].iloc[idx]), str(out["Quarter"].iloc[idx])\
+\
+def first_deflationary_quarter(out: pd.DataFrame) -> str:\
+    neg = out.index[out["Net_Issuance_SAIT"] < 0]\
+    return str(out.loc[neg[0], "Quarter"]) if len(neg) else "\'97"\
+\
+def overhang_count(out: pd.DataFrame, threshold: float) -> int:\
+    return int((out["Overhang_vs_Float"] > threshold).sum())\
+\
+def scenario_report_md(\
+    total_supply: int,\
+    cfg: dict,\
+    sched_df: pd.DataFrame,\
+    out: pd.DataFrame,\
+    k: dict,\
+    bucket_totals: dict,\
+    warn_overhang: float = 0.40\
+) -> str:\
+    min_bal, min_bal_q = find_min_treasury_point(out)\
+    overhang_warns = overhang_count(out, warn_overhang)\
+    return "\\n".join([\
+        f"# SAIT Scenario \'97 Total Supply \{total_supply:,\}",\
+        "",\
+        "## Headline",\
+        f"- **Supply**: 16q unlocks = \{pct(sched_df[BUCKETS].sum(axis=1).sum())\}; Final circ = \{k['final_circ_pct']\} (\{k['final_circulating']:,\} SAIT).",\
+        f"- **Burns**: cumulative = \{k['cum_burn_sait']:,\} SAIT (\{pct(k['cum_burn_pct_total'])\}); Deflationary quarters: \{k['deflationary_quarters']\} (first: \{k['first_deflation_q']\}).",\
+        f"- **Treasury**: runway\uc0\u8776  \{k['min_runway_quarters']\} q (min balance $\{min_bal:,.0f\} at \{min_bal_q\}).",\
+        f"- **Overhang**: max = \{pct(k['max_overhang_vs_float'])\}; quarters > \{int(warn_overhang*100)\}% = \{overhang_warns\}.",\
+        "",\
+        "## Unlocks by Bucket (16q total)",\
+        *(f"- \{b\}: \{pct(bucket_totals[b])\}" for b in BUCKETS),\
+        f"- **Total**: \{pct(bucket_totals['Total'])\}",\
+        "",\
+        "## Notes",\
+        "- Burns are driven by usage/fees/price, not by total supply \'97 hence identical SAIT burns across caps.",\
+        "- Global cap enforcer ensures per-quarter total unlock \uc0\u8804  3% (given 1%/mo cap).",\
+        "- Overhang is defined as next-2Q unlocks \'f7 starting float for the quarter.",\
+        "",\
+        "## Suggested levers if this scenario trips warnings",\
+        "- Reduce early unlock pace (longer durations / stagger phases) to cut overhang.",\
+        "- Raise burn_share / increase actions / fee_per_action / price to approach deflationary quarters.",\
+        "- Consider a small increase in initial float only if liquidity depth is a concern (trade-off: more potential sellers).",\
+        ""\
+    ])\
+\
+\
+# ---------------------------\
+# Simulation\
+# ---------------------------\
+\
+def simulate_one_supply(\
+    total_supply: int,\
+    cfg: dict,\
+    sched_pct: pd.DataFrame,\
+    price_series: Optional[np.ndarray]\
+) -> pd.DataFrame:\
+    Q = int(cfg["quarters"])\
+    # schedule (% of total) -> SAIT\
+    unlocks_sait = sched_pct.copy()\
+    for b in BUCKETS:\
+        unlocks_sait[b] = (sched_pct[b].astype(float) * total_supply).round(0)\
+    unlocks_sait["Total_Unlocks"] = unlocks_sait[BUCKETS].sum(axis=1)\
+\
+    # Quarterly cap (3 * monthly cap) \'97 for reporting only (global cap already enforced if chosen)\
+    quarterly_cap_pct = 3.0 * float(cfg["max_unlock_cap_per_month"])\
+    q_cap_units = quarterly_cap_pct * total_supply\
+    cap_flags = (unlocks_sait["Total_Unlocks"] > q_cap_units)\
+\
+    # Usage & fees\
+    actions = geometric_series(Q, cfg["base_actions_q1"], cfg["actions_growth_qoq"])\
+    fee_revenue = actions * float(cfg["fee_per_action_usd"])\
+\
+    # Price path\
+    if price_series is not None:\
+        prices = price_series\
+    else:\
+        prices = geometric_series(Q, cfg["price_q1_usd"], cfg["price_growth_qoq"])\
+\
+    # Splits\
+    burn_share = float(cfg["burn_share"])\
+    stakers_share = float(cfg["stakers_share"])\
+    treasury_share = float(cfg["treasury_share"])\
+    if abs((burn_share + stakers_share + treasury_share) - 1.0) > 1e-6:\
+        raise ValueError("burn+stakers+treasury must sum to 1.0")\
+\
+    # Usage-coupled burns\
+    burns_usd_usage = fee_revenue * burn_share\
+    burns_sait_usage = np.where(prices > 0, burns_usd_usage / prices, 0.0)\
+\
+    # Burn floor (SAIT)\
+    burn_floor_sait = float(cfg.get("burn_floor_sait_per_q", 0.0))\
+    finance_mode = str(cfg.get("burn_floor_finance", "treasury")).lower()  # "treasury" or "ignore"\
+\
+    # Final burns with floor\
+    burns_sait = np.maximum(burns_sait_usage, burn_floor_sait)\
+    burns_usd = burns_sait * prices\
+\
+    # Treasury inflow (adjust if extra burn financed from treasury)\
+    treasury_inflow_usd_nominal = fee_revenue * treasury_share\
+    extra_burn_sait = np.maximum(0.0, burns_sait - burns_sait_usage)\
+    extra_burn_usd = extra_burn_sait * prices\
+    if finance_mode == "treasury":\
+        treasury_inflow_usd = np.maximum(0.0, treasury_inflow_usd_nominal - extra_burn_usd)\
+    else:\
+        treasury_inflow_usd = treasury_inflow_usd_nominal\
+\
+    # Stakers nominal payout\
+    stakers_payout_usd_nominal = fee_revenue * stakers_share\
+\
+    # Trackers\
+    starting_circ = np.zeros(Q)\
+    ending_circ = np.zeros(Q)\
+    net_issuance = np.zeros(Q)\
+    overhang_2q = np.zeros(Q)\
+    overhang_pct = np.zeros(Q)\
+\
+    treasury_cash = np.zeros(Q)\
+    ops_spend = np.full(Q, float(cfg["ops_spend_per_q_usd"]), dtype=float)\
+\
+    staked_pct = float(cfg["staked_pct_of_circ"])\
+    target_apy = float(cfg["target_staker_apy"])\
+    realized_staker_apy = np.zeros(Q)\
+    staked_value_usd = np.zeros(Q)\
+    stakers_payout_usd = np.zeros(Q)\
+\
+    initial_circ = total_supply * float(cfg["initial_circulating_pct"])\
+\
+    for i in range(Q):\
+        starting_circ[i] = initial_circ if i == 0 else ending_circ[i - 1]\
+        unlocks_q = float(unlocks_sait.loc[i, "Total_Unlocks"])\
+        burns_q_sait = burns_sait[i]\
+\
+        ending_circ[i] = starting_circ[i] + unlocks_q - burns_q_sait\
+        net_issuance[i] = unlocks_q - burns_q_sait\
+\
+        # Overhang next 2Q\
+        if i + 1 < Q:\
+            j2 = min(i + 2, Q - 1)\
+            over = unlocks_sait.loc[i + 1:j2, "Total_Unlocks"].sum()\
+        else:\
+            over = 0.0\
+        overhang_2q[i] = over\
+        overhang_pct[i] = (over / starting_circ[i]) if starting_circ[i] > 0 else 0.0\
+\
+        # Staker payouts (fee-funded & APY-capped)\
+        avg_circ = 0.5 * (starting_circ[i] + ending_circ[i])\
+        staked_val = avg_circ * staked_pct * prices[i]\
+        staked_value_usd[i] = staked_val\
+        cap_quarterly = target_apy / 4.0 * staked_val\
+        stakers_payout_usd[i] = min(stakers_payout_usd_nominal[i], cap_quarterly)\
+        realized_staker_apy[i] = (stakers_payout_usd[i] / staked_val * 4.0) if staked_val > 0 else 0.0\
+\
+        # Treasury cash cumulative\
+        treasury_cash[i] = (\
+            float(cfg["starting_treasury_cash_usd"])\
+            + float(treasury_inflow_usd[: i + 1].sum())\
+            - float(ops_spend[: i + 1].sum())\
+        )\
+\
+    out = pd.DataFrame(\{\
+        "Quarter": [f"Q\{i + 1\}" for i in range(Q)],\
+        "Starting_Circ_SAIT": starting_circ.round(0),\
+        "Price_USD": prices,\
+        "Fee_Actions": actions.round(0),\
+        "Fee_Revenue_USD": fee_revenue,\
+        "Burns_USD": burns_usd,\
+        "Burns_SAIT": burns_sait.round(0),\
+        "Unlocks_SAIT": unlocks_sait["Total_Unlocks"].values,\
+        "Ending_Circ_SAIT": ending_circ.round(0),\
+        "Net_Issuance_SAIT": net_issuance.round(0),\
+        "Overhang_2Q_SAIT": overhang_2q.round(0),\
+        "Overhang_vs_Float": overhang_pct,\
+        "Staked_Value_USD": staked_value_usd,\
+        "Stakers_Payout_USD": stakers_payout_usd,\
+        "Realized_Staker_APY": realized_staker_apy,\
+        "Treasury_Cash_USD": treasury_cash,\
+        "Unlocks_Cap_Breached": (unlocks_sait["Total_Unlocks"] > q_cap_units).values\
+    \})\
+    out["Cumulative_Burns_SAIT"] = out["Burns_SAIT"].cumsum().round(0)\
+    out["Cumulative_Burns_%Total"] = out["Cumulative_Burns_SAIT"] / float(total_supply)\
+        # --- Fundraising tiers (optional) ---\
+    sales_yaml_path = "sims/sales.yaml"\
+    sales = []\
+    try:\
+        sales = load_sales_yaml(sales_yaml_path, Q)\
+    except FileNotFoundError:\
+        sales = []\
+\
+    sale_amounts = np.zeros(Q)\
+    sale_proceeds = np.zeros(Q)\
+    for s in sales:\
+        i = s["quarter"] - 1\
+        sale_amounts[i] += s["amount_sait"]\
+        sale_proceeds[i] += s["amount_sait"] * s["price_usd"]\
+\
+    out["Crowdfund_Sold_SAIT"] = sale_amounts\
+    out["Crowdfund_Proceeds_USD"] = sale_proceeds\
+\
+    # Optional: treat crowdfund proceeds as treasury cash (ring-fenced)\
+    out["Treasury_Cash_USD"] = out["Treasury_Cash_USD"] + np.cumsum(sale_proceeds)\
+\
+\
+    return out\
+\
+\
+def kpis_from_out(\
+    out: pd.DataFrame,\
+    total_supply: int,\
+    cfg: dict,\
+    sched_pct: pd.DataFrame,\
+    quarterly_cap_pct: float\
+) -> dict:\
+    init_float = total_supply * float(cfg["initial_circulating_pct"])\
+    per_q_totals = sched_pct[BUCKETS].sum(axis=1).values\
+\
+    # Staker APY stats\
+    apy = out["Realized_Staker_APY"].to_numpy(dtype=float)\
+    avg_apy = float(apy.mean()) if len(apy) else 0.0\
+    min_apy = float(apy.min()) if len(apy) else 0.0\
+    max_apy = float(apy.max()) if len(apy) else 0.0\
+\
+    final_circ = int(out["Ending_Circ_SAIT"].iloc[-1])\
+    final_circ_pct = final_circ / float(total_supply)\
+\
+    # min treasury balance quarter\
+    min_bal, min_bal_q = find_min_treasury_point(out)\
+\
+    return \{\
+        "total_supply": int(total_supply),\
+        "initial_float": int(init_float),\
+        "final_circulating": final_circ,\
+        "final_circ_pct": pct(final_circ_pct),\
+        "cum_burn_sait": int(out["Burns_SAIT"].sum()),\
+        "cum_burn_pct_total": float(out["Burns_SAIT"].sum() / float(total_supply)),\
+        "deflationary_quarters": int((out["Net_Issuance_SAIT"] < 0).sum()),\
+        "first_deflation_q": first_deflationary_quarter(out),\
+        "min_runway_quarters": int(np.argmax(out["Treasury_Cash_USD"] < 0)) if (out["Treasury_Cash_USD"] < 0).any() else math.inf,\
+        "treasury_min_balance": float(min_bal),\
+        "treasury_min_balance_q": min_bal_q,\
+        "max_overhang_vs_float": float(out["Overhang_vs_Float"].max() if len(out) > 0 else 0.0),\
+        "peak_unlock_pct_per_q": float(per_q_totals.max()),\
+        "cap_breach_any": bool((per_q_totals > quarterly_cap_pct + 1e-12).any()),\
+        "avg_staker_apy": float(avg_apy),\
+        "min_staker_apy": float(min_apy),\
+        "max_staker_apy": float(max_apy),\
+        "total_unlocked_pct_16q": float(per_q_totals.sum()),\
+    \}\
+\
+\
+def pretty_print_kpis(kpis_list: list[dict]) -> None:\
+    headers = [\
+        "TotalSupply","InitFloat","FinalCirc","FinalCirc(%)",\
+        "CumBurn(SAIT)","CumBurn(%)","DeflQ","RunwayQ(min)",\
+        "PeakUnl/q","MaxOverhang/Float","AvgAPY","CapBreach"\
+    ]\
+    rows = []\
+    for k in kpis_list:\
+        over = k["max_overhang_vs_float"]\
+        over_str = f"\{over*100:0.1f\}%"\
+        if over >= 0.50:\
+            over_str = ansi("red", over_str)\
+        elif over >= 0.40:\
+            over_str = ansi("yellow", over_str)\
+        else:\
+            over_str = ansi("green", over_str)\
+\
+        runway = k["min_runway_quarters"]\
+        runway_str = str(runway)\
+\
+        rows.append([\
+            f"\{k['total_supply']:,\}",\
+            f"\{k['initial_float']:,\}",\
+            f"\{k['final_circulating']:,\}",\
+            k["final_circ_pct"],\
+            f"\{k['cum_burn_sait']:,\}",\
+            f"\{k['cum_burn_pct_total']*100:0.2f\}%",\
+            k["deflationary_quarters"],\
+            runway_str,\
+            f"\{k['peak_unlock_pct_per_q']*100:0.2f\}%",\
+            over_str,\
+            f"\{k['avg_staker_apy']*100:0.2f\}%",\
+            "YES" if k["cap_breach_any"] else "no",\
+        ])\
+\
+    col_widths = [max(len(str(x)) for x in [h] + [r[i] for r in rows]) for i, h in enumerate(headers)]\
+    sep = "+" + "+".join("-" * (w + 2) for w in col_widths) + "+"\
+    print(sep)\
+    print("| " + " | ".join(h.ljust(col_widths[i]) for i, h in enumerate(headers)) + " |")\
+    print(sep)\
+    for r in rows:\
+        print("| " + " | ".join(str(r[i]).ljust(col_widths[i]) for i in range(len(headers))) + " |")\
+    print(sep)\
+\
+\
+def compute_schedule_stats(sched_df: pd.DataFrame, quarterly_cap_pct: float) -> dict:\
+    totals = sched_df[BUCKETS].sum(axis=1)\
+    return \{\
+        "avg_unlock_pct_per_q": float(totals.mean()),\
+        "max_unlock_pct_per_q": float(totals.max()),\
+        "quarters_over_cap": [f"Q\{i+1\}" for i, t in enumerate(totals) if t > quarterly_cap_pct + 1e-12],\
+        "total_pct_16q": float(totals.sum()),\
+    \}\
+\
+def plain_english_intro(cfg: dict, supplies: list[int], price_mode: str) -> list[str]:\
+    return [\
+        "# SAIT Tokenomics Simulation \'97 Plain English Context",\
+        "",\
+        "## What this is",\
+        "We modeled SAIT\'92s tokenomics to see how unlocks, burns, staking, and treasury cash interact.",\
+        "It shows whether SAIT stays scarce, whether the treasury runs out, and whether the design is credible.",\
+        "",\
+        "## Key assumptions in this run",\
+        f"- **Total Supply**: \{supplies[0]:,\} SAIT (fixed, no inflation).",\
+        f"- **Initial circulation**: \{cfg['initial_circulating_pct']*100:.1f\}% of supply unlocked in Q1.",\
+        f"- **Unlock cap**: \uc0\u8804  \{cfg['max_unlock_cap_per_month']*100:.2f\}% per month (\u8776  \{3*cfg['max_unlock_cap_per_month']*100:.2f\}% per quarter).",\
+        f"- **Fee per action**: $\{cfg['fee_per_action_usd']:.2f\}.",\
+        f"- **Fee split**: \{cfg['burn_share']*100:.0f\}% burn, \{cfg['stakers_share']*100:.0f\}% stakers, \{cfg['treasury_share']*100:.0f\}% treasury.",\
+        f"- **Usage start**: \{cfg['base_actions_q1']:,\} actions in Q1, growing \{cfg['actions_growth_qoq']*100:.1f\}% per quarter.",\
+        f"- **Staking**: \{cfg['staked_pct_of_circ']*100:.0f\}% of circulating tokens staked, with \{cfg['target_staker_apy']*100:.0f\}% APY cap.",\
+        f"- **Treasury**: start $\{cfg['starting_treasury_cash_usd']:,\}, spending $\{cfg['ops_spend_per_q_usd']:,\}/quarter.",\
+        f"- **Burn floor**: \{cfg.get('burn_floor_sait_per_q',0):,.0f\} SAIT per quarter, mode=\{cfg.get('burn_floor_finance','treasury')\}.",\
+        f"- **Price path**: \{price_mode\}.",\
+        "",\
+        "## How to read the results",\
+        "- **Deflationary quarters**: times when burns exceed unlocks (circulating supply shrinks).",\
+        "- **Overhang vs Float**: supply waiting to unlock relative to what\'92s circulating (dump risk).",\
+        "- **Treasury runway**: quarters before treasury cash runs out.",\
+        "- **Crowdfund proceeds**: cash raised from planned sales (tiers).",\
+        "",\
+        "The following sections show KPI tables, per-scenario reports, and recommendations.",\
+        ""\
+    ]\
+\
+\
+def print_inputs_summary(cfg: dict, price_mode: str, sched_stats: dict) -> None:\
+    print("\\n== Inputs Summary ==")\
+    print(f"Horizon: \{cfg['quarters']\} quarters")\
+    print(f"Total-supply grid: \{cfg['total_supply_grid']\}")\
+    print(f"Initial float: \{cfg['initial_circulating_pct']*100:.2f\}% of total (Q1 start)")\
+    print(f"Unlock cap: \{cfg['max_unlock_cap_per_month']*100:.2f\}%/mo \uc0\u8658  \{3*cfg['max_unlock_cap_per_month']*100:.2f\}%/qtr (global)")\
+    print(f"Usage: actions Q1=\{cfg['base_actions_q1']:,\}, growth QoQ=\{cfg['actions_growth_qoq']*100:.1f\}%")\
+    print(f"Fees: $\{cfg['fee_per_action_usd']:.2f\}/action | Splits: burn=\{cfg['burn_share']:.2f\}, stakers=\{cfg['stakers_share']:.2f\}, treasury=\{cfg['treasury_share']:.2f\}")\
+    print(f"Staking: %staked=\{cfg['staked_pct_of_circ']*100:.1f\}% | target APY=\{cfg['target_staker_apy']*100:.1f\}% (fee-funded cap)")\
+    print(f"Treasury: start=$\{cfg['starting_treasury_cash_usd']:,\} | ops=$\{cfg['ops_spend_per_q_usd']:,\}/qtr")\
+    print(f"Burn floor: \{cfg.get('burn_floor_sait_per_q',0):,.0f\} SAIT/q (\{cfg.get('burn_floor_finance','treasury')\})")\
+    print(f"Price: \{price_mode\}")\
+\
+    print("\\n== Schedule Summary ==")\
+    print(f"Total unlock over 16q: \{sched_stats['total_pct_16q']*100:.2f\}% of total supply")\
+    print(f"Avg unlock per quarter: \{sched_stats['avg_unlock_pct_per_q']*100:.2f\}% | Max per quarter: \{sched_stats['max_unlock_pct_per_q']*100:.2f\}%")\
+    if sched_stats["quarters_over_cap"]:\
+        print(f"Cap breaches: \{', '.join(sched_stats['quarters_over_cap'])\}  (exceeds global quarterly cap)")\
+    else:\
+        print("Cap breaches: none")\
+\
+def consolidated_recommendations(kpis_list: list[dict]) -> list[str]:\
+    recs = []\
+    # Flags across scenarios\
+    any_no_defl = any(k["deflationary_quarters"] == 0 for k in kpis_list)\
+    any_overhang_hi = any(k["max_overhang_vs_float"] >= 0.50 for k in kpis_list)\
+    any_runway_short = any((isinstance(k["min_runway_quarters"], int) and k["min_runway_quarters"] < 6) for k in kpis_list)\
+    # Recommendations\
+    if any_no_defl:\
+        recs.append("Increase burn intensity (raise burn_share) and/or adoption (actions growth, fee_per_action) to create at least 1\'962 deflationary quarters by Year 2.")\
+    if any_overhang_hi:\
+        recs.append("Reduce early unlocks (longer durations, stagger phases) or slightly increase initial float to bring Max Overhang/Float below 40%.")\
+    if any_runway_short:\
+        recs.append("Extend treasury runway (raise treasury_share or reduce ops spend) to \uc0\u8805  8\'9612 quarters.")\
+    # Always useful\
+    recs.append("Publish the cap-compliant unlock curve and overhang metric alongside governance proposals to set expectations.")\
+    recs.append("Add a burn floor (e.g., 2M SAIT/q) financed from treasury early on; remove when usage burns dominate.")\
+    return recs\
+\
+# ---------------------------\
+# CLI\
+# ---------------------------\
+\
+def main() -> None:\
+    ap = argparse.ArgumentParser(description="SAIT Tokenomics Simulator")\
+    ap.add_argument("--config", default="config.yaml", help="Path to config.yaml")\
+    ap.add_argument("--schedule", default="unlock_schedule.csv", help="Path to unlock schedule CSV (percents of total)")\
+    ap.add_argument("--phase_yaml", help="Path to phase YAML to auto-generate a cap-compliant schedule CSV")\
+    ap.add_argument("--price_csv", help="Path to custom per-quarter price CSV (Price_USD column)")\
+    ap.add_argument("--outdir", default="outputs", help="Directory to write outputs")\
+    ap.add_argument("--verbose", action="store_true", help="Print inputs and schedule diagnostics")\
+    args = ap.parse_args()\
+\
+    cfg = load_inputs(args.config)\
+    Q = int(cfg["quarters"])\
+    quarterly_cap_pct = 3.0 * float(cfg["max_unlock_cap_per_month"])\
+    os.makedirs(args.outdir, exist_ok=True)\
+\
+    # Schedule: from phases or from CSV\
+    if args.phase_yaml:\
+        sched_df = generate_schedule_from_phases(args.phase_yaml, Q, quarterly_cap_pct)\
+        # enforce global cap across overlapping phases\
+        sched_df = enforce_global_quarterly_cap(sched_df, quarterly_cap_pct)\
+        schedule_path = os.path.join(args.outdir, "derived_unlock_schedule.csv")\
+        sched_df.to_csv(schedule_path, index=False)\
+    else:\
+        schedule_path = args.schedule\
+        sched_df = load_schedule_csv(schedule_path)\
+\
+    # Price series\
+    price_series = None\
+    if args.price_csv:\
+        price_series = load_price_csv(args.price_csv, Q)\
+        price_mode = f"custom CSV (\{len(price_series)\} rows)"\
+    else:\
+        price_mode = f"geometric (Q1=$\{cfg['price_q1_usd']:.2f\}, QoQ=\{cfg['price_growth_qoq']*100:.1f\}%)"\
+\
+    # Verbose inputs & schedule diagnostics\
+    if args.verbose:\
+        stats = compute_schedule_stats(sched_df, quarterly_cap_pct)\
+        print_inputs_summary(cfg, price_mode, stats)\
+\
+    # Run supplies\
+    supplies = cfg.get("total_supply_grid", [])\
+    if not supplies:\
+        raise ValueError("No total_supply_grid in config.yaml")\
+\
+    kpis_all = []\
+    for s in supplies:\
+        out = simulate_one_supply(int(s), cfg, sched_df, price_series)\
+\
+        # 1) Save the full quarterly ledger\
+        out.to_csv(os.path.join(args.outdir, f"results_\{int(s)\}.csv"), index=False)\
+\
+        # 2) Compute KPIs for THIS scenario\
+        kpis = kpis_from_out(out, int(s), cfg, sched_df, quarterly_cap_pct)\
+\
+        # 3) Append to the summary list\
+        kpis_all.append(kpis)\
+\
+        # 4) Per-scenario narrative report (use the 'kpis' we just computed)\
+        buckets_16q = bucket_totals_pct(sched_df)\
+        report = scenario_report_md(int(s), cfg, sched_df, out, kpis, buckets_16q, warn_overhang=0.40)\
+        with open(os.path.join(args.outdir, f"report_\{int(s)\}.md"), "w") as f:\
+            f.write(report)\
+\
+    # KPI summary\
+    kdf = pd.DataFrame(kpis_all)\
+    kdf.to_csv(os.path.join(args.outdir, "kpis_summary.csv"), index=False)\
+    pretty_print_kpis(kpis_all)\
+\
+    # Markdown summary\
+    lines = [\
+        "# SAIT Tokenomics \'97 KPI Summary",\
+        "",\
+        "| Total Supply | Init Float | Final Circ | Cum Burn (SAIT) | Cum Burn % | Deflationary Qtrs | Min Runway Qtrs | Peak Unlock %/q | Max Overhang/Float | Cap Breach |",\
+        "|---:|---:|---:|---:|---:|---:|---:|---:|---:|:---:|",\
+    ]\
+    for k in kpis_all:\
+        runway = k["min_runway_quarters"]\
+        runway_str = "\uc0\u8734 " if (isinstance(runway, float) and not math.isfinite(runway)) else int(runway)\
+        lines.append(\
+            f"| \{k['total_supply']:,\} | \{k['initial_float']:,\} | \{k['final_circulating']:,\} | \{k['cum_burn_sait']:,\} | "\
+            f"\{k['cum_burn_pct_total']*100:0.2f\}% | \{k['deflationary_quarters']\} | \{runway_str\} | "\
+            f"\{k['peak_unlock_pct_per_q']*100:0.2f\}% | \{k['max_overhang_vs_float']*100:0.1f\}% | "\
+            f"\{'YES' if k['cap_breach_any'] else 'no'\} |"\
+        )\
+    with open(os.path.join(args.outdir, "kpis_summary.md"), "w") as f:\
+        f.write("\\n".join(lines))\
+\
+    # Run manifest (reproducibility)\
+    manifest = \{\
+        "config": cfg,\
+        "price_mode": price_mode,\
+        "used_schedule_path": schedule_path,\
+        "used_price_csv": args.price_csv or None,\
+        "quarterly_cap_pct": quarterly_cap_pct,\
+        "schedule_totals_pct_per_q": sched_df[BUCKETS].sum(axis=1).round(6).tolist(),\
+        "total_supply_grid": [int(s) for s in supplies],\
+    \}\
+    with open(os.path.join(args.outdir, "run_manifest.json"), "w") as f:\
+        json.dump(manifest, f, indent=2)\
+\
+    # --- Consolidated Markdown report ---\
+    comp_lines = []\
+    comp_lines.extend(plain_english_intro(cfg, supplies, price_mode))\
+    comp_lines.append("# SAIT Tokenomics \'97 Consolidated Report")\
+    comp_lines.append("")\
+    comp_lines.append("## Executive Summary")\
+    comp_lines.append("- This report compares total-supply scenarios using the same cap-compliant unlock schedule, fee/burn settings, and price path.")\
+    comp_lines.append("- Burns scale with **usage** rather than supply, so SAIT burned is similar across caps; burn **percent** falls as supply grows.")\
+    comp_lines.append("- Overhang/Float and Treasury runway are the two most important operational risk flags.")\
+    comp_lines.append("")\
+\
+    # Inputs summary\
+    comp_lines.append("## Inputs & Assumptions")\
+    comp_lines.append(f"- Horizon: **\{cfg['quarters']\} quarters**")\
+    comp_lines.append(f"- Total-supply grid: **\{', '.join(f'\{int(s):,\}' for s in supplies)\}**")\
+    comp_lines.append(f"- Initial float: **\{cfg['initial_circulating_pct']*100:.2f\}%** of total (Q1 start)")\
+    comp_lines.append(f"- Unlock cap: **\{cfg['max_unlock_cap_per_month']*100:.2f\}%/mo \uc0\u8658  \{3*cfg['max_unlock_cap_per_month']*100:.2f\}%/qtr** (global)")\
+    comp_lines.append(f"- Usage: actions Q1=**\{cfg['base_actions_q1']:,\}**, growth QoQ=**\{cfg['actions_growth_qoq']*100:.1f\}%**")\
+    comp_lines.append(f"- Fees: **$\{cfg['fee_per_action_usd']:.2f\}/action** | Splits: burn=\{cfg['burn_share']:.2f\}, stakers=\{cfg['stakers_share']:.2f\}, treasury=\{cfg['treasury_share']:.2f\}")\
+    comp_lines.append(f"- Staking: %staked=**\{cfg['staked_pct_of_circ']*100:.1f\}%** | target APY=**\{cfg['target_staker_apy']*100:.1f\}%** (fee-funded cap)")\
+    comp_lines.append(f"- Treasury: start=**$\{cfg['starting_treasury_cash_usd']:,\}**, ops=**$\{cfg['ops_spend_per_q_usd']:,\}/qtr**")\
+    comp_lines.append(f"- Burn floor: **\{cfg.get('burn_floor_sait_per_q',0):,.0f\} SAIT/q** (\{cfg.get('burn_floor_finance','treasury')\})")\
+    comp_lines.append(f"- Price: **\{price_mode\}**")\
+    comp_lines.append("")\
+\
+    # Schedule diagnostics\
+    sched_totals_pct = sched_df[BUCKETS].sum(axis=1)\
+    comp_lines.append("## Schedule Diagnostics")\
+    comp_lines.append(f"- Total unlock over 16q: **\{sched_totals_pct.sum()*100:.2f\}%** of total supply")\
+    comp_lines.append(f"- Avg unlock per quarter: **\{sched_totals_pct.mean()*100:.2f\}%** | Max per quarter: **\{sched_totals_pct.max()*100:.2f\}%**")\
+    comp_lines.append("- Global cap breaches: **none** (excess spilled forward if needed)")\
+    comp_lines.append("")\
+    comp_lines.append("### Unlocks by Bucket (16q totals)")\
+    for b in BUCKETS:\
+        comp_lines.append(f"- \{b\}: **\{sched_df[b].sum()*100:.2f\}%**")\
+    comp_lines.append(f"- Total: **\{sched_totals_pct.sum()*100:.2f\}%**")\
+    comp_lines.append("")\
+\
+    # Comparison table\
+    comp_lines.append("## Scenario Comparison (Key KPIs)")\
+    comp_lines.append("| Total Supply | Init Float | Final Circ | Final Circ % | Cum Burn (SAIT) | Cum Burn % | Defl Qtrs | Runway Q (min) | Peak Unlock %/q | Max Overhang/Float | Avg Staker APY |")\
+    comp_lines.append("|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|")\
+    for k in kpis_all:\
+        comp_lines.append(\
+            f"| \{k['total_supply']:,\} | \{k['initial_float']:,\} | \{k['final_circulating']:,\} | \{k['final_circ_pct']\} | "\
+            f"\{k['cum_burn_sait']:,\} | \{k['cum_burn_pct_total']*100:0.2f\}% | \{k['deflationary_quarters']\} | \{k['min_runway_quarters']\} | "\
+            f"\{k['peak_unlock_pct_per_q']*100:0.2f\}% | \{k['max_overhang_vs_float']*100:0.1f\}% | \{k['avg_staker_apy']*100:0.2f\}% |"\
+        )\
+    comp_lines.append("")\
+\
+    # Recommendations\
+    comp_lines.append("## Recommendations")\
+    for r in consolidated_recommendations(kpis_all):\
+        comp_lines.append(f"- \{r\}")\
+    comp_lines.append("")\
+\
+    # Append each per-scenario report (already generated above)\
+    comp_lines.append("## Per-Scenario Details")\
+    for s in supplies:\
+        p = os.path.join(args.outdir, f"report_\{int(s)\}.md")\
+        if os.path.exists(p):\
+            comp_lines.append(f"\\n---\\n\\n### Scenario \'97 Total Supply \{int(s):,\}\\n")\
+            with open(p, "r") as rf:\
+                # skip the first H1, keep the rest\
+                lines_md = rf.read().splitlines()\
+                body = [ln for ln in lines_md if not ln.startswith("# SAIT Scenario")]\
+                comp_lines.extend(body)\
+                comp_lines.append("")\
+\
+    with open(os.path.join(args.outdir, "SAIT_Tokenomics_Report.md"), "w") as f:\
+        f.write("\\n".join(comp_lines))\
+\
+\
+if __name__ == "__main__":\
+    main()\
+\
+tiers:\
+  - quarter: 1   # Q4'25 in your narrative\
+    amount_sait: 50000000\
+    price_usd: 0.05\
+  - quarter: 2-5 # 2026 (4 quarters)\
+    amount_sait: 75000000\
+    price_usd: 0.10\
+  - quarter: 6-13  # 2027\'9628 window\
+    amount_sait: 25000000\
+    price_usd_range: [0.25, 0.50]  # the sim will let you pick mid/hi value\
+\
+profiles:\
+  - name: base_mid\
+    overrides:\
+      total_supply_grid: [1000000000]\
+      initial_circulating_pct: 0.10\
+      actions_growth_qoq: 0.20\
+      fee_per_action_usd: 0.25\
+      burn_share: 0.50\
+      stakers_share: 0.20        # <-- add explicitly for clarity\
+      treasury_share: 0.30\
+      burn_floor_sait_per_q: 2000000\
+      staked_pct_of_circ: 0.25\
+      target_staker_apy: 0.12\
+\
+  - name: lean_supply_low_fee\
+    overrides:\
+      total_supply_grid: [1000000000, 500000000]\
+      initial_circulating_pct: 0.08\
+      fee_per_action_usd: 0.10\
+      burn_share: 0.60\
+      stakers_share: 0.15         # <-- trim stakers to protect runway at low fees\
+      treasury_share: 0.25\
+      burn_floor_sait_per_q: 3000000\
+\
+  - name: high_adoption_high_fee\
+    overrides:\
+      total_supply_grid: [1000000000, 5000000000]\
+      base_actions_q1: 200000\
+      actions_growth_qoq: 0.30\
+      fee_per_action_usd: 0.40\
+      burn_share: 0.55\
+      stakers_share: 0.20\
+      treasury_share: 0.25         # <-- trim treasury (fees are healthier here)\
+      burn_floor_sait_per_q: 1000000\
+\
+  - name: runway_guard\
+    overrides:\
+      burn_share: 0.45             # <-- small trim to make room\
+      stakers_share: 0.15          # <-- conservative yield early\
+      treasury_share: 0.40         # <-- maximize runway\
+      ops_spend_per_q_usd: 500000\
+      staked_pct_of_circ: 0.20\
+\
+# Python\
+__pycache__/\
+*.pyc\
+.venv/\
+.env\
+\
+# Simulator outputs (reproducible)\
+sims/outputs/*.csv\
+sims/outputs/*results_*.csv\
+sims/outputs/*run_manifest.json\
+sims/outputs_scenarios/*/results_*.csv\
+sims/outputs_scenarios/*/kpis_summary.csv\
+sims/outputs_scenarios/*/run_manifest.json\
+\
+# (Optional) keep human-readable reports; comment these out if you *do* want them\
+# sims/outputs/*report_*.md\
+# sims/outputs/SAIT_Tokenomics_Report.md\
+# sims/outputs_scenarios/*/SAIT_Tokenomics_Report.md\
+# sims/outputs_scenarios/*/kpis_summary.md\
+}
