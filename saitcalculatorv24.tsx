@@ -85,6 +85,65 @@ interface Phase {
   buckets: { research: number; ecosystem: number; team: number };
 }
 
+// Tooltip Component
+const Tooltip: React.FC<{ text: string }> = ({ text }) => {
+  const [show, setShow] = useState(false);
+
+  return (
+    <div className="relative inline-block ml-1">
+      <button
+        onClick={() => setShow(!show)}
+        className="text-blue-500 hover:text-blue-700 cursor-pointer text-xs font-bold"
+        type="button"
+      >
+        ⓘ
+      </button>
+      {show && (
+        <>
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50 z-40"
+            onClick={() => setShow(false)}
+          />
+          <div className="absolute z-50 w-72 p-4 bg-white border-2 border-blue-500 rounded-lg shadow-xl left-0 top-6">
+            <div className="text-sm text-gray-700 leading-relaxed">{text}</div>
+            <button
+              onClick={() => setShow(false)}
+              className="mt-3 text-xs text-white bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded font-semibold"
+              type="button"
+            >
+              Close
+            </button>
+          </div>
+        </>
+      )}
+    </div>
+  );
+};
+
+// Tooltip Explanation Texts
+const TOOLTIP_TEXTS = {
+  unlocked: "The amount of tokens that have vested and are available from this vault. These tokens have passed their vesting schedule and can be used according to quarterly transfer limits.",
+  kpiVesting: "Tokens unlock when Key Performance Indicators (KPIs) are achieved. Maximum 7 active KPIs, with combined unlocks capped at 21% of circulating supply.",
+  finalPrice: "The projected SAIT price at the end of the simulation period, based on supply/demand dynamics, buyback pressure, and market sentiment factors.",
+  marketCap: "Total value of all circulating SAIT tokens (Price × Circulating Supply). This represents the protocol's market valuation.",
+  circulatingSupply: "The number of SAIT tokens currently in circulation, including vested tokens minus buybacks. Does not include locked tokens in vaults.",
+  totalBoughtBack: "Total SAIT tokens removed from circulation through treasury buyback operations. Buybacks occur at 0.3%, 1.5%, and 2.0% monthly rates depending on timeline.",
+  initialPrice: "Starting price for SAIT token. Set to $150 based on SAT backing parity. This establishes the initial price floor from treasury reserves.",
+  marketSentiment: "Multiplier representing overall market conditions (0.5 = bearish, 1.0 = neutral, 2.0 = bullish). Affects price projections by simulating investor confidence.",
+  priceGrowth: "Monthly percentage increase in base price. 2% monthly equals ~27% annual growth. This models organic price appreciation from adoption.",
+  treasuryReserves: "Total value of SAT (Safe Asset Token) held in treasury reserves. Used to fund buybacks and provide SAIT price floor support.",
+  treasuryRunway: "Number of months the treasury can sustain operations and buybacks at current burn rate before reserves are depleted.",
+  treasuryStartingCash: "Initial SAT reserves from institutional capital commitments. Used to fund operations and SAIT buybacks.",
+  operationalSpend: "Quarterly operational expenses paid from treasury. Includes development, audits, operations, and team costs.",
+  speculator: "Percentage of token holders who trade frequently (high sell rate). These holders contribute to short-term price volatility.",
+  utilityBuyer: "Percentage of token holders who use tokens for governance/utility (medium sell rate). These holders balance value accrual with participation.",
+  hodler: "Percentage of long-term holders with low sell rates. These holders provide price stability and reduce circulating supply pressure.",
+  timeHorizon: "Duration of the simulation in months. Default is 60 months (5 years) to match strategic planning horizon.",
+  priceChart: "Shows SAIT price over time with three key levels: Market Price (blue), Buyback Floor (red dashed), and Premium Target (purple dashed) from equilibrium model.",
+  supplyChart: "Tracks circulating supply growth as vaults unlock over time. Affected by vesting schedules and buyback reductions.",
+  satTreasuryChart: "Displays SAT reserve accumulation from SAIT sales (125k/mo), grant recoveries (10%), and LP fees (0.3%), minus buyback costs and operations."
+};
+
 const SAITCalculator: React.FC = () => {
   // Core token parameters
 
@@ -94,7 +153,7 @@ const SAITCalculator: React.FC = () => {
   const [timeHorizon, setTimeHorizon] = useState<number>(60); // 5 years
 
   // --- SAIT State ---
-  const [basePrice, setBasePrice] = useState<number>(0.10);
+  const [basePrice, setBasePrice] = useState<number>(150); // $150 SAT backing parity
   const [priceGrowthRate, setPriceGrowthRate] = useState<number>(0.02); // 2% m/m
   const [activeKPIs, setActiveKPIs] = useState<KPIMilestone[]>([
     { ...STANDARD_KPIS[0], achievedMonth: 1 } // Beta Launch default
@@ -414,6 +473,13 @@ const SAITCalculator: React.FC = () => {
     return v.toString();
   };
 
+  const formatYAxis = (value: number) => {
+    if (value >= 1e9) return `${(value / 1e9).toFixed(1)}B`;
+    if (value >= 1e6) return `${(value / 1e6).toFixed(1)}M`;
+    if (value >= 1e3) return `${(value / 1e3).toFixed(0)}K`;
+    return value.toString();
+  };
+
   // Select Data based on Tab
   const final = activeTab === 'SAIT'
     ? (calculateScenario.length > 0 ? calculateScenario[calculateScenario.length - 1] : undefined) as ScenarioData
@@ -456,25 +522,37 @@ const SAITCalculator: React.FC = () => {
             <div className="text-2xl font-bold text-blue-600">
               {formatCurrency(final?.price || 0)}
             </div>
-            <div className="text-sm text-gray-600">Final Price</div>
+            <div className="text-sm text-gray-600 flex items-center justify-center">
+              Final Price
+              <Tooltip text={TOOLTIP_TEXTS.finalPrice} />
+            </div>
           </div>
           <div className="text-center">
             <div className="text-2xl font-bold text-green-600">
               {formatCurrency(final?.marketCap || 0)}
             </div>
-            <div className="text-sm text-gray-600">Market Cap</div>
+            <div className="text-sm text-gray-600 flex items-center justify-center">
+              Market Cap
+              <Tooltip text={TOOLTIP_TEXTS.marketCap} />
+            </div>
           </div>
           <div className="text-center">
             <div className="text-2xl font-bold text-purple-600">
               {formatTokens(activeTab === 'SAIT' ? ((final as ScenarioData)?.totalBurned || 0) : ((final as ABCScenarioData)?.burnedTokens || 0))}
             </div>
-            <div className="text-sm text-gray-600">Total Burned</div>
+            <div className="text-sm text-gray-600 flex items-center justify-center">
+              {activeTab === 'SAIT' ? 'Total Bought Back' : 'Total Burned'}
+              <Tooltip text={TOOLTIP_TEXTS.totalBoughtBack} />
+            </div>
           </div>
           <div className="text-center">
             <div className="text-2xl font-bold text-orange-600">
               {formatTokens(final?.circulatingSupply || 0)}
             </div>
-            <div className="text-sm text-gray-600">Circulating Supply</div>
+            <div className="text-sm text-gray-600 flex items-center justify-center">
+              Circulating Supply
+              <Tooltip text={TOOLTIP_TEXTS.circulatingSupply} />
+            </div>
           </div>
         </div>
 
@@ -525,13 +603,15 @@ const SAITCalculator: React.FC = () => {
                 <div className="text-xs font-bold text-gray-500">AI Fund (50%)</div>
                 <div className="flex justify-between items-center">
                   <span className="font-mono text-lg">{formatTokens(50_000_000)}</span>
-                  <span className="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded">KPI Vesting</span>
+                  <span className="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded inline-flex items-center">
+                    KPI Vesting
+                    <Tooltip text={TOOLTIP_TEXTS.kpiVesting} />
+                  </span>
                 </div>
-                {/* ... KPI Toggles Removed for brevity in this replace, assume they stay if outside ... */}
-                {/* Wait, I am replacing the whole block. I need to keep the KPI toggles. 
-                    Actually, let's just render the correct block. 
-                */}
-                <div className="text-xs text-gray-600 mt-1">Unlocked: {formatTokens((final as ScenarioData)?.aiFundVested || 0)}</div>
+                <div className="text-xs text-gray-600 mt-1 flex items-center">
+                  Unlocked: {formatTokens((final as ScenarioData)?.aiFundVested || 0)}
+                  <Tooltip text={TOOLTIP_TEXTS.unlocked} />
+                </div>
               </div>
               {/* Other SAIT Vaults Simplified for this response, the previous tool put them there. */}
             </div>
@@ -569,8 +649,9 @@ const SAITCalculator: React.FC = () => {
           <div className="space-y-4">
             {/* Base Price */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
                 {activeTab === 'SAIT' ? 'Initial SAIT Price ($)' : 'Initial ABC Price ($)'}
+                <Tooltip text={TOOLTIP_TEXTS.initialPrice} />
               </label>
               <input
                 type="number"
@@ -585,8 +666,9 @@ const SAITCalculator: React.FC = () => {
               <>
                 {/* Price Growth */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
                     Monthly Price Growth Rate
+                    <Tooltip text={TOOLTIP_TEXTS.priceGrowth} />
                   </label>
                   <input
                     type="range"
@@ -604,8 +686,9 @@ const SAITCalculator: React.FC = () => {
 
                 {/* Sentiment */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
                     Market Sentiment
+                    <Tooltip text={TOOLTIP_TEXTS.marketSentiment} />
                   </label>
                   <input
                     type="range"
@@ -664,8 +747,9 @@ const SAITCalculator: React.FC = () => {
           </h3>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
                 Starting Treasury Cash ($)
+                <Tooltip text={TOOLTIP_TEXTS.treasuryStartingCash} />
               </label>
               <input
                 type="number"
@@ -678,8 +762,9 @@ const SAITCalculator: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
                 Operational Spend ($ per quarter)
+                <Tooltip text={TOOLTIP_TEXTS.operationalSpend} />
               </label>
               <input
                 type="number"
@@ -699,19 +784,19 @@ const SAITCalculator: React.FC = () => {
               <h4 className="text-sm font-semibold text-red-800 mb-2">
                 Treasury Status (SAT)
               </h4>
-              <div className="grid grid-cols-2 gap-2 text-xs">
+              <div className="grid grid-cols-2 gap-3 text-xs">
                 <div>
-                  <span className="text-gray-500">Reserves:</span>
+                  <span className="text-gray-500 block mb-1">Reserves:</span>
                   <div className="font-bold text-lg">{formatCurrency(final?.satReserves || 0)}</div>
                 </div>
                 <div>
-                  <span className="text-gray-500">Runway:</span>
-                  <div className="font-bold text-lg ml-1">
-                    {final?.treasuryRunway === Infinity ? '∞' : final?.treasuryRunway} m
+                  <span className="text-gray-500 block mb-1">Runway:</span>
+                  <div className="font-bold text-lg">
+                    {final?.treasuryRunway === Infinity ? '∞' : `${final?.treasuryRunway || 0}m`}
                   </div>
                 </div>
-                <div className="col-span-2">
-                  <span className="text-gray-500">Price Floor:</span>
+                <div className="col-span-2 mt-2 pt-2 border-t border-red-200">
+                  <span className="text-gray-500 block mb-1">Price Floor:</span>
                   <div className="font-bold text-blue-600">{formatCurrency(final?.priceFloor || 0)}</div>
                 </div>
               </div>
@@ -727,8 +812,9 @@ const SAITCalculator: React.FC = () => {
           <div className="space-y-4">
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
                 Time Horizon (months)
+                <Tooltip text={TOOLTIP_TEXTS.timeHorizon} />
               </label>
               <input
                 type="number"
@@ -740,8 +826,9 @@ const SAITCalculator: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
                 Speculator Ratio
+                <Tooltip text={TOOLTIP_TEXTS.speculator} />
               </label>
               <input
                 type="range"
@@ -763,8 +850,9 @@ const SAITCalculator: React.FC = () => {
               </span>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
                 Utility Buyer Ratio
+                <Tooltip text={TOOLTIP_TEXTS.utilityBuyer} />
               </label>
               <input
                 type="range"
@@ -780,8 +868,9 @@ const SAITCalculator: React.FC = () => {
               </span>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
                 Hodler Ratio
+                <Tooltip text={TOOLTIP_TEXTS.hodler} />
               </label>
               <input
                 type="range"
@@ -805,11 +894,17 @@ const SAITCalculator: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Price Over Time */}
           <div className="h-64">
+            <div className="text-center mb-2">
+              <h3 className="text-lg font-semibold text-gray-700 inline-flex items-center">
+                Price Over Time
+                <Tooltip text={TOOLTIP_TEXTS.priceChart} />
+              </h3>
+            </div>
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={dataToRender}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="month" />
-                <YAxis domain={['auto', 'auto']} />
+                <YAxis domain={['auto', 'auto']} tickFormatter={formatYAxis} />
                 <Tooltip />
                 <Legend />
                 <Line
@@ -847,11 +942,17 @@ const SAITCalculator: React.FC = () => {
 
           {/* Circulating Supply Over Time */}
           <div className="h-64">
+            <div className="text-center mb-2">
+              <h3 className="text-lg font-semibold text-gray-700 inline-flex items-center">
+                Circulating Supply
+                <Tooltip text={TOOLTIP_TEXTS.supplyChart} />
+              </h3>
+            </div>
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={dataToRender}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="month" />
-                <YAxis />
+                <YAxis tickFormatter={formatYAxis} />
                 <Tooltip />
                 <Legend />
                 <Area
@@ -866,6 +967,62 @@ const SAITCalculator: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* SAT Treasury Chart - SAIT Mode Only */}
+      {activeTab === 'SAIT' && (
+        <div className="bg-white rounded-lg shadow-lg p-6 mt-6">
+          <div className="text-center mb-4">
+            <h3 className="text-xl font-semibold text-gray-700 inline-flex items-center justify-center">
+              SAT Treasury Reserves
+              <Tooltip text={TOOLTIP_TEXTS.satTreasuryChart} />
+            </h3>
+          </div>
+          <div className="h-80">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={calculateScenario}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis
+                  dataKey="month"
+                  label={{ value: 'Month', position: 'insideBottom', offset: -5 }}
+                />
+                <YAxis
+                  tickFormatter={formatYAxis}
+                  label={{ value: 'USD Value', angle: -90, position: 'insideLeft' }}
+                />
+                <Tooltip
+                  formatter={(value) => formatCurrency(Number(value))}
+                  labelFormatter={(label) => `Month ${label}`}
+                />
+                <Legend />
+                <Area
+                  type="monotone"
+                  dataKey="satReserves"
+                  stroke="#ef4444"
+                  fill="#fecaca"
+                  name="SAT Reserves ($)"
+                  fillOpacity={0.6}
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+          <div className="mt-4 grid grid-cols-3 gap-4 text-center text-sm">
+            <div>
+              <div className="text-gray-500">Starting Reserves</div>
+              <div className="font-bold text-lg">{formatCurrency(INITIAL_SAT_RESERVES)}</div>
+            </div>
+            <div>
+              <div className="text-gray-500">Current Reserves</div>
+              <div className="font-bold text-lg text-red-600">{formatCurrency(final?.satReserves || 0)}</div>
+            </div>
+            <div>
+              <div className="text-gray-500">Growth</div>
+              <div className="font-bold text-lg text-green-600">
+                {((((final?.satReserves || INITIAL_SAT_RESERVES) - INITIAL_SAT_RESERVES) / INITIAL_SAT_RESERVES) * 100).toFixed(1)}%
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
