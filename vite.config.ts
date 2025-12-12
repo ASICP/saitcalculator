@@ -11,6 +11,6 @@ export default defineConfig({
     preview: {
         host: '0.0.0.0',
         port: 4173,
-        allowedHosts: ['.replit.app', '.replit.dev', 'scenarios.saitoken.org']
+        allowedHosts: ['.replit.app', '.replit.dev', 'scenarios.saitoken.org', 'scenarios.asi2.org']
     }
 })
