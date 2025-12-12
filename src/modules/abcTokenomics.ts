@@ -35,6 +35,8 @@ export interface ABCScenarioData {
     curationCount: number;
     activeBounties: number;
     authorityScoreAvg: number;
+    treasuryReserves: number; // USD treasury reserves
+    treasuryRunway: number; // Months of runway
 }
 
 export interface ABCUsageParams {

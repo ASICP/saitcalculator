@@ -219,6 +219,8 @@ const SAITCalculator: React.FC = () => {
   const [abcBasePrice, setAbcBasePrice] = useState<number>(0.10);
   const [abcMonthlyPapers, setAbcMonthlyPapers] = useState<number>(150);
   const [abcBountiesMonthly, setAbcBountiesMonthly] = useState<number>(20);
+  const [abcTreasuryStartingCash, setAbcTreasuryStartingCash] = useState<number>(30_000); // $30k
+  const [abcOperationalSpend, setAbcOperationalSpend] = useState<number>(3_000); // $3k per quarter
 
   // SAIT Calculation
   const calculateScenario = useMemo<ScenarioData[]>(
@@ -325,6 +327,11 @@ const SAITCalculator: React.FC = () => {
         satReserves = treasuryState.satReserves;
         treasurySaitHoldings = treasuryState.saitHoldings;
 
+        // Total Treasury Value = SAT Reserves (USD) + Value of SAIT Holdings
+        // The treasury gets richer as SAIT appreciates!
+        const saitHoldingsValue = treasurySaitHoldings * currentPrice;
+        const totalTreasuryValue = satReserves + saitHoldingsValue;
+
         // 4. Update Supplies
         // NO BURNS in this version - buybacks cost money but don't reduce circulating supply
         circulatingSupply = totalUnlockedSupply;
@@ -407,7 +414,7 @@ const SAITCalculator: React.FC = () => {
           teamVested,
           partnersVested,
           saitHoldings: treasurySaitHoldings,
-          satReserves,
+          satReserves: totalTreasuryValue, // Total value: SAT + SAIT holdings value
           priceFloor: priceFloor,
           premiumTarget
         });
@@ -446,6 +453,7 @@ const SAITCalculator: React.FC = () => {
     const staticSupply = ABC_ALLOCATIONS.PUBLIC + ABC_ALLOCATIONS.PARTNERS;
 
     let totalBurned = 0;
+    let treasuryReserves = abcTreasuryStartingCash;
 
     for (let month = 1; month <= timeHorizon; month++) {
       // Dynamic Unlocks
@@ -494,6 +502,25 @@ const SAITCalculator: React.FC = () => {
       const price = abcBasePrice * timeFactor * scarcityPremium;
       const marketCap = circulating * price;
 
+      // Treasury Management
+      // Inflows: Paper submission fees ($100 per paper), bounty recoveries
+      const paperFeeRevenue = abcMonthlyPapers * 100; // $100 per paper submission
+      const bountyRecoveryRevenue = abcBountiesMonthly * 500; // $500 avg recovery per bounty
+      const totalInflows = paperFeeRevenue + bountyRecoveryRevenue;
+
+      // Outflows: Operational spend
+      const monthlyOpex = abcOperationalSpend / 3; // Convert quarterly to monthly
+      const totalOutflows = monthlyOpex;
+
+      // Update reserves
+      const netFlow = totalInflows - totalOutflows;
+      treasuryReserves += netFlow;
+
+      // Calculate runway
+      const runway = treasuryReserves > 0 && totalOutflows > totalInflows
+        ? Math.floor(treasuryReserves / (totalOutflows - totalInflows))
+        : Infinity;
+
       months.push({
         month,
         circulatingSupply: Math.round(circulating),
@@ -505,11 +532,13 @@ const SAITCalculator: React.FC = () => {
         marketCap,
         curationCount: abcMonthlyPapers * month,
         activeBounties: abcBountiesMonthly,
-        authorityScoreAvg: 100 + (month * 5)
+        authorityScoreAvg: 100 + (month * 5),
+        treasuryReserves,
+        treasuryRunway: runway
       });
     }
     return months;
-  }, [abcBasePrice, abcMonthlyPapers, abcBountiesMonthly, timeHorizon]);
+  }, [abcBasePrice, abcMonthlyPapers, abcBountiesMonthly, timeHorizon, abcTreasuryStartingCash, abcOperationalSpend]);
 
   // Formatting helpers
   const formatCurrency = (v: number) => {
@@ -561,7 +590,7 @@ const SAITCalculator: React.FC = () => {
               onClick={() => setActiveTab('ABC')}
               className={`px-4 py-2 rounded-md font-semibold ${activeTab === 'ABC' ? 'bg-green-600 text-white shadow' : 'text-gray-600 hover:bg-gray-200'} `}
             >
-              ABC (Commons)
+              ABC (Beacon)
             </button>
           </div>
         </div>
@@ -569,7 +598,7 @@ const SAITCalculator: React.FC = () => {
         <p className="text-gray-600 mb-4">
           {activeTab === 'SAIT' ?
             "Projecting SAIT tokenomics: Buybacks, Treasury Saturation, and Price Floors." :
-            "Projecting ABC tokenomics: Commons Treasury Emissions, Curation Staking, and Reputation."}
+            "Projecting ABC tokenomics: Beacon Treasury Emissions, Curation Staking, and Reputation."}
         </p>
 
         {/* Key Metrics Summary */}
@@ -618,19 +647,28 @@ const SAITCalculator: React.FC = () => {
               <div className="text-xl font-bold text-green-700">
                 {formatTokens((final as ABCScenarioData)?.stakedCuration || 0)}
               </div>
-              <div className="text-xs text-green-600">Staked (Curation)</div>
+              <div className="text-xs text-green-600 flex items-center justify-center">
+                Staked (Curation)
+                <InfoTooltip text={TOOLTIP_TEXTS.stakedCuration} />
+              </div>
             </div>
             <div className="text-center">
               <div className="text-xl font-bold text-green-700">
                 {formatTokens((final as ABCScenarioData)?.stakedBounties || 0)}
               </div>
-              <div className="text-xs text-green-600">Staked (Bounties)</div>
+              <div className="text-xs text-green-600 flex items-center justify-center">
+                Staked (Bounties)
+                <InfoTooltip text={TOOLTIP_TEXTS.stakedBounties} />
+              </div>
             </div>
             <div className="text-center">
               <div className="text-xl font-bold text-green-700">
                 {((final as ABCScenarioData)?.authorityScoreAvg || 0).toFixed(0)}
               </div>
-              <div className="text-xs text-green-600">Avg Authority Score</div>
+              <div className="text-xs text-green-600 flex items-center justify-center">
+                Avg Authority Score
+                <InfoTooltip text={TOOLTIP_TEXTS.avgAuthorityScore} />
+              </div>
             </div>
           </div>
         )}
@@ -649,8 +687,9 @@ const SAITCalculator: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-6">
         {/* Allocations & Vaults */}
         <div className="bg-white rounded-lg shadow-lg p-6">
-          <h3 className="text-lg font-semibold mb-4 text-gray-700">
+          <h3 className="text-lg font-semibold mb-4 text-gray-700 flex items-center">
             {activeTab === 'SAIT' ? 'SAIT Vault Allocations (100M Fixed)' : 'ABC Supply Allocations (100M Fixed)'}
+            {activeTab === 'ABC' && <InfoTooltip text={TOOLTIP_TEXTS.abcSupplyAlloc} />}
           </h3>
 
           {activeTab === 'SAIT' ? (
@@ -709,7 +748,7 @@ const SAITCalculator: React.FC = () => {
           ) : (
             <div className="space-y-3">
               <div className="p-2 border rounded bg-purple-50">
-                <div className="text-xs font-bold text-gray-500">Commons Treasury (50%)</div>
+                <div className="text-xs font-bold text-gray-500">Beacon Treasury (50%)</div>
                 <div className="flex justify-between items-center">
                   <span className="font-mono text-lg">{formatTokens(ABC_ALLOCATIONS.TREASURY)}</span>
                   <span className="text-sm bg-purple-100 text-purple-800 px-2 py-1 rounded">5yr Emission</span>
@@ -734,8 +773,9 @@ const SAITCalculator: React.FC = () => {
 
         {/* Market / Scenario Parameters */}
         <div className="bg-white rounded-lg shadow-lg p-6 lg:col-span-1">
-          <h3 className="text-lg font-semibold mb-4 text-blue-600">
+          <h3 className="text-lg font-semibold mb-4 text-blue-600 flex items-center">
             {activeTab === 'SAIT' ? 'Market Parameters' : 'ABC Usage Parameters'}
+            {activeTab === 'ABC' && <InfoTooltip text={TOOLTIP_TEXTS.abcUsageParams} />}
           </h3>
           <div className="space-y-4">
             {/* Base Price */}
@@ -860,14 +900,16 @@ const SAITCalculator: React.FC = () => {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
                 Starting Treasury Cash ($)
-                <InfoTooltip text={TOOLTIP_TEXTS.startingCash} />
+                <InfoTooltip text={activeTab === 'SAIT' ? TOOLTIP_TEXTS.startingCash : "Initial ABC treasury reserves in USD for operations and grants."} />
               </label>
               <input
                 type="number"
-                step="100000"
-                value={treasuryStartingCash}
+                step={activeTab === 'SAIT' ? "100000" : "1000"}
+                value={activeTab === 'SAIT' ? treasuryStartingCash : abcTreasuryStartingCash}
                 onChange={e =>
-                  setTreasuryStartingCash(parseInt(e.target.value) || 0)
+                  activeTab === 'SAIT'
+                    ? setTreasuryStartingCash(parseInt(e.target.value) || 0)
+                    : setAbcTreasuryStartingCash(parseInt(e.target.value) || 0)
                 }
                 className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-red-500 focus:border-red-500"
               />
@@ -879,10 +921,12 @@ const SAITCalculator: React.FC = () => {
               </label>
               <input
                 type="number"
-                step="50000"
-                value={operationalSpend}
+                step={activeTab === 'SAIT' ? "50000" : "500"}
+                value={activeTab === 'SAIT' ? operationalSpend : abcOperationalSpend}
                 onChange={e =>
-                  setOperationalSpend(parseInt(e.target.value) || 0)
+                  activeTab === 'SAIT'
+                    ? setOperationalSpend(parseInt(e.target.value) || 0)
+                    : setAbcOperationalSpend(parseInt(e.target.value) || 0)
                 }
                 className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-red-500 focus:border-red-500"
               />
@@ -893,23 +937,33 @@ const SAITCalculator: React.FC = () => {
             {/* Treasury Health Check */}
             <div className="p-3 rounded-md" style={{ backgroundColor: '#B5C7EB' }}>
               <h4 className="text-sm font-semibold mb-2 text-black">
-                Treasury Status (SAT)
+                Treasury Status ({activeTab === 'SAIT' ? 'SAT' : 'ABC'})
               </h4>
               <div className="space-y-2 text-xs">
                 <div>
                   <span className="text-gray-500 block mb-1">Reserves:</span>
-                  <div className="text-sm text-black">{formatCurrency((final as ScenarioData)?.satReserves || 0)}</div>
+                  <div className="text-sm text-black">
+                    {activeTab === 'SAIT'
+                      ? formatCurrency((final as ScenarioData)?.satReserves || 0)
+                      : formatCurrency((final as ABCScenarioData)?.treasuryReserves || 0)
+                    }
+                  </div>
                 </div>
                 <div>
                   <span className="text-gray-500 block mb-1">Runway:</span>
                   <div className="text-sm text-black">
-                    {(final as ScenarioData)?.treasuryRunway === Infinity ? '∞' : `${(final as ScenarioData)?.treasuryRunway || 0}m`}
+                    {activeTab === 'SAIT'
+                      ? ((final as ScenarioData)?.treasuryRunway === Infinity ? '∞' : `${(final as ScenarioData)?.treasuryRunway || 0}m`)
+                      : ((final as ABCScenarioData)?.treasuryRunway === Infinity ? '∞' : `${(final as ABCScenarioData)?.treasuryRunway || 0}m`)
+                    }
                   </div>
                 </div>
-                <div className="mt-2 pt-2 border-t" style={{ borderColor: '#8FA3D0' }}>
-                  <span className="text-gray-500 block mb-1">Price Floor:</span>
-                  <div className="text-blue-600">{formatCurrency((final as ScenarioData)?.priceFloor || 0)}</div>
-                </div>
+                {activeTab === 'SAIT' && (
+                  <div className="mt-2 pt-2 border-t" style={{ borderColor: '#8FA3D0' }}>
+                    <span className="text-gray-500 block mb-1">Price Floor:</span>
+                    <div className="text-blue-600">{formatCurrency((final as ScenarioData)?.priceFloor || 0)}</div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -1006,26 +1060,83 @@ const SAITCalculator: React.FC = () => {
             <InfoTooltip text="Major calculations used in the SAIT and SAT treasury model. Click for detailed explanations." />
           </h3>
           <div className="space-y-3 text-xs">
-            <div className="p-2 bg-blue-50 rounded">
-              <div className="font-bold text-gray-700">Price Floor</div>
-              <div className="font-mono text-gray-600">Floor = SAT Reserves / (Circ. Supply × Velocity)</div>
-            </div>
-            <div className="p-2 bg-green-50 rounded">
-              <div className="font-bold text-gray-700">Premium Target</div>
-              <div className="font-mono text-gray-600">Target = Price Floor × 2.0</div>
-            </div>
-            <div className="p-2 bg-purple-50 rounded">
-              <div className="font-bold text-gray-700">Market Cap</div>
-              <div className="font-mono text-gray-600">Market Cap = Price × Circ. Supply</div>
-            </div>
-            <div className="p-2 bg-yellow-50 rounded">
-              <div className="font-bold text-gray-700">Treasury Runway</div>
-              <div className="font-mono text-gray-600">Runway = Reserves / Monthly Net Burn</div>
-            </div>
-            <div className="p-2 bg-red-50 rounded">
-              <div className="font-bold text-gray-700">Buyback Schedule</div>
-              <div className="font-mono text-gray-600">Mo 1-6: 0.3% | Mo 7-18: 1.5% | Mo 19+: 2.0%</div>
-            </div>
+            {activeTab === 'SAIT' ? (
+              <>
+                <div className="p-2 bg-blue-50 rounded">
+                  <div className="font-bold text-gray-700 flex items-center">
+                    Price Floor
+                    <InfoTooltip text={TOOLTIP_TEXTS.priceFloorFormula} />
+                  </div>
+                  <div className="font-mono text-gray-600">Floor = SAT Reserves / (Circ. Supply × Velocity)</div>
+                </div>
+                <div className="p-2 bg-green-50 rounded">
+                  <div className="font-bold text-gray-700 flex items-center">
+                    Premium Target
+                    <InfoTooltip text={TOOLTIP_TEXTS.premiumTargetFormula} />
+                  </div>
+                  <div className="font-mono text-gray-600">Target = Price Floor × 2.0</div>
+                </div>
+                <div className="p-2 bg-purple-50 rounded">
+                  <div className="font-bold text-gray-700 flex items-center">
+                    Market Cap
+                    <InfoTooltip text={TOOLTIP_TEXTS.marketCapFormula} />
+                  </div>
+                  <div className="font-mono text-gray-600">Market Cap = Price × Circ. Supply</div>
+                </div>
+                <div className="p-2 bg-yellow-50 rounded">
+                  <div className="font-bold text-gray-700 flex items-center">
+                    Treasury Runway
+                    <InfoTooltip text={TOOLTIP_TEXTS.treasuryRunwayFormula} />
+                  </div>
+                  <div className="font-mono text-gray-600">Runway = Reserves / Monthly Net Burn</div>
+                </div>
+                <div className="p-2 bg-red-50 rounded">
+                  <div className="font-bold text-gray-700 flex items-center">
+                    Buyback Schedule
+                    <InfoTooltip text={TOOLTIP_TEXTS.buybackScheduleFormula} />
+                  </div>
+                  <div className="font-mono text-gray-600">Mo 1-6: 0.3% | Mo 7-18: 1.5% | Mo 19+: 2.0%</div>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="p-2 bg-purple-50 rounded">
+                  <div className="font-bold text-gray-700 flex items-center">
+                    Market Cap
+                    <InfoTooltip text={TOOLTIP_TEXTS.marketCapFormula} />
+                  </div>
+                  <div className="font-mono text-gray-600">Market Cap = Price × Circ. Supply</div>
+                </div>
+                <div className="p-2 bg-green-50 rounded">
+                  <div className="font-bold text-gray-700 flex items-center">
+                    Scarcity Premium
+                    <InfoTooltip text="Scarcity Premium = 1 + (Staked / Circulating × 2.5). Higher staking percentage increases price through reduced liquid supply and enhanced utility demand." />
+                  </div>
+                  <div className="font-mono text-gray-600">Premium = 1 + (Staked / Circ. × 2.5)</div>
+                </div>
+                <div className="p-2 bg-blue-50 rounded">
+                  <div className="font-bold text-gray-700 flex items-center">
+                    Curation Stake
+                    <InfoTooltip text="Total ABC staked for paper curation = Papers × Curators per Paper × Stake per Curator. Average 5 curators per paper, 200 ABC each, locked for 3-month dispute window." />
+                  </div>
+                  <div className="font-mono text-gray-600">Stake = Papers × 5 × 200</div>
+                </div>
+                <div className="p-2 bg-yellow-50 rounded">
+                  <div className="font-bold text-gray-700 flex items-center">
+                    Bounty Stake
+                    <InfoTooltip text="Total ABC staked for bounties = Bounties × 5000 ABC. Locked until completion or failure. 15% slashed on failure." />
+                  </div>
+                  <div className="font-mono text-gray-600">Stake = Bounties × 5000</div>
+                </div>
+                <div className="p-2 bg-red-50 rounded">
+                  <div className="font-bold text-gray-700 flex items-center">
+                    Burn Rate
+                    <InfoTooltip text="Monthly ABC burned = (Bounty Failures × 5000 × 15%) + (Paper Failures × Fee × 15%). Assumes 15% failure/slashing rate, creating deflationary pressure." />
+                  </div>
+                  <div className="font-mono text-gray-600">Burn = Failures × Stake × 15%</div>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -1159,6 +1270,62 @@ const SAITCalculator: React.FC = () => {
               <div className="text-gray-500">Growth</div>
               <div className="font-bold text-lg text-green-600">
                 {(((((final as ScenarioData)?.satReserves || treasuryStartingCash) - treasuryStartingCash) / treasuryStartingCash) * 100).toFixed(2)}%
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ABC Treasury Chart - ABC Mode Only */}
+      {activeTab === 'ABC' && (
+        <div className="bg-white rounded-lg shadow-lg p-6 mt-6">
+          <div className="text-center mb-4">
+            <h3 className="text-xl font-semibold text-gray-700 inline-flex items-center justify-center">
+              ABC Treasury Reserves
+              <InfoTooltip text="ABC treasury accumulates from paper submission fees ($100/paper), bounty recoveries ($500 avg), and grants. Funds operations and research initiatives." />
+            </h3>
+          </div>
+          <div className="h-80">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={calculateABC}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis
+                  dataKey="month"
+                  label={{ value: 'Month', position: 'insideBottom', offset: -5 }}
+                />
+                <YAxis
+                  tickFormatter={formatYAxis}
+                  label={{ value: 'USD Value', angle: -90, position: 'insideLeft', offset: 3 }}
+                />
+                <RechartsTooltip
+                  formatter={(value) => formatCurrency(Number(value))}
+                  labelFormatter={(label) => `Month ${label}`}
+                />
+                <Legend wrapperStyle={{ paddingTop: '10px' }} />
+                <Area
+                  type="monotone"
+                  dataKey="treasuryReserves"
+                  stroke="#48bb78"
+                  fill="#9ae6b4"
+                  name="ABC Reserves ($)"
+                  fillOpacity={0.6}
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+          <div className="mt-4 grid grid-cols-3 gap-4 text-center text-sm">
+            <div>
+              <div className="text-gray-500">Starting Reserves</div>
+              <div className="font-bold text-lg">{formatCurrency(abcTreasuryStartingCash)}</div>
+            </div>
+            <div>
+              <div className="text-gray-500">Current Reserves</div>
+              <div className="font-bold text-lg text-black">{formatCurrency((final as ABCScenarioData)?.treasuryReserves || 0)}</div>
+            </div>
+            <div>
+              <div className="text-gray-500">Growth</div>
+              <div className="font-bold text-lg text-green-600">
+                {(((((final as ABCScenarioData)?.treasuryReserves || abcTreasuryStartingCash) - abcTreasuryStartingCash) / abcTreasuryStartingCash) * 100).toFixed(2)}%
               </div>
             </div>
           </div>
