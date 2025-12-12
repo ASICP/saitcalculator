@@ -89,10 +89,28 @@ interface Phase {
 const InfoTooltip: React.FC<{ text: string }> = ({ text }) => {
   const [show, setShow] = useState(false);
 
+  const handleClose = () => {
+    setShow(false);
+  };
+
+  const handleBackdropClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    handleClose();
+  };
+
+  const handleContentClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
   return (
     <div className="relative inline-block ml-1 group z-10">
       <button
-        onClick={() => setShow(!show)}
+        onClick={(e) => {
+          e.stopPropagation();
+          setShow(!show);
+        }}
         className="text-blue-500 hover:text-blue-700 cursor-pointer text-xs font-bold"
         type="button"
       >
@@ -102,12 +120,18 @@ const InfoTooltip: React.FC<{ text: string }> = ({ text }) => {
         <>
           <div
             className="fixed inset-0 bg-black bg-opacity-50 z-40"
-            onClick={() => setShow(false)}
+            onClick={handleBackdropClick}
           />
-          <div className="absolute z-50 w-72 p-4 bg-white border-2 border-blue-500 rounded-lg shadow-xl left-0 top-6">
+          <div
+            className="fixed z-50 w-72 p-4 bg-white border-2 border-blue-500 rounded-lg shadow-xl left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2"
+            onClick={handleContentClick}
+          >
             <div className="text-sm text-gray-700 leading-relaxed">{text}</div>
             <button
-              onClick={() => setShow(false)}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleClose();
+              }}
               className="mt-3 text-xs text-white bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded font-semibold"
               type="button"
             >
@@ -142,12 +166,24 @@ const TOOLTIP_TEXTS = {
   priceChart: "Shows SAIT price over time with three key levels: Market Price (blue), Buyback Floor (red dashed), and Premium Target (purple dashed) from equilibrium model.",
   supplyChart: "Tracks circulating supply growth as vaults unlock over time. Affected by vesting schedules and buyback reductions.",
   satTreasuryChart: "Displays SAT reserve accumulation from SAIT sales (125k/mo), grant recoveries (10%), and LP fees (0.3%), minus buyback costs and operations.",
-  monthlyHiring: "Placeholder for monthly hiring tooltip text.", // Added
-  vaultVesting: "Describes the vesting mechanism for this specific vault.", // Added
-  vaultUnlocked: "The amount of tokens from this vault that have vested and are available.", // Added
-  sentiment: "Multiplier representing overall market conditions (0.5 = bearish, 1.0 = neutral, 2.0 = bullish). Affects price projections by simulating investor confidence.", // Added, same as marketSentiment
-  startingCash: "Initial SAT reserves from institutional capital commitments. Used to fund operations and SAIT buybacks.", // Added, same as treasuryStartingCash
-  totalBurned: "Total ABC tokens removed from circulation through various mechanisms like failed bounties or slashing." // Added
+  monthlyHiring: "Placeholder for monthly hiring tooltip text.",
+  vaultVesting: "Describes the vesting mechanism for this specific vault.",
+  vaultUnlocked: "The amount of tokens from this vault that have vested and are available.",
+  sentiment: "Multiplier representing overall market conditions (0.5 = bearish, 1.0 = neutral, 2.0 = bullish). Affects price projections by simulating investor confidence.",
+  startingCash: "Initial SAT reserves from institutional capital commitments. Used to fund operations and SAIT buybacks.",
+  totalBurned: "Total ABC tokens removed from circulation through various mechanisms like failed bounties or slashing.",
+  // Formula tooltips
+  priceFloorFormula: "Price Floor = SAT Reserves / (Circulating Supply × Velocity). This establishes the minimum SAIT price based on treasury backing divided by active supply turnover. Lower velocity (hodling) = higher floor.",
+  premiumTargetFormula: "Premium Target = Price Floor × 2.0. When market price exceeds 2x the floor, it indicates strong confidence and healthy premium above backing.",
+  marketCapFormula: "Market Cap = Price × Circulating Supply. Total value of all SAIT tokens in circulation, representing the protocol's market valuation.",
+  treasuryRunwayFormula: "Runway = Reserves / Monthly Net Burn. Number of months treasury can sustain operations and buybacks. Infinity (∞) means reserves are growing, not depleting.",
+  buybackScheduleFormula: "Buyback schedule increases over time: Months 1-6 at 0.3%, Months 7-18 at 1.5%, Months 19+ at 2.0%. Percentages are of circulating supply bought monthly.",
+  // ABC-specific tooltips
+  stakedCuration: "ABC tokens staked by researchers to curate and validate scientific papers. Stakers earn rewards for accurate curation and risk slashing for poor quality work.",
+  stakedBounties: "ABC tokens staked by participants working on bounties and research challenges. Successful completion returns stake plus rewards; failure results in slashing.",
+  avgAuthorityScore: "Average reputation score of participants in the ABC ecosystem. Ranges from 0-200, with 100 being baseline. Higher scores unlock greater rewards and governance weight.",
+  abcSupplyAlloc: "ABC Supply Allocations (100M Fixed): Total ABC token distribution across Beacon Treasury (50%), Liquidity (20%), ASI Institute (15%), and other allocations. Fixed supply, no inflation.",
+  abcUsageParams: "ABC Usage Parameters: Configure monthly paper submissions, active bounties, and staking levels. These drive ABC token demand and circulation through research activities."
 };
 
 const SAITCalculator: React.FC = () => {
@@ -156,25 +192,28 @@ const SAITCalculator: React.FC = () => {
 
   // --- Common State ---
   const [activeTab, setActiveTab] = useState<'SAIT' | 'ABC'>('SAIT');
-  const [timeHorizon, setTimeHorizon] = useState<number>(60); // 5 years
+  const [timeHorizon, setTimeHorizon] = useState<number>(12); // 12 months default
 
   // --- SAIT State ---
   const [basePrice, setBasePrice] = useState<number>(150); // $150 SAT backing parity
   const [priceGrowthRate, setPriceGrowthRate] = useState<number>(0.02); // 2% m/m
+  const [aiFundInitialUnlocked, setAiFundInitialUnlocked] = useState<number>(1_000_000); // 1M tokens initially unlocked
   const [activeKPIs, setActiveKPIs] = useState<KPIMilestone[]>([
     { ...STANDARD_KPIS[0], achievedMonth: 1 } // Beta Launch default
   ]);
-  const [speculatorRatio, setSpeculatorRatio] = useState<number>(0.2);
-  const [utilityBuyerRatio, setUtilityBuyerRatio] = useState<number>(0.3);
-  const [hodlerRatio, setHodlerRatio] = useState<number>(0.5);
+  const [speculatorRatio, setSpeculatorRatio] = useState<number>(0.15); // 15% speculators
+  const [utilityBuyerRatio, setUtilityBuyerRatio] = useState<number>(0.51); // 51% utility buyers
+  const [hodlerRatio, setHodlerRatio] = useState<number>(0.34); // 34% hodlers
   const [speculatorSellRate, setSpeculatorSellRate] = useState<number>(0.3);
   const [utilityBuyerSellRate, setUtilityBuyerSellRate] = useState<number>(0.1);
   const [hodlerSellRate, setHodlerSellRate] = useState<number>(0.05);
   const [marketSentimentSAIT, setMarketSentimentSAIT] = useState<number>(1.0); // Renamed to avoid conflict
   const [regulatoryRiskSAIT, setRegulatoryRiskSAIT] = useState<number>(1.0); // Renamed to avoid conflict
   const [competitionFactorSAIT, setCompetitionFactorSAIT] = useState<number>(1.0); // Renamed to avoid conflict
-  const [treasuryStartingCash, setTreasuryStartingCash] = useState<number>(50_000_000); // $50M
-  const [operationalSpend, setOperationalSpend] = useState<number>(500_000); // $500k/mo
+  const [velocity, setVelocity] = useState<number>(0.10); // 10% monthly velocity (normal market)
+  const [buybackRateMultiplier, setBuybackRateMultiplier] = useState<number>(1.0); // 1.0 = base rates (0.3%, 1.5%, 2%)
+  const [treasuryStartingCash, setTreasuryStartingCash] = useState<number>(4_000_000); // $4M
+  const [operationalSpend, setOperationalSpend] = useState<number>(250_000); // $250k per quarter
 
   // --- ABC State ---
   const [abcBasePrice, setAbcBasePrice] = useState<number>(0.10);
@@ -186,9 +225,12 @@ const SAITCalculator: React.FC = () => {
     () => {
       const months: ScenarioData[] = [];
       let currentPrice = basePrice;
-      let circulatingSupply = TGE_TOTAL;
-      let totalBurned = 0;
-      let escrowRemaining = TOTAL_SUPPLY - TGE_TOTAL;
+      let previousPrice = basePrice; // Track previous month's price for estimates
+      // Calculate adjusted TGE total using custom AI Fund unlocked amount
+      const adjustedTgeTotal = aiFundInitialUnlocked + TGE_TREASURY + TGE_TEAM + TGE_PARTNERS;
+      let circulatingSupply = adjustedTgeTotal;
+      let escrowRemaining = TOTAL_SUPPLY - adjustedTgeTotal;
+      let totalBoughtBack = 0; // Track cumulative buybacks (no burns in this version)
 
       // Initial Holdings Dist
       let speculatorHoldings = circulatingSupply * speculatorRatio;
@@ -196,7 +238,7 @@ const SAITCalculator: React.FC = () => {
       let hodlerHoldings = circulatingSupply * hodlerRatio;
 
       // Treasury Initial State
-      let satReserves = INITIAL_SAT_RESERVES;
+      let satReserves = treasuryStartingCash; // Use user-configurable starting cash instead of constant
       let treasurySaitHoldings = TREASURY_TOTAL_ALLOCATION; // 30M - Treasury holds all allocation including TGE portion for gradual sales
       // Treasury allocation is 30M total. 6M unlocked at TGE (20%) is controlled by treasury for strategic sales.
       // Treasury sells 5% of 30M annually (1.5M/year = 125k/month) from total holdings.
@@ -229,7 +271,7 @@ const SAITCalculator: React.FC = () => {
         );
 
         const totalVestedFromLocked = aiFundVested + treasuryVested + teamVested + partnersVested;
-        const totalUnlockedSupply = TGE_TOTAL + totalVestedFromLocked;
+        const totalUnlockedSupply = adjustedTgeTotal + totalVestedFromLocked;
 
         // Monthly Unlock (Delta from last month)
         const prevVested = month === 1 ? 0 :
@@ -237,21 +279,43 @@ const SAITCalculator: React.FC = () => {
         const monthlyNewTokens = totalVestedFromLocked - prevVested;
 
         // 2. Buyback (Burn Replacement)
-        let buybackRate = 0.003;
-        if (month > 6 && month <= 18) buybackRate = 0.015;
-        if (month > 18) buybackRate = 0.020;
+        // Base rates: 0.3% (mo 1-6), 1.5% (mo 7-18), 2.0% (mo 19+)
+        // Scaled by buybackRateMultiplier
+        let baseBuybackRate = 0.003;
+        if (month > 6 && month <= 18) baseBuybackRate = 0.015;
+        if (month > 18) baseBuybackRate = 0.020;
 
-        const tokensToBuy = (circulatingSupply + monthlyNewTokens) * buybackRate;
+        const buybackRate = baseBuybackRate * buybackRateMultiplier;
+        const tokensToBuyTarget = (circulatingSupply + monthlyNewTokens) * buybackRate;
 
-        // Buyback Price (Simplified TWAP - just use current price for estimation)
-        const buybackPrice = currentPrice;
-        const buybackCost = tokensToBuy * buybackPrice;
+        // Buyback Price (use previousPrice to avoid circular dependency)
+        const buybackPrice = previousPrice;
+        const desiredBuybackCost = tokensToBuyTarget * buybackPrice;
+
+        // Buyback Affordability Check - Only buy what treasury can afford
+        const monthlyOpex = operationalSpend / 3;
+
+        // Calculate available funds after operational expenses
+        // Use previousPrice for sales estimates to avoid circular dependency
+        const estimatedSaitSales = 125_000 * previousPrice;
+        const estimatedGrantRecoveries = 200_000 * Math.min(1, month / 12);
+        const estimatedLpFees = 50_000 * Math.max(1, month / 6);
+        const estimatedInflows = estimatedSaitSales + estimatedGrantRecoveries + estimatedLpFees;
+        const availableForBuyback = Math.max(0, satReserves + estimatedInflows - monthlyOpex);
+
+        // Cap buyback to affordable amount
+        const affordableBuybackCost = Math.min(desiredBuybackCost, availableForBuyback * 0.8); // Use 80% buffer for safety
+        const actualTokensToBuy = affordableBuybackCost / buybackPrice;
+        const buybackCost = affordableBuybackCost;
+
+        // Track cumulative buybacks
+        totalBoughtBack += actualTokensToBuy;
 
         // 3. Treasury Update
-        const monthlyOpex = operationalSpend / 3;
+        // Use previousPrice for SAIT sales to avoid circular dependency with price floor
         const treasuryState = calculateMonthlyTreasuryFlow({
           month,
-          saitPrice: currentPrice,
+          saitPrice: previousPrice,
           buybackCost,
           operationalSpend: monthlyOpex,
           prevReserves: satReserves,
@@ -262,44 +326,23 @@ const SAITCalculator: React.FC = () => {
         treasurySaitHoldings = treasuryState.saitHoldings;
 
         // 4. Update Supplies
-        // "Buybacks have been replaced with Buy ins" -> "Models token destruction instead of buyback" was the issue.
-        // If we buy back, do we burn? Or hold in treasury?
-        // Plan says: "Burn Mechanism ... replaced with SAIT-for-SAT buyback swaps"
-        // Usually buybacks for treasury hold tokens, reducing circulating supply.
-        // Let's assume they are removed from circulation (effectively burned or locked).
-        const effectiveBurn = tokensToBuy;
-
-        totalBurned += effectiveBurn;
-        circulatingSupply = totalUnlockedSupply - totalBurned;
+        // NO BURNS in this version - buybacks cost money but don't reduce circulating supply
+        circulatingSupply = totalUnlockedSupply;
         escrowRemaining = (TOTAL_SUPPLY - TGE_TOTAL) - totalVestedFromLocked;
 
-        // 5. Price Dynamics
-        // Price Floor: (SAT Reserves * 150) / Monthly Demand ??? -> Plan says: "(SAT Reserves * 150) / Monthly Demand" is weird.
-        // Plan says: "Price Floor = (SAT Reserves * 150) / Monthly Demand" ... wait.
-        // Let's re-read: "Calculate price floor from reserves... priceFloor = (params.satReserves * 150) / monthlyDemand;"
-        // "monthlyDemand = tokensToTarget * buybackPrice"
-        // This formula seems to imply backing coverage.
-        // Let's implement as specified, even if odd.
+        // 5. Price Dynamics - Equilibrium Model
+        // SAIT Price Floor depends on treasury backing AND circulating supply velocity
+        // Formula: SAIT Price Floor = (Treasury SAT reserves in USD) / (Circulating SAIT × Velocity)
+        // Note: satReserves is already in USD, no need to multiply by $150
 
-        // Actually, normally Floor = Reserves / Supply.
-        // But let's follow the "Price Floor Module" spec in the plan:
-        // const monthlyDemand = tokensToTarget * buybackPrice;
-        // const priceFloor = (params.satReserves * 150) / monthlyDemand; <- This units don't make sense (USD * Constant / USD = Constant).
-        // If Reserves=$50M, Demand=$1M, Floor = 50 * 150 = 7500? High.
-        // Maybe it meant: Floor = Reserves / Circulating Supply?
-        // OR: Floor is based on SAT backing capability.
-        // Let's look at "ASIP-SAIT-SAT-EQ-v5.pdf" context if possible, but sticking to Plan text:
-        // "Target State Requirements... Price Targets: Launch $150 (parity with SAT backing)"
-        // If Reserves limit the floor, maybe Floor = Total Reserves / Total Supply?
-        // Let's use a standard "Book Value" floor: Reserves / Circulating Supply.
-        // But the plan SPECIFICALLY wrote code: `priceFloor = (params.satReserves * 150) / monthlyDemand; `
-        // Wait, `monthlyDemand` is `tokens * price`.
-        // Maybe it's a ratio?
-        // Let's safeguard: priceFloor = satReserves / circulatingSupply (Backing per token).
-        // That makes physical sense.
-        // The plan code might be pseudo-code or I misread "monthlyDemand".
-        // Let's use Backing Per Token as the hard floor.
-        const backingFloor = satReserves / (circulatingSupply || 1);
+        // Effective Floor (normal market conditions with current velocity)
+        const effectiveFloor = satReserves / (circulatingSupply * velocity || 1);
+
+        // Stress Floor (crisis scenario - 50% monthly velocity)
+        const stressFloor = satReserves / (circulatingSupply * 0.50 || 1);
+
+        // Use Effective Floor as the enforceable price floor
+        const priceFloor = effectiveFloor;
 
         // Apply Price Change
         const sells = speculatorHoldings * speculatorSellRate +
@@ -312,30 +355,27 @@ const SAITCalculator: React.FC = () => {
         hodlerHoldings = hodlerHoldings - (hodlerHoldings * hodlerSellRate) + (monthlyNewTokens * hodlerRatio);
 
         const supplyPressure = (monthlyNewTokens + sells) / circulatingSupply;
-        const demandPressure = effectiveBurn / circulatingSupply;
+        const demandPressure = 0; // No burns in this version
         const netPressure = supplyPressure - demandPressure;
 
-        const priceGrowth = Math.pow(1 + priceGrowthRate, month);
+        // Monthly compounding: each month price grows by (1 + rate)
+        // Month 1: no growth yet (base price), Month 2: base * (1 + rate), etc.
+        const priceGrowth = month === 1 ? 1 : Math.pow(1 + priceGrowthRate, month - 1);
         const adjustment = 1 - netPressure * 0.5;
 
         let projectedPrice = basePrice * priceGrowth * adjustment * marketSentimentSAIT * regulatoryRiskSAIT * competitionFactorSAIT;
 
         // Enforce Floor
-        projectedPrice = Math.max(projectedPrice, backingFloor);
+        projectedPrice = Math.max(projectedPrice, priceFloor);
         currentPrice = projectedPrice;
 
-        // Premium Target Calculation
-        let premiumTarget = 0;
-        if (month <= 12) {
-          premiumTarget = 165 + (month / 12) * 10;
-        } else if (month <= 24) {
-          premiumTarget = 175 + ((month - 12) / 12) * 25;
-        } else {
-          premiumTarget = 200 + ((month - 24) / 12) * 100;
-        }
+        // Premium Target Calculation - Equilibrium Model
+        // Healthy indicator: Market Price > 2× Effective Floor = Strong confidence
+        // Premium target represents the "healthy premium" price level
+        const premiumTarget = effectiveFloor * 2.0;
 
         const marketCap = circulatingSupply * currentPrice;
-        const burnRate = (effectiveBurn / circulatingSupply) * 100;
+        const burnRate = 0; // No burns in this version
         const totalMonthlyInflows = treasuryState.monthlyInflows.saitSales + treasuryState.monthlyInflows.grantRecoveries + treasuryState.monthlyInflows.lpFees;
         const netBurn = monthlyOpex + buybackCost - totalMonthlyInflows;
         const runway = satReserves > 0 && netBurn > 0
@@ -347,10 +387,10 @@ const SAITCalculator: React.FC = () => {
           price: currentPrice,
           circulatingSupply: Math.round(circulatingSupply),
           escrowRemaining: Math.round(escrowRemaining),
-          totalBurned: Math.round(totalBurned),
+          totalBurned: Math.round(totalBoughtBack), // Track total buybacks (no burns)
           marketCap,
           monthlyUnlocks: Math.round(monthlyNewTokens),
-          monthlyBurns: Math.round(effectiveBurn),
+          monthlyBurns: Math.round(actualTokensToBuy), // Monthly buybacks (not burns)
           burnRate,
           speculatorHoldings: Math.round(speculatorHoldings),
           utilityBuyerHoldings: Math.round(utilityBuyerHoldings),
@@ -368,15 +408,19 @@ const SAITCalculator: React.FC = () => {
           partnersVested,
           saitHoldings: treasurySaitHoldings,
           satReserves,
-          priceFloor: backingFloor,
+          priceFloor: priceFloor,
           premiumTarget
         });
+
+        // Update previousPrice for next month
+        previousPrice = currentPrice;
       }
       return months;
     },
     [
       basePrice,
       priceGrowthRate,
+      aiFundInitialUnlocked,
       activeKPIs,
       timeHorizon,
       speculatorRatio,
@@ -388,6 +432,8 @@ const SAITCalculator: React.FC = () => {
       marketSentimentSAIT,
       regulatoryRiskSAIT,
       competitionFactorSAIT,
+      velocity,
+      buybackRateMultiplier,
       treasuryStartingCash,
       operationalSpend,
     ]
@@ -467,6 +513,7 @@ const SAITCalculator: React.FC = () => {
 
   // Formatting helpers
   const formatCurrency = (v: number) => {
+    if (v >= 1e12) return `$${(v / 1e12).toFixed(2)}T`;
     if (v >= 1e9) return `$${(v / 1e9).toFixed(2)}B`;
     if (v >= 1e6) return `$${(v / 1e6).toFixed(2)}M`;
     if (v >= 1e3) return `$${(v / 1e3).toFixed(2)}K`;
@@ -474,16 +521,19 @@ const SAITCalculator: React.FC = () => {
   };
 
   const formatTokens = (v: number) => {
-    if (v >= 1e6) return `${(v / 1e6).toFixed(0)}M`;
-    if (v >= 1e3) return `${(v / 1e3).toFixed(0)}K`;
-    return v.toString();
+    if (v >= 1e12) return `${(v / 1e12).toFixed(2)}T`;
+    if (v >= 1e9) return `${(v / 1e9).toFixed(2)}B`;
+    if (v >= 1e6) return `${(v / 1e6).toFixed(2)}M`;
+    if (v >= 1e3) return `${(v / 1e3).toFixed(2)}K`;
+    return v.toFixed(2);
   };
 
   const formatYAxis = (value: number) => {
-    if (value >= 1e9) return `${(value / 1e9).toFixed(1)}B`;
-    if (value >= 1e6) return `${(value / 1e6).toFixed(1)}M`;
-    if (value >= 1e3) return `${(value / 1e3).toFixed(0)}K`;
-    return value.toString();
+    if (value >= 1e12) return `${(value / 1e12).toFixed(2)}T`;
+    if (value >= 1e9) return `${(value / 1e9).toFixed(2)}B`;
+    if (value >= 1e6) return `${(value / 1e6).toFixed(2)}M`;
+    if (value >= 1e3) return `${(value / 1e3).toFixed(2)}K`;
+    return value.toFixed(2);
   };
 
   // Select Data based on Tab
@@ -614,11 +664,46 @@ const SAITCalculator: React.FC = () => {
                     <InfoTooltip text={TOOLTIP_TEXTS.vaultVesting} />
                   </span>
                 </div>
-                <div className="text-xs text-gray-600 mt-1 flex items-center">
-                  Unlocked: {formatTokens((final as ScenarioData)?.aiFundVested || 0)}
-                  <InfoTooltip text={TOOLTIP_TEXTS.vaultUnlocked} />
+                <div className="mt-2 space-y-1">
+                  <div className="text-xs text-gray-600 flex items-center">
+                    <label className="flex items-center gap-1">
+                      Initial Unlocked:
+                      <InfoTooltip text={TOOLTIP_TEXTS.vaultUnlocked} />
+                    </label>
+                  </div>
+                  <input
+                    type="number"
+                    step="100000"
+                    value={aiFundInitialUnlocked}
+                    onChange={e => setAiFundInitialUnlocked(parseInt(e.target.value) || 0)}
+                    className="w-full p-1 text-xs border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                  <div className="text-xs text-gray-500">
+                    Current Total: {formatTokens((final as ScenarioData)?.aiFundVested || 0)}
+                  </div>
                 </div>
               </div>
+
+              {/* Buyback Rate Multiplier */}
+              <div className="mt-4 p-3 border rounded bg-yellow-50">
+                <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center">
+                  Buyback Rate Multiplier
+                  <InfoTooltip text="Scales monthly buyback rates. Base: 0.3% (months 1-6), 1.5% (months 7-18), 2.0% (months 19+). Multiplier of 1.0 = base rates, 2.0 = double, 0.5 = half." />
+                </label>
+                <input
+                  type="range"
+                  min="0.1"
+                  max="3.0"
+                  step="0.1"
+                  value={buybackRateMultiplier}
+                  onChange={e => setBuybackRateMultiplier(parseFloat(e.target.value))}
+                  className="w-full"
+                />
+                <div className="text-sm text-gray-600 mt-1">
+                  {buybackRateMultiplier.toFixed(1)}x (Current: {(0.003 * buybackRateMultiplier * 100).toFixed(2)}% → {(0.015 * buybackRateMultiplier * 100).toFixed(2)}% → {(0.020 * buybackRateMultiplier * 100).toFixed(2)}%)
+                </div>
+              </div>
+
               {/* Other SAIT Vaults Simplified for this response, the previous tool put them there. */}
             </div>
           ) : (
@@ -686,7 +771,7 @@ const SAITCalculator: React.FC = () => {
                     className="w-full"
                   />
                   <span className="text-sm text-gray-500">
-                    {(priceGrowthRate * 100).toFixed(1)}%
+                    {(priceGrowthRate * 100).toFixed(2)}%
                   </span>
                 </div>
 
@@ -706,7 +791,27 @@ const SAITCalculator: React.FC = () => {
                     className="w-full"
                   />
                   <span className="text-sm text-gray-500">
-                    {marketSentimentSAIT.toFixed(1)}x
+                    {marketSentimentSAIT.toFixed(2)}x
+                  </span>
+                </div>
+
+                {/* Velocity */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                    Market Velocity
+                    <InfoTooltip text="Monthly turnover rate of circulating supply. Bull: 1-5%, Normal: 5-15%, Bear: 15-30%, Crisis: 30-50%. Affects price floor calculation." />
+                  </label>
+                  <input
+                    type="range"
+                    min="0.01"
+                    max="0.50"
+                    step="0.01"
+                    value={velocity}
+                    onChange={e => setVelocity(parseFloat(e.target.value))}
+                    className="w-full"
+                  />
+                  <span className="text-sm text-gray-500">
+                    {(velocity * 100).toFixed(0)}% monthly
                   </span>
                 </div>
               </>
@@ -770,7 +875,7 @@ const SAITCalculator: React.FC = () => {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
                 Operational Spend ($ per quarter)
-                <Tooltip text={TOOLTIP_TEXTS.operationalSpend} />
+                <InfoTooltip text={TOOLTIP_TEXTS.operationalSpend} />
               </label>
               <input
                 type="number"
@@ -786,24 +891,24 @@ const SAITCalculator: React.FC = () => {
 
 
             {/* Treasury Health Check */}
-            <div className="bg-red-50 p-3 rounded-md">
-              <h4 className="text-sm font-semibold text-red-800 mb-2">
+            <div className="p-3 rounded-md" style={{ backgroundColor: '#B5C7EB' }}>
+              <h4 className="text-sm font-semibold mb-2 text-black">
                 Treasury Status (SAT)
               </h4>
-              <div className="grid grid-cols-2 gap-3 text-xs">
+              <div className="space-y-2 text-xs">
                 <div>
                   <span className="text-gray-500 block mb-1">Reserves:</span>
-                  <div className="font-bold text-lg">{formatCurrency(final?.satReserves || 0)}</div>
+                  <div className="text-sm text-black">{formatCurrency((final as ScenarioData)?.satReserves || 0)}</div>
                 </div>
                 <div>
                   <span className="text-gray-500 block mb-1">Runway:</span>
-                  <div className="font-bold text-lg">
-                    {final?.treasuryRunway === Infinity ? '∞' : `${final?.treasuryRunway || 0}m`}
+                  <div className="text-sm text-black">
+                    {(final as ScenarioData)?.treasuryRunway === Infinity ? '∞' : `${(final as ScenarioData)?.treasuryRunway || 0}m`}
                   </div>
                 </div>
-                <div className="col-span-2 mt-2 pt-2 border-t border-red-200">
+                <div className="mt-2 pt-2 border-t" style={{ borderColor: '#8FA3D0' }}>
                   <span className="text-gray-500 block mb-1">Price Floor:</span>
-                  <div className="font-bold text-blue-600">{formatCurrency(final?.priceFloor || 0)}</div>
+                  <div className="text-blue-600">{formatCurrency((final as ScenarioData)?.priceFloor || 0)}</div>
                 </div>
               </div>
             </div>
@@ -893,13 +998,43 @@ const SAITCalculator: React.FC = () => {
             </div>
           </div>
         </div>
+
+        {/* Formula Reference Box */}
+        <div className="bg-white rounded-lg shadow-lg p-6 lg:col-span-1">
+          <h3 className="text-lg font-semibold mb-4 text-blue-600 flex items-center">
+            Key Formulas
+            <InfoTooltip text="Major calculations used in the SAIT and SAT treasury model. Click for detailed explanations." />
+          </h3>
+          <div className="space-y-3 text-xs">
+            <div className="p-2 bg-blue-50 rounded">
+              <div className="font-bold text-gray-700">Price Floor</div>
+              <div className="font-mono text-gray-600">Floor = SAT Reserves / (Circ. Supply × Velocity)</div>
+            </div>
+            <div className="p-2 bg-green-50 rounded">
+              <div className="font-bold text-gray-700">Premium Target</div>
+              <div className="font-mono text-gray-600">Target = Price Floor × 2.0</div>
+            </div>
+            <div className="p-2 bg-purple-50 rounded">
+              <div className="font-bold text-gray-700">Market Cap</div>
+              <div className="font-mono text-gray-600">Market Cap = Price × Circ. Supply</div>
+            </div>
+            <div className="p-2 bg-yellow-50 rounded">
+              <div className="font-bold text-gray-700">Treasury Runway</div>
+              <div className="font-mono text-gray-600">Runway = Reserves / Monthly Net Burn</div>
+            </div>
+            <div className="p-2 bg-red-50 rounded">
+              <div className="font-bold text-gray-700">Buyback Schedule</div>
+              <div className="font-mono text-gray-600">Mo 1-6: 0.3% | Mo 7-18: 1.5% | Mo 19+: 2.0%</div>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Charts */}
       <div className="bg-white rounded-lg shadow-lg p-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Price Over Time */}
-          <div className="h-64">
+          <div className="h-72">
             <div className="text-center mb-2">
               <h3 className="text-lg font-semibold text-gray-700 inline-flex items-center">
                 Price Over Time
@@ -912,7 +1047,7 @@ const SAITCalculator: React.FC = () => {
                 <XAxis dataKey="month" />
                 <YAxis domain={['auto', 'auto']} tickFormatter={formatYAxis} />
                 <RechartsTooltip />
-                <Legend />
+                <Legend wrapperStyle={{ paddingTop: '10px' }} />
                 <Line
                   type="monotone"
                   dataKey="price"
@@ -935,7 +1070,7 @@ const SAITCalculator: React.FC = () => {
                       type="monotone"
                       dataKey="premiumTarget"
                       stroke="#805ad5"
-                      name="Target Eq."
+                      name="Premium"
                       strokeDasharray="3 3"
                       opacity={0.5}
                       dot={false}
@@ -947,7 +1082,7 @@ const SAITCalculator: React.FC = () => {
           </div>
 
           {/* Circulating Supply Over Time */}
-          <div className="h-64">
+          <div className="h-72">
             <div className="text-center mb-2">
               <h3 className="text-lg font-semibold text-gray-700 inline-flex items-center">
                 Circulating Supply
@@ -960,7 +1095,7 @@ const SAITCalculator: React.FC = () => {
                 <XAxis dataKey="month" />
                 <YAxis tickFormatter={formatYAxis} />
                 <RechartsTooltip />
-                <Legend />
+                <Legend wrapperStyle={{ paddingTop: '10px' }} />
                 <Area
                   type="monotone"
                   dataKey="circulatingSupply"
@@ -993,18 +1128,18 @@ const SAITCalculator: React.FC = () => {
                 />
                 <YAxis
                   tickFormatter={formatYAxis}
-                  label={{ value: 'USD Value', angle: -90, position: 'insideLeft' }}
+                  label={{ value: 'USD Value', angle: -90, position: 'insideLeft', offset: 3 }}
                 />
                 <RechartsTooltip
                   formatter={(value) => formatCurrency(Number(value))}
                   labelFormatter={(label) => `Month ${label}`}
                 />
-                <Legend />
+                <Legend wrapperStyle={{ paddingTop: '10px' }} />
                 <Area
                   type="monotone"
                   dataKey="satReserves"
-                  stroke="#ef4444"
-                  fill="#fecaca"
+                  stroke="#657797"
+                  fill="#B5C7EB"
                   name="SAT Reserves ($)"
                   fillOpacity={0.6}
                 />
@@ -1014,16 +1149,16 @@ const SAITCalculator: React.FC = () => {
           <div className="mt-4 grid grid-cols-3 gap-4 text-center text-sm">
             <div>
               <div className="text-gray-500">Starting Reserves</div>
-              <div className="font-bold text-lg">{formatCurrency(INITIAL_SAT_RESERVES)}</div>
+              <div className="font-bold text-lg">{formatCurrency(treasuryStartingCash)}</div>
             </div>
             <div>
               <div className="text-gray-500">Current Reserves</div>
-              <div className="font-bold text-lg text-red-600">{formatCurrency(final?.satReserves || 0)}</div>
+              <div className="font-bold text-lg text-black">{formatCurrency((final as ScenarioData)?.satReserves || 0)}</div>
             </div>
             <div>
               <div className="text-gray-500">Growth</div>
               <div className="font-bold text-lg text-green-600">
-                {((((final?.satReserves || INITIAL_SAT_RESERVES) - INITIAL_SAT_RESERVES) / INITIAL_SAT_RESERVES) * 100).toFixed(1)}%
+                {(((((final as ScenarioData)?.satReserves || treasuryStartingCash) - treasuryStartingCash) / treasuryStartingCash) * 100).toFixed(2)}%
               </div>
             </div>
           </div>
